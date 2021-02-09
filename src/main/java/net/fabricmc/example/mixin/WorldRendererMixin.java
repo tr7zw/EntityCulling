@@ -10,7 +10,6 @@ import dev.tr7zw.entityculling.occlusionculling.OcclusionCullingInstance;
 import net.fabricmc.example.ExampleMod;
 import net.fabricmc.example.access.Cullable;
 import net.fabricmc.example.access.EntityRendererInter;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.LightmapTextureManager;
@@ -54,7 +53,7 @@ public class WorldRendererMixin {
 			EntityRenderer<Entity> entityRenderer = (EntityRenderer<Entity>) entityRenderDispatcher.getRenderer(entity);
 			@SuppressWarnings("unchecked")
 			EntityRendererInter<Entity> entityRendererInter = (EntityRendererInter<Entity>) entityRenderer;
-			if(matrices != null && vertexConsumers != null && entityRendererInter.shadowHasLabel(entity)) {
+			if(ExampleMod.instance.nametags && matrices != null && vertexConsumers != null && entityRendererInter.shadowHasLabel(entity)) {
 				double x = MathHelper.lerp((double) tickDelta, (double) entity.lastRenderX, (double) entity.getX()) - cameraX;
 				double y = MathHelper.lerp((double) tickDelta, (double) entity.lastRenderY, (double) entity.getY()) - cameraY;
 				double z = MathHelper.lerp((double) tickDelta, (double) entity.lastRenderZ, (double) entity.getZ()) - cameraZ;

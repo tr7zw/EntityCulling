@@ -46,23 +46,24 @@ public class CullTask implements Runnable {
 									cullable.setCulled(!visible);
 								}
 							}
-							for (Entity entity : client.world.getEntities()) {
-								Cullable cullable = (Cullable) entity;
-								if (!cullable.isForcedVisible()) {
-									Box boundingBox = entity.getVisibilityBoundingBox();
-									boolean visible = ExampleMod.instance.culling.isAABBVisible(
-											new Vec3d(entity.getPos().getX(), entity.getPos().getY(),
-													entity.getPos().getZ()),
-											new AxisAlignedBB(boundingBox.minX - 0.05, boundingBox.minY,
-													boundingBox.minZ - 0.05, boundingBox.maxX + 0.05, boundingBox.maxY,
-													boundingBox.maxZ + 0.05),
-											client.player.getCameraPosVec(client.getTickDelta()), true);
-									cullable.setCulled(!visible);
-								}
-							}
 
 						}
 					}
+					for (Entity entity : client.world.getEntities()) {
+						Cullable cullable = (Cullable) entity;
+						if (!cullable.isForcedVisible()) {
+							Box boundingBox = entity.getVisibilityBoundingBox();
+							boolean visible = ExampleMod.instance.culling.isAABBVisible(
+									new Vec3d(entity.getPos().getX(), entity.getPos().getY(),
+											entity.getPos().getZ()),
+									new AxisAlignedBB(boundingBox.minX - 0.05, boundingBox.minY,
+											boundingBox.minZ - 0.05, boundingBox.maxX + 0.05, boundingBox.maxY,
+											boundingBox.maxZ + 0.05),
+									client.player.getCameraPosVec(client.getTickDelta()), true);
+							cullable.setCulled(!visible);
+						}
+					}
+
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
