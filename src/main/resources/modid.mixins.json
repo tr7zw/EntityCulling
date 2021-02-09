@@ -9,7 +9,11 @@
     "BlockEntityRenderDispatcherMixin",
     "WorldRendererMixin",
     "EntityRendererMixin",
-    "CullableMixin"
+    "CullableMixin",
+    "EntityMixin",
+    "TextMixin",
+    "TextRendererMixin",
+    "PlayerEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

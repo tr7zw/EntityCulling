@@ -8,7 +8,7 @@ public class ExampleMod implements ModInitializer {
 	
 	public static ExampleMod instance;
 	public final OcclusionCullingInstance culling = new OcclusionCullingInstance();
-	public boolean nametags = false;
+	public boolean nametags = true;
 	public boolean debug = false;
 	private CullTask cullTask = new CullTask();
 	
