@@ -34,6 +34,7 @@ public class BlockEntityRenderDispatcherMixin {
 				blockAABB, client.player.getCameraPosVec(tickDelta), false)) {
 			
 			info.cancel();
+			return;
 		}
 		((Cullable)blockEntity).setVisible();
 	}
