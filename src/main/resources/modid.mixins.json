@@ -8,7 +8,8 @@
   "client": [
     "BlockEntityRenderDispatcherMixin",
     "WorldRendererMixin",
-    "EntityRendererMixin"
+    "EntityRendererMixin",
+    "CullableMixin"
   ],
   "injectors": {
     "defaultRequire": 1

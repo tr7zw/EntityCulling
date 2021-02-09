@@ -8,6 +8,7 @@ public class ExampleMod implements ModInitializer {
 	
 	public static ExampleMod instance;
 	public final OcclusionCullingInstance culling = new OcclusionCullingInstance();
+	public boolean debug = false;
 	
 	@Override
 	public void onInitialize() {

@@ -7,18 +7,23 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import dev.tr7zw.entityculling.occlusionculling.AxisAlignedBB;
+import dev.tr7zw.entityculling.occlusionculling.OcclusionCullingInstance;
 import net.fabricmc.example.ExampleMod;
+import net.fabricmc.example.access.Cullable;
 import net.fabricmc.example.access.EntityRendererInter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.LightmapTextureManager;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3d;
@@ -33,14 +38,21 @@ public class WorldRendererMixin {
 	}
 	
 	private MinecraftClient client = MinecraftClient.getInstance();
-	private AxisAlignedBB entityAABB = new AxisAlignedBB(0d, 0d, 0d, 1d, 2d, 1d);
 	@Shadow
 	private EntityRenderDispatcher entityRenderDispatcher;
 	
 	@Inject(at = @At("HEAD"), method = "renderEntity", cancellable = true)
 	private void renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta,
 			MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo info) {
-		if(!ExampleMod.instance.culling.isAABBVisible(new Vec3d(entity.getPos().getX(), entity.getPos().getY(), entity.getPos().getZ()), entityAABB, client.player.getCameraPosVec(client.getTickDelta()), true)) {
+		if(((Cullable)entity).forceVisible()) {
+			return;
+		}
+		Box boundingBox = entity.getVisibilityBoundingBox();
+		if(!ExampleMod.instance.culling.isAABBVisible(new Vec3d(entity.getPos().getX(), entity.getPos().getY(), entity.getPos().getZ()), new AxisAlignedBB(boundingBox.minX - 0.05, boundingBox.minY, boundingBox.minZ - 0.05, boundingBox.maxX + 0.05, boundingBox.maxY, boundingBox.maxZ + 0.05), client.player.getCameraPosVec(client.getTickDelta()), true)) {
+			if(ExampleMod.instance.debug) {
+				renderDebugPoints(matrices, vertexConsumers);
+			}
+			@SuppressWarnings("unchecked")
 			EntityRenderer<Entity> entityRenderer = (EntityRenderer<Entity>) entityRenderDispatcher.getRenderer(entity);
 			@SuppressWarnings("unchecked")
 			EntityRendererInter<Entity> entityRendererInter = (EntityRendererInter<Entity>) entityRenderer;
@@ -58,7 +70,25 @@ public class WorldRendererMixin {
 				matrices.pop();
 			}
 			info.cancel();
+			return;
+		}
+		renderDebugPoints(matrices, vertexConsumers);
+		((Cullable)entity).setVisible();
+	}
+	
+	private void renderDebugPoints(MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
+		if(ExampleMod.instance.debug) {
+			for(Vec3d pos : OcclusionCullingInstance.targets) {
+				drawBox(matrices, vertexConsumers.getBuffer(RenderLayer.getLines()), new Box(pos.x, pos.y, pos.z, pos.x+0.1, pos.y+0.1, pos.z+0.1), 1, 1, 1);
+			}
 		}
 	}
+	
+	private void drawBox(MatrixStack matrix, VertexConsumer vertices, Box box, float red, float green,
+			float blue) {
+		WorldRenderer.drawBox((MatrixStack) matrix, (VertexConsumer) vertices, (Box) box, (float) red, (float) green,
+				(float) blue, (float) 1.0f);
+	}
+	
 	
 }

@@ -11,25 +11,35 @@ import net.minecraft.world.chunk.WorldChunk;
 
 public class OcclusionCullingInstance {
 
+	public static Vec3d[] targets = new Vec3d[5];
+	
 	public boolean isAABBVisible(Vec3d aabbBlock, AxisAlignedBB aabb, Vec3d playerLoc, boolean entity) {
 		try {
 			double width = aabb.getWidth();
 			double height = aabb.getHeight();
 			double depth = aabb.getDepth();
 			Vec3d center = entity ? aabbBlock.add(0, height/2, 0) : aabb.getAABBMiddle(aabbBlock);
-			Vec3d centerXMin = center.add(-width / 2, 0, 0);
-			Vec3d centerXMax = center.add(width / 2, 0, 0);
+			Vec3d centerXZMin = center.add(-width / 2, 0, depth / 2);
+			Vec3d centerXMZMax = center.add(width / 2, 0, -depth / 2);
 			Vec3d centerYMin = center.add(0, -height / 2, 0);
 			Vec3d centerYMax = center.add(0, height / 2, 0);
-			Vec3d centerZMin = center.add(0, 0, -depth / 2);
-			Vec3d centerZMax = center.add(0, 0, depth / 2);
-			Vec3d[] targets = new Vec3d[6];
-			targets[0] = centerYMin.subtract(playerLoc);
-			targets[1] = centerYMax.subtract(playerLoc);
-			targets[2] = centerXMin.subtract(playerLoc);
-			targets[3] = centerXMax.subtract(playerLoc);
-			targets[4] = centerZMin.subtract(playerLoc);
-			targets[5] = centerZMax.subtract(playerLoc);
+			Vec3d centerZMXMin = center.add(-width / 2, 0, -depth / 2);
+			Vec3d centerZXMax = center.add(width / 2, 0, depth / 2);
+			
+			targets[0] = center.subtract(playerLoc);
+			targets[1] = centerYMin.subtract(playerLoc);
+			targets[2] = centerYMax.subtract(playerLoc);
+			
+			if(centerXZMin.squaredDistanceTo(playerLoc) > centerXMZMax.squaredDistanceTo(playerLoc)) {
+				targets[3] = centerXZMin.subtract(playerLoc);
+			}else {
+				targets[3] = centerXMZMax.subtract(playerLoc);
+			}
+			if(centerZMXMin.squaredDistanceTo(playerLoc) > centerZXMax.squaredDistanceTo(playerLoc)) {
+				targets[4] = centerZMXMin.subtract(playerLoc);
+			}else {
+				targets[4] = centerZXMax.subtract(playerLoc);
+			}
 			if(isVisible(playerLoc, targets))return true;
 
 			return false;
@@ -192,7 +202,7 @@ public class OcclusionCullingInstance {
 			}
 			if(cVal == 0) {
 				// save current cell
-				Vec3d cp = new Vec3d(x, y, z);
+				//Vec3d cp = new Vec3d(x, y, z);
 				int tchunkX = (int) Math.floor(x / 16d);
 				int tchunkZ = (int) Math.floor(z / 16d);
 				if(snapshot == null || chunkX != tchunkX || chunkZ != tchunkZ) {
