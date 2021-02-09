@@ -6,7 +6,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import dev.tr7zw.entityculling.occlusionculling.AxisAlignedBB;
 import dev.tr7zw.entityculling.occlusionculling.OcclusionCullingInstance;
 import net.fabricmc.example.ExampleMod;
 import net.fabricmc.example.access.Cullable;
@@ -37,18 +36,17 @@ public class WorldRendererMixin {
 
 	}
 	
-	private MinecraftClient client = MinecraftClient.getInstance();
 	@Shadow
 	private EntityRenderDispatcher entityRenderDispatcher;
 	
 	@Inject(at = @At("HEAD"), method = "renderEntity", cancellable = true)
 	private void renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta,
 			MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo info) {
-		if(((Cullable)entity).forceVisible()) {
+		Cullable cullable = (Cullable) entity;
+		if(cullable.isForcedVisible()) {
 			return;
 		}
-		Box boundingBox = entity.getVisibilityBoundingBox();
-		if(!ExampleMod.instance.culling.isAABBVisible(new Vec3d(entity.getPos().getX(), entity.getPos().getY(), entity.getPos().getZ()), new AxisAlignedBB(boundingBox.minX - 0.05, boundingBox.minY, boundingBox.minZ - 0.05, boundingBox.maxX + 0.05, boundingBox.maxY, boundingBox.maxZ + 0.05), client.player.getCameraPosVec(client.getTickDelta()), true)) {
+		if(cullable.isCulled()) {
 			if(ExampleMod.instance.debug) {
 				renderDebugPoints(matrices, vertexConsumers);
 			}
@@ -73,7 +71,6 @@ public class WorldRendererMixin {
 			return;
 		}
 		renderDebugPoints(matrices, vertexConsumers);
-		((Cullable)entity).setVisible();
 	}
 	
 	private void renderDebugPoints(MatrixStack matrices, VertexConsumerProvider vertexConsumers) {

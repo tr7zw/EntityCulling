@@ -9,6 +9,7 @@ public class ExampleMod implements ModInitializer {
 	public static ExampleMod instance;
 	public final OcclusionCullingInstance culling = new OcclusionCullingInstance();
 	public boolean debug = false;
+	private CullTask cullTask = new CullTask();
 	
 	@Override
 	public void onInitialize() {
@@ -18,7 +19,9 @@ public class ExampleMod implements ModInitializer {
 		instance = this;
 		ClientTickEvents.START_WORLD_TICK.register((event) -> {
 			culling.resetCache();
+			cullTask.requestCull = true;
 		});
 		System.out.println("Loaded entity culling!");
+		new Thread(cullTask, "CullThread").start();
 	}
 }

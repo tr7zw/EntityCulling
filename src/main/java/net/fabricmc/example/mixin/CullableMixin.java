@@ -10,15 +10,29 @@ import net.minecraft.entity.Entity;
 public class CullableMixin implements Cullable {
 
 	private long lasttime = 0;
+	private boolean culled = false;
 	
 	@Override
-	public void setVisible() {
+	public void setTimeout() {
 		lasttime = System.currentTimeMillis() + 250;
 	}
 
 	@Override
-	public boolean forceVisible() {
+	public boolean isForcedVisible() {
 		return lasttime > System.currentTimeMillis();
+	}
+
+	@Override
+	public void setCulled(boolean value) {
+		this.culled = value;
+		if(!value) {
+			setTimeout();
+		}
+	}
+
+	@Override
+	public boolean isCulled() {
+		return culled;
 	}
 
 }
