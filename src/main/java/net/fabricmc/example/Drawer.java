@@ -89,7 +89,7 @@ public class Drawer implements CharacterVisitor {
 			glyphes.add((consumer, matrix) -> {
 				VertexConsumer vertexConsumer = consumer.getBuffer(glyphRenderer.getLayer(this.seeThrough));
 				drawGlyph(glyphRenderer, bl, style.isItalic(), p, fx + q, this.y + q, matrix,
-					vertexConsumer, m, n, o, f, this.light);
+					vertexConsumer, m, n, o, 1, this.light);
 			});
 			
 		}

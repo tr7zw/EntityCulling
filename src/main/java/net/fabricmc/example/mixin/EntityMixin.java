@@ -21,7 +21,7 @@ public abstract class EntityMixin {
 	
 	@Inject(method = "getDisplayName", at = @At("HEAD"), cancellable = true)
 	public Text getDisplayName(CallbackInfoReturnable<Text> info) {
-		if(cachedDisplayName == null/* || !cachedName.equals(getName()) || cachedTeam != getScoreboardTeam()*/) {
+		if(cachedDisplayName == null || !cachedName.equals(getName()) || cachedTeam != getScoreboardTeam()) {
 			cachedName = getName();
 			cachedTeam = getScoreboardTeam();
 			cachedDisplayName = Team.modifyText(cachedTeam, cachedName)
