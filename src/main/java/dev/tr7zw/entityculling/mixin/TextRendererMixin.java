@@ -1,4 +1,4 @@
-package net.fabricmc.example.mixin;
+package dev.tr7zw.entityculling.mixin;
 
 import java.util.function.Function;
 
@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.fabricmc.example.Drawer;
-import net.fabricmc.example.access.CachedText;
+import dev.tr7zw.entityculling.Drawer;
+import dev.tr7zw.entityculling.access.CachedText;
 import net.minecraft.client.font.FontStorage;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.VertexConsumerProvider;

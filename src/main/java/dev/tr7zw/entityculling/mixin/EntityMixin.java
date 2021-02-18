@@ -1,4 +1,4 @@
-package net.fabricmc.example.mixin;
+package dev.tr7zw.entityculling.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

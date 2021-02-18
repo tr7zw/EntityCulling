@@ -1,4 +1,4 @@
-package net.fabricmc.example;
+package dev.tr7zw.entityculling;
 
 import java.util.ArrayList;
 import java.util.List;

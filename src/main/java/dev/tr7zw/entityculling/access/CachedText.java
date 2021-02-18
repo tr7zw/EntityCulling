@@ -1,6 +1,6 @@
-package net.fabricmc.example.access;
+package dev.tr7zw.entityculling.access;
 
-import net.fabricmc.example.Drawer;
+import dev.tr7zw.entityculling.Drawer;
 
 public interface CachedText {
 

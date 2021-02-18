@@ -30,7 +30,7 @@ public class CullTask implements Runnable {
 				Thread.sleep(sleepDelay);
 
 				if (client.world != null) {
-					Vec3d camera = ExampleMod.instance.debug ? client.player.getCameraPosVec(client.getTickDelta())
+					Vec3d camera = EntityCullingMod.instance.debug ? client.player.getCameraPosVec(client.getTickDelta())
 							: client.gameRenderer.getCamera().getPos();
 					if (requestCull || !lastPos.equals(camera)) {
 						requestCull = false;
@@ -60,7 +60,7 @@ public class CullTask implements Runnable {
 									cullable.setCulled(false);
 								}else {
 									Box boundingBox = entity.getVisibilityBoundingBox();
-									boolean visible = ExampleMod.instance.culling.isAABBVisible(
+									boolean visible = culling.isAABBVisible(
 											new Vec3d(entity.getPos().getX(), entity.getPos().getY(),
 													entity.getPos().getZ()),
 											new AxisAlignedBB(boundingBox.minX - 0.05, boundingBox.minY,
