@@ -4,9 +4,9 @@
   "version": "${version}",
 
   "name": "EntityCulling-Fabric",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "description": "This mod uses async path-tracing to hide Tiles/Entities that are not visible.",
   "authors": [
-    "Me!"
+    "tr7zw"
   ],
   "contact": {
 
