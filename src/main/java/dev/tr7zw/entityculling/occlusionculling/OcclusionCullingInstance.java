@@ -50,10 +50,6 @@ public class OcclusionCullingInstance {
 		return true;
 	}
 	
-	private Vec3d add(Vec3d org, double x, double y, double z) {
-		return new Vec3d(org.x + x, org.y + y, org.z + z);
-	}
-	
 	private final int reach = 50;
 	private final byte[] cache = new byte[(reach*2)*(reach*2)*(reach*2)];
 	
@@ -181,6 +177,7 @@ public class OcclusionCullingInstance {
 		int chunkX = 0;//(int) Math.floor(x / 16d);
 		int chunkZ = 0;//(int) Math.floor(z / 16d);
 		WorldChunk snapshot = null;
+		@SuppressWarnings("resource")
 		ClientWorld world =  MinecraftClient.getInstance().world;
 		
 		// iterate through all intersecting cells (n times)
