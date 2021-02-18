@@ -60,7 +60,7 @@ public abstract class TextRendererMixin {
 			Drawer drawer = new Drawer(fontStorageAccessor, x, y, underlineColor, shadow, seeThrough, light);
 			text.asOrderedText().accept(drawer);
 			drawer.drawLayer(underlineColor, x);
-			System.out.println("uncached rendering " + text.hashCode());
+			//System.out.println("uncached rendering " + text.hashCode());
 			cached.setDrawer(drawer);
 			cached.getDrawer().drawAll(vertexConsumerProvider, matrix);
 			return x;

@@ -1,5 +1,6 @@
 package dev.tr7zw.entityculling;
 
+import java.util.Iterator;
 import java.util.Map.Entry;
 
 import dev.tr7zw.entityculling.access.Cullable;
@@ -53,7 +54,14 @@ public class CullTask implements Runnable {
 
 							}
 						}
-						for (Entity entity : client.world.getEntities()) {
+						Entity entity = null;
+						Iterator<Entity> iterable = client.world.getEntities().iterator();
+						while (iterable.hasNext()) {
+							try {
+								entity = iterable.next();
+							}catch(NullPointerException npe) {
+								break; // We are not synced to the main thread, so NPE's are allowed here and way less overhead probably
+							}
 							Cullable cullable = (Cullable) entity;
 							if (!cullable.isForcedVisible()) {
 								if(entity.isGlowing()) {
