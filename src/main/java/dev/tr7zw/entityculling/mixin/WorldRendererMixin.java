@@ -73,6 +73,7 @@ public class WorldRendererMixin {
 	}
 	
 	private void renderDebugPoints(MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
+		if(true)return;
 		if(EntityCullingMod.instance.debug) {
 			for(Vec3d pos : OcclusionCullingInstance.targets) {
 				drawBox(matrices, vertexConsumers.getBuffer(RenderLayer.getLines()), new Box(pos.x, pos.y, pos.z, pos.x+0.1, pos.y+0.1, pos.z+0.1), 1, 1, 1);
