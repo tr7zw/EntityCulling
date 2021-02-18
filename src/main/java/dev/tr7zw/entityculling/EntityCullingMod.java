@@ -1,12 +1,12 @@
-package net.fabricmc.example;
+package dev.tr7zw.entityculling;
 
 import dev.tr7zw.entityculling.occlusionculling.OcclusionCullingInstance;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 
-public class ExampleMod implements ModInitializer {
+public class EntityCullingMod implements ModInitializer {
 	
-	public static ExampleMod instance;
+	public static EntityCullingMod instance;
 	public final OcclusionCullingInstance culling = new OcclusionCullingInstance();
 	public boolean nametags = true;
 	public boolean debug = false;
@@ -22,7 +22,6 @@ public class ExampleMod implements ModInitializer {
 			culling.resetCache();
 			cullTask.requestCull = true;
 		});
-		System.out.println("Loaded entity culling!");
 		new Thread(cullTask, "CullThread").start();
 	}
 }

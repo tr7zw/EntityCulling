@@ -1,8 +1,8 @@
-package net.fabricmc.example.mixin;
+package dev.tr7zw.entityculling.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 
-import net.fabricmc.example.access.Cullable;
+import dev.tr7zw.entityculling.access.Cullable;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 

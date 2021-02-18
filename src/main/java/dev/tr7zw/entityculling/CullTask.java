@@ -1,10 +1,10 @@
-package net.fabricmc.example;
+package dev.tr7zw.entityculling;
 
 import java.util.Map.Entry;
 
+import dev.tr7zw.entityculling.access.Cullable;
 import dev.tr7zw.entityculling.occlusionculling.AxisAlignedBB;
 import dev.tr7zw.entityculling.occlusionculling.OcclusionCullingInstance;
-import net.fabricmc.example.access.Cullable;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;

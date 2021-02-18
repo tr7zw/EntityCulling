@@ -1,11 +1,11 @@
-package net.fabricmc.example.mixin;
+package dev.tr7zw.entityculling.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.fabricmc.example.access.Cullable;
+import dev.tr7zw.entityculling.access.Cullable;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
