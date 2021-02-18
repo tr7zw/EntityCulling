@@ -1,4 +1,4 @@
-package net.fabricmc.example.access;
+package dev.tr7zw.entityculling.access;
 
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;

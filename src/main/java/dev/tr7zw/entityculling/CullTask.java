@@ -1,10 +1,10 @@
-package net.fabricmc.example;
+package dev.tr7zw.entityculling;
 
 import java.util.Map.Entry;
 
+import dev.tr7zw.entityculling.access.Cullable;
 import dev.tr7zw.entityculling.occlusionculling.AxisAlignedBB;
 import dev.tr7zw.entityculling.occlusionculling.OcclusionCullingInstance;
-import net.fabricmc.example.access.Cullable;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
@@ -53,7 +53,7 @@ public class CullTask implements Runnable {
 						Cullable cullable = (Cullable) entity;
 						if (!cullable.isForcedVisible()) {
 							Box boundingBox = entity.getVisibilityBoundingBox();
-							boolean visible = ExampleMod.instance.culling.isAABBVisible(
+							boolean visible = EntityCullingMod.instance.culling.isAABBVisible(
 									new Vec3d(entity.getPos().getX(), entity.getPos().getY(),
 											entity.getPos().getZ()),
 									new AxisAlignedBB(boundingBox.minX - 0.05, boundingBox.minY,

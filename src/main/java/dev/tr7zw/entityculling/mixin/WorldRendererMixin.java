@@ -1,4 +1,4 @@
-package net.fabricmc.example.mixin;
+package dev.tr7zw.entityculling.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -6,10 +6,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import dev.tr7zw.entityculling.EntityCullingMod;
+import dev.tr7zw.entityculling.access.Cullable;
+import dev.tr7zw.entityculling.access.EntityRendererInter;
 import dev.tr7zw.entityculling.occlusionculling.OcclusionCullingInstance;
-import net.fabricmc.example.ExampleMod;
-import net.fabricmc.example.access.Cullable;
-import net.fabricmc.example.access.EntityRendererInter;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.LightmapTextureManager;
@@ -46,14 +46,14 @@ public class WorldRendererMixin {
 			return;
 		}
 		if(cullable.isCulled()) {
-			if(ExampleMod.instance.debug) {
+			if(EntityCullingMod.instance.debug) {
 				renderDebugPoints(matrices, vertexConsumers);
 			}
 			@SuppressWarnings("unchecked")
 			EntityRenderer<Entity> entityRenderer = (EntityRenderer<Entity>) entityRenderDispatcher.getRenderer(entity);
 			@SuppressWarnings("unchecked")
 			EntityRendererInter<Entity> entityRendererInter = (EntityRendererInter<Entity>) entityRenderer;
-			if(ExampleMod.instance.nametags && matrices != null && vertexConsumers != null && entityRendererInter.shadowHasLabel(entity)) {
+			if(EntityCullingMod.instance.nametags && matrices != null && vertexConsumers != null && entityRendererInter.shadowHasLabel(entity)) {
 				double x = MathHelper.lerp((double) tickDelta, (double) entity.lastRenderX, (double) entity.getX()) - cameraX;
 				double y = MathHelper.lerp((double) tickDelta, (double) entity.lastRenderY, (double) entity.getY()) - cameraY;
 				double z = MathHelper.lerp((double) tickDelta, (double) entity.lastRenderZ, (double) entity.getZ()) - cameraZ;
@@ -73,7 +73,7 @@ public class WorldRendererMixin {
 	}
 	
 	private void renderDebugPoints(MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
-		if(ExampleMod.instance.debug) {
+		if(EntityCullingMod.instance.debug) {
 			for(Vec3d pos : OcclusionCullingInstance.targets) {
 				drawBox(matrices, vertexConsumers.getBuffer(RenderLayer.getLines()), new Box(pos.x, pos.y, pos.z, pos.x+0.1, pos.y+0.1, pos.z+0.1), 1, 1, 1);
 			}

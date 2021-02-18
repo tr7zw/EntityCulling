@@ -1,4 +1,4 @@
-package net.fabricmc.example.access;
+package dev.tr7zw.entityculling.access;
 
 public interface Cullable {
 
