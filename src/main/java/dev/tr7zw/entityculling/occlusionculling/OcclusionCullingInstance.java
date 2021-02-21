@@ -50,8 +50,8 @@ public class OcclusionCullingInstance {
 		return true;
 	}
 	
-	private final int reach = 50;
-	private final byte[] cache = new byte[(reach*2)*(reach*2)*(reach*2)];
+	private final int reach = 64;
+	private final byte[] cache = new byte[((reach*2)*(reach*2)*(reach*2))/4];
 	
 	public void resetCache() {
 		Arrays.fill(cache, (byte)0);
@@ -170,12 +170,12 @@ public class OcclusionCullingInstance {
 		}
 		return false;
 	}
-
+	
 	private boolean stepRay(Vec3d start, double x0, double y0, double z0, int x, int y,
 			int z, double dt_dx, double dt_dy, double dt_dz, int n, int x_inc, int y_inc, int z_inc, double t_next_y,
 			double t_next_x, double t_next_z) {
-		int chunkX = 0;//(int) Math.floor(x / 16d);
-		int chunkZ = 0;//(int) Math.floor(z / 16d);
+		int chunkX = 0;
+		int chunkZ = 0;
 		WorldChunk snapshot = null;
 		@SuppressWarnings("resource")
 		ClientWorld world =  MinecraftClient.getInstance().world;
@@ -185,15 +185,11 @@ public class OcclusionCullingInstance {
 			int cx = (int) Math.floor((x0 - x) + reach);
 			int cy = (int) Math.floor((y0 - y) + reach);
 			int cz = (int) Math.floor((z0 - z) + reach);
-			//cx += reach;
-			//cy += reach;
-			//cz += reach;
-			if(cx < 0 || cy < 0 || cz < 0 || cx+1 > reach*2 || cy+1 > reach*2 || cz+1 > reach*2) {
-				System.out.println("wrong data! " + cx + " " + cy + " " + cz);
-				return false;
-			}
-			int key = cx + cy*(reach*2) + cz*(reach*2)*(reach*2);
-			byte cVal = cache[key];
+
+			int keyPos = cx + cy*(reach*2) + cz*(reach*2)*(reach*2);
+			int entry = keyPos/4;
+			int offset = (keyPos%4)*2;
+			int cVal = cache[entry] >> offset & 3;
 			if(cVal == 2) {
 				return false;
 			}
@@ -220,26 +216,25 @@ public class OcclusionCullingInstance {
 				if (relativeZ < 0) {
 					relativeZ = 16 + relativeZ;
 				}
-				if (relativeX < 0 || relativeX > 15) {
-					cache[key] = 2;
+				if (relativeX < 0) {
+					cache[entry] |= 1 << offset + 1;
 					return false;
 				}
-				if (relativeZ < 0 || relativeZ > 15) {
-					cache[key] = 2;
+				if (relativeZ < 0) {
+					cache[entry] |= 1 << offset + 1;
 					return false;
 				}
 				if (y < 0 || y > 255) {
-					cache[key] = 2;
+					cache[entry] |= 1 << offset + 1;
 					return false;
 				}
 				BlockPos pos = new BlockPos(x, y, z);
 				BlockState state = snapshot.getBlockState(pos);
 				if(state.isOpaqueFullCube(world, pos)) {
-					//System.out.println(cx + " " + cy + " " + cz);
-					cache[key] = 2;
+					cache[entry] |= 1 << offset + 1;
 					return false;
 				}
-				cache[key] = 1;
+				cache[entry] |= 1 << offset;
 			}
 
 			if (t_next_y < t_next_x && t_next_y < t_next_z) { // next cell is upwards/downwards because the distance to the next vertical
