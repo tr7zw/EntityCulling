@@ -31,12 +31,14 @@ public class CullTask implements Runnable {
 				Thread.sleep(sleepDelay);
 
 				if (client.world != null && client.player != null && client.player.age > 10) {
-					Vec3d camera = EntityCullingMod.instance.debug ? client.player.getCameraPosVec(client.getTickDelta())
+					Vec3d camera = EntityCullingMod.instance.debug
+							? client.player.getCameraPosVec(client.getTickDelta())
 							: client.gameRenderer.getCamera().getPos();
 					if (requestCull || !lastPos.equals(camera)) {
 						requestCull = false;
 						lastPos = camera;
 						culling.resetCache();
+						boolean spectator = client.player.isSpectator();
 						for (int x = -3; x <= 3; x++) {
 							for (int z = -3; z <= 3; z++) {
 								WorldChunk chunk = client.world.getChunk(client.player.chunkX + x,
@@ -44,6 +46,10 @@ public class CullTask implements Runnable {
 								for (Entry<BlockPos, BlockEntity> entry : chunk.getBlockEntities().entrySet()) {
 									Cullable cullable = (Cullable) entry.getValue();
 									if (!cullable.isForcedVisible()) {
+										if (spectator) {
+											cullable.setCulled(false);
+											continue;
+										}
 										BlockPos pos = entry.getKey();
 										boolean visible = culling.isAABBVisible(
 												new Vec3d(pos.getX(), pos.getY(), pos.getZ()), blockAABB, camera,
@@ -59,14 +65,15 @@ public class CullTask implements Runnable {
 						while (iterable.hasNext()) {
 							try {
 								entity = iterable.next();
-							}catch(NullPointerException npe) {
-								break; // We are not synced to the main thread, so NPE's are allowed here and way less overhead probably
+							} catch (NullPointerException npe) {
+								break; // We are not synced to the main thread, so NPE's are allowed here and way less
+										// overhead probably than trying to sync stuff up for no really good reason
 							}
 							Cullable cullable = (Cullable) entity;
 							if (!cullable.isForcedVisible()) {
-								if(entity.isGlowing()) {
+								if (spectator || entity.isGlowing()) {
 									cullable.setCulled(false);
-								}else {
+								} else {
 									Box boundingBox = entity.getVisibilityBoundingBox();
 									boolean visible = culling.isAABBVisible(
 											new Vec3d(entity.getPos().getX(), entity.getPos().getY(),
