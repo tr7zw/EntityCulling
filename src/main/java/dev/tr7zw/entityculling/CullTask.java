@@ -1,12 +1,14 @@
 package dev.tr7zw.entityculling;
 
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import dev.tr7zw.entityculling.access.Cullable;
 import dev.tr7zw.entityculling.occlusionculling.AxisAlignedBB;
 import dev.tr7zw.entityculling.occlusionculling.OcclusionCullingInstance;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
@@ -18,12 +20,18 @@ public class CullTask implements Runnable {
 
 	public boolean requestCull = false;
 
-	private final OcclusionCullingInstance culling = new OcclusionCullingInstance();
+	private final OcclusionCullingInstance culling;
 	private final MinecraftClient client = MinecraftClient.getInstance();
 	private final AxisAlignedBB blockAABB = new AxisAlignedBB(0d, 0d, 0d, 1d, 1d, 1d);
 	private final int sleepDelay = 10;
+	private final Set<BlockEntityType<?>> unCullable;
 	private Vec3d lastPos = new Vec3d(0, 0, 0);
 
+	public CullTask(OcclusionCullingInstance culling, Set<BlockEntityType<?>> unCullable) {
+		this.culling = culling;
+		this.unCullable = unCullable;
+	}
+	
 	@Override
 	public void run() {
 		while (client.isRunning()) {
@@ -44,6 +52,9 @@ public class CullTask implements Runnable {
 								WorldChunk chunk = client.world.getChunk(client.player.chunkX + x,
 										client.player.chunkZ + z);
 								for (Entry<BlockPos, BlockEntity> entry : chunk.getBlockEntities().entrySet()) {
+									if(unCullable.contains(entry.getValue().getType())) {
+										continue;
+									}
 									Cullable cullable = (Cullable) entry.getValue();
 									if (!cullable.isForcedVisible()) {
 										if (spectator) {
