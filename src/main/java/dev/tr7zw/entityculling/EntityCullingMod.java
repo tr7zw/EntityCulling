@@ -15,6 +15,7 @@ public class EntityCullingMod implements ModInitializer {
 	public Set<BlockEntityType<?>> unCullable = new HashSet<>();
 	public boolean nametags = true;
 	public boolean debug = false;
+	public boolean debugHitboxes = false;
 	private CullTask cullTask = new CullTask(culling, unCullable);
 
 	@Override

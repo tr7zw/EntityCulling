@@ -2,9 +2,11 @@ package dev.tr7zw.entityculling.occlusionculling;
 
 import java.util.Arrays;
 
+import dev.tr7zw.entityculling.EntityCullingMod;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.chunk.WorldChunk;
@@ -15,32 +17,37 @@ public class OcclusionCullingInstance {
 	
 	public boolean isAABBVisible(Vec3d aabbBlock, AxisAlignedBB aabb, Vec3d playerLoc, boolean entity) {
 		try {
-			double width = aabb.getWidth();
-			double height = aabb.getHeight();
-			double depth = aabb.getDepth();
-			Vec3d center = entity ? aabbBlock.add(0, height/2, 0) : aabb.getAABBMiddle(aabbBlock);
-			Vec3d centerXZMin = center.add(-width / 2, 0, depth / 2);
-			Vec3d centerXMZMax = center.add(width / 2, 0, -depth / 2);
-			Vec3d centerYMin = center.add(0, -height / 2, 0);
-			Vec3d centerYMax = center.add(0, height / 2, 0);
-			Vec3d centerZMXMin = center.add(-width / 2, 0, -depth / 2);
-			Vec3d centerZXMax = center.add(width / 2, 0, depth / 2);
-			
-			targets[0] = center.subtract(playerLoc);
-			targets[1] = centerYMin.subtract(playerLoc);
-			targets[2] = centerYMax.subtract(playerLoc);
-			
-			if(centerXZMin.squaredDistanceTo(playerLoc) > centerXMZMax.squaredDistanceTo(playerLoc)) {
-				targets[3] = centerXZMin.subtract(playerLoc);
-			}else {
-				targets[3] = centerXMZMax.subtract(playerLoc);
+			if (entity) {
+				aabb.maxx -= aabbBlock.x;
+				aabb.minx -= aabbBlock.x;
+				aabb.maxy -= aabbBlock.y;
+				aabb.miny -= aabbBlock.y;
+				aabb.maxz -= aabbBlock.z;
+				aabb.minz -= aabbBlock.z;
 			}
-			if(centerZMXMin.squaredDistanceTo(playerLoc) > centerZXMax.squaredDistanceTo(playerLoc)) {
-				targets[4] = centerZMXMin.subtract(playerLoc);
-			}else {
-				targets[4] = centerZXMax.subtract(playerLoc);
+			aabbBlock = aabbBlock.subtract(((int)playerLoc.x), ((int)playerLoc.y), ((int)playerLoc.z));
+			int maxX = (int) Math.ceil(aabbBlock.x + aabb.maxx + 0.25);
+			int maxY = (int) Math.ceil(aabbBlock.y + aabb.maxy + 0.25);
+			int maxZ = (int) Math.ceil(aabbBlock.z + aabb.maxz + 0.25);
+			int minX = (int) Math.floor(aabbBlock.x + aabb.minx - 0.25);
+			int minY = (int) Math.floor(aabbBlock.y + aabb.miny - 0.25);
+			int minZ = (int) Math.floor(aabbBlock.z + aabb.minz - 0.25);
+
+			for (int x = minX; x < maxX; x++) {
+				if (!(x == minX || x == maxX - 1))
+					continue;
+				for (int y = minY; y < maxY; y++) {
+					if (!(y == minY || y == maxY - 1))
+						continue;
+					for (int z = minZ; z < maxZ; z++) {
+						if (!(z == minZ || z == maxZ - 1))
+							continue;
+						if (isVoxelVisible(playerLoc, new Vec3d(x, y, z), EntityCullingMod.instance.debugHitboxes)) {
+							return true;
+						}
+					}
+				}
 			}
-			if(isVisible(playerLoc, targets))return true;
 
 			return false;
 
@@ -48,6 +55,24 @@ public class OcclusionCullingInstance {
 			exception.printStackTrace();
 		}
 		return true;
+	}
+
+	private boolean isVoxelVisible(Vec3d playerLoc, Vec3d position, boolean showDebug) {
+		Vec3d[] targets = new Vec3d[8];
+		targets[0] = position;
+		targets[1] = position.add(1, 0, 0);
+		targets[2] = position.add(0, 1, 0);
+		targets[3] = position.add(1, 1, 0);
+		targets[4] = position.add(0, 0, 1);
+		targets[5] = position.add(1, 0, 1);
+		targets[6] = position.add(0, 1, 1);
+		targets[7] = position.add(1, 1, 1);
+		if(showDebug) {
+			for(Vec3d target : targets) {
+				MinecraftClient.getInstance().world.addImportantParticle(ParticleTypes.HAPPY_VILLAGER, true, ((int)playerLoc.x) + target.x, ((int)playerLoc.y) + target.y, ((int)playerLoc.z) + target.z, 0, 0, 0);
+			}
+		}
+		return isVisible(playerLoc, targets);
 	}
 	
 	private final int reach = 64;
