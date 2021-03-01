@@ -98,6 +98,22 @@ public class OcclusionCullingInstance {
 		}
 		if(maxX > reach - 2 || maxY > reach - 2 || maxZ > reach - 2)return false;
 		
+		for(int v = 0; v < targets.length; v++) {//check if target is already known
+			Vec3d target = targets[v];
+			int cx = (int) Math.floor(target.x + reach);
+			int cy = (int) Math.floor(target.y + reach);
+			int cz = (int) Math.floor(target.z + reach);
+			int keyPos = cx + cy * (reach*2) + cz*(reach*2)*(reach*2);
+			int entry = keyPos/4;
+			int offset = (keyPos%4)*2;
+			int cVal = cache[entry] >> offset & 3;
+			if(cVal == 2) {
+				return false;
+			}else if(cVal == 1) {
+				return true;
+			}
+		}
+		
 		for(int v = 0; v < targets.length; v++) {
 			Vec3d target = targets[v];
 			// coordinates of start and target point
@@ -190,10 +206,27 @@ public class OcclusionCullingInstance {
 			boolean finished =stepRay(start, x0, y0, z0, x, y, z, dt_dx, dt_dy, dt_dz, n, x_inc, y_inc, z_inc, t_next_y, t_next_x,
 					t_next_z);
 			if(finished) {
+				cacheResult(target, true);
 				return true;
+			}else {
+				cacheResult(target, false);
 			}
 		}
 		return false;
+	}
+	
+	private void cacheResult(Vec3d vector, boolean result) {
+		int cx = (int) Math.floor(vector.x + reach);
+		int cy = (int) Math.floor(vector.y + reach);
+		int cz = (int) Math.floor(vector.z + reach);
+		int keyPos = cx + cy * (reach*2) + cz*(reach*2)*(reach*2);
+		int entry = keyPos/4;
+		int offset = (keyPos%4)*2;
+		if(result) {
+			cache[entry] |= 1 << offset;
+		} else {
+			cache[entry] |= 1 << offset + 1;
+		}
 	}
 	
 	private boolean stepRay(Vec3d start, double x0, double y0, double z0, int x, int y,
