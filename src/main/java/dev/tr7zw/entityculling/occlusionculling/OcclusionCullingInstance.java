@@ -60,13 +60,13 @@ public class OcclusionCullingInstance {
 	private boolean isVoxelVisible(Vec3d playerLoc, Vec3d position, boolean showDebug) {
 		Vec3d[] targets = new Vec3d[8];
 		targets[0] = position;
-		targets[1] = position.add(1, 0, 0);
-		targets[2] = position.add(0, 1, 0);
-		targets[3] = position.add(1, 1, 0);
-		targets[4] = position.add(0, 0, 1);
-		targets[5] = position.add(1, 0, 1);
-		targets[6] = position.add(0, 1, 1);
-		targets[7] = position.add(1, 1, 1);
+		targets[1] = position.add(0.95, 0, 0);
+		targets[2] = position.add(0, 0.95, 0);
+		targets[3] = position.add(0.95, 0.95, 0);
+		targets[4] = position.add(0, 0, 0.95);
+		targets[5] = position.add(0.95, 0, 0.95);
+		targets[6] = position.add(0, 0.95, 0.95);
+		targets[7] = position.add(0.95, 0.95, 0.95);
 		if(showDebug) {
 			for(Vec3d target : targets) {
 				MinecraftClient.getInstance().world.addImportantParticle(ParticleTypes.HAPPY_VILLAGER, true, ((int)playerLoc.x) + target.x, ((int)playerLoc.y) + target.y, ((int)playerLoc.z) + target.z, 0, 0, 0);
