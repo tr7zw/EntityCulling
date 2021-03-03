@@ -86,6 +86,8 @@ public class OcclusionCullingInstance {
 	 * returns the grid cells that intersect with this Vec3d<br>
 	 * <a href=
 	 * "http://playtechs.blogspot.de/2007/03/raytracing-on-grid.html">http://playtechs.blogspot.de/2007/03/raytracing-on-grid.html</a>
+	 * 
+	 * Caching assumes that all Vec3d's are inside the same block
 	 */
 	private boolean isVisible(Vec3d start, Vec3d[] targets) {
 		int maxX = 0;
@@ -206,12 +208,11 @@ public class OcclusionCullingInstance {
 			boolean finished =stepRay(start, x0, y0, z0, x, y, z, dt_dx, dt_dy, dt_dz, n, x_inc, y_inc, z_inc, t_next_y, t_next_x,
 					t_next_z);
 			if(finished) {
-				cacheResult(target, true);
+				cacheResult(targets[0], true);
 				return true;
-			}else {
-				cacheResult(target, false);
 			}
 		}
+		cacheResult(targets[0], false);
 		return false;
 	}
 	
@@ -239,7 +240,7 @@ public class OcclusionCullingInstance {
 		ClientWorld world =  MinecraftClient.getInstance().world;
 		
 		// iterate through all intersecting cells (n times)
-		for (; n > 0; n--) {
+		for (; n > 1; n--) { //n-1 times because we don't want to check the last block
 			int cx = (int) Math.floor((x0 - x) + reach);
 			int cy = (int) Math.floor((y0 - y) + reach);
 			int cz = (int) Math.floor((z0 - z) + reach);
