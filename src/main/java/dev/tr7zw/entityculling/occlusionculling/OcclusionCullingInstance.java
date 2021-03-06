@@ -12,8 +12,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.chunk.WorldChunk;
 
 public class OcclusionCullingInstance {
-
-	public static Vec3d[] targets = new Vec3d[5];
+	
+	private Vec3d[] targets = new Vec3d[8];
+	private MinecraftClient client = MinecraftClient.getInstance();
 	
 	public boolean isAABBVisible(Vec3d aabbBlock, AxisAlignedBB aabb, Vec3d playerLoc, boolean entity) {
 		try {
@@ -34,17 +35,12 @@ public class OcclusionCullingInstance {
 			int minZ = (int) Math.floor(aabbBlock.z + aabb.minz - 0.25);
 
 			for (int x = minX; x < maxX; x++) {
-				if (!(x == minX || x == maxX - 1))
-					continue;
 				for (int y = minY; y < maxY; y++) {
-					if (!(y == minY || y == maxY - 1))
-						continue;
 					for (int z = minZ; z < maxZ; z++) {
-						if (!(z == minZ || z == maxZ - 1))
-							continue;
-						if (isVoxelVisible(playerLoc, new Vec3d(x, y, z), EntityCullingMod.instance.debugHitboxes)) {
-							return true;
-						}
+						if(x == minX || x == maxX - 1 || y == minY || y == maxY - 1 || z == minZ || z == maxZ - 1)
+							if (isVoxelVisible(playerLoc, new Vec3d(x, y, z), EntityCullingMod.instance.debugHitboxes)) {
+								return true;
+							}
 					}
 				}
 			}
@@ -58,7 +54,6 @@ public class OcclusionCullingInstance {
 	}
 
 	private boolean isVoxelVisible(Vec3d playerLoc, Vec3d position, boolean showDebug) {
-		Vec3d[] targets = new Vec3d[8];
 		targets[0] = position;
 		targets[1] = position.add(0.95, 0, 0);
 		targets[2] = position.add(0, 0.95, 0);
@@ -69,7 +64,7 @@ public class OcclusionCullingInstance {
 		targets[7] = position.add(0.95, 0.95, 0.95);
 		if(showDebug) {
 			for(Vec3d target : targets) {
-				MinecraftClient.getInstance().world.addImportantParticle(ParticleTypes.HAPPY_VILLAGER, true, ((int)playerLoc.x) + target.x, ((int)playerLoc.y) + target.y, ((int)playerLoc.z) + target.z, 0, 0, 0);
+				client.world.addImportantParticle(ParticleTypes.HAPPY_VILLAGER, true, ((int)playerLoc.x) + target.x, ((int)playerLoc.y) + target.y, ((int)playerLoc.z) + target.z, 0, 0, 0);
 			}
 		}
 		return isVisible(playerLoc, targets);
@@ -236,8 +231,7 @@ public class OcclusionCullingInstance {
 		int chunkX = 0;
 		int chunkZ = 0;
 		WorldChunk snapshot = null;
-		@SuppressWarnings("resource")
-		ClientWorld world =  MinecraftClient.getInstance().world;
+		ClientWorld world =  client.world;
 		
 		// iterate through all intersecting cells (n times)
 		for (; n > 1; n--) { //n-1 times because we don't want to check the last block
@@ -254,15 +248,13 @@ public class OcclusionCullingInstance {
 			}
 			if(cVal == 0) {
 				// save current cell
-				//Vec3d cp = new Vec3d(x, y, z);
 				int tchunkX = (int) Math.floor(x / 16d);
 				int tchunkZ = (int) Math.floor(z / 16d);
 				if(snapshot == null || chunkX != tchunkX || chunkZ != tchunkZ) {
 					chunkX = tchunkX;
 					chunkZ = tchunkZ;
-					snapshot = world.getChunk(chunkX, chunkZ);//CullingPlugin.instance.blockChangeListener.cachedChunkSnapshots.get(cc);
+					snapshot = world.getChunk(chunkX, chunkZ);
 					if(snapshot == null) {
-						//cache[cx][cy][cz] = 2;
 						return false;
 					}
 				}

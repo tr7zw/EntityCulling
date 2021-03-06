@@ -9,19 +9,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import dev.tr7zw.entityculling.EntityCullingMod;
 import dev.tr7zw.entityculling.access.Cullable;
 import dev.tr7zw.entityculling.access.EntityRendererInter;
-import dev.tr7zw.entityculling.occlusionculling.OcclusionCullingInstance;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3d;
@@ -46,9 +42,6 @@ public class WorldRendererMixin {
 			return;
 		}
 		if(cullable.isCulled()) {
-			if(EntityCullingMod.instance.debug) {
-				renderDebugPoints(matrices, vertexConsumers);
-			}
 			@SuppressWarnings("unchecked")
 			EntityRenderer<Entity> entityRenderer = (EntityRenderer<Entity>) entityRenderDispatcher.getRenderer(entity);
 			@SuppressWarnings("unchecked")
@@ -69,23 +62,6 @@ public class WorldRendererMixin {
 			info.cancel();
 			return;
 		}
-		renderDebugPoints(matrices, vertexConsumers);
 	}
-	
-	private void renderDebugPoints(MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
-		if(true)return;
-		if(EntityCullingMod.instance.debug) {
-			for(Vec3d pos : OcclusionCullingInstance.targets) {
-				drawBox(matrices, vertexConsumers.getBuffer(RenderLayer.getLines()), new Box(pos.x, pos.y, pos.z, pos.x+0.1, pos.y+0.1, pos.z+0.1), 1, 1, 1);
-			}
-		}
-	}
-	
-	private void drawBox(MatrixStack matrix, VertexConsumer vertices, Box box, float red, float green,
-			float blue) {
-		WorldRenderer.drawBox((MatrixStack) matrix, (VertexConsumer) vertices, (Box) box, (float) red, (float) green,
-				(float) blue, (float) 1.0f);
-	}
-	
 	
 }
