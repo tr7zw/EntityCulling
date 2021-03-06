@@ -41,30 +41,61 @@ public class OcclusionCullingInstance {
 				return true; // We are inside of the AABB, don't cull
 			}
 
+			Vec3d[] blocks = new Vec3d[(maxX-minX+1)*(maxY-minY+1)*(maxZ-minZ+1)];
+			int slot = 0;
+			
 			for (int x = minX; x < maxX; x++) {
 				for (int y = minY; y < maxY; y++) {
 					for (int z = minZ; z < maxZ; z++) {
-						if (       (relX == Relative.POSITIVE && x == minX) 
-								|| (relX == Relative.NEGATIVE && x == maxX - 1)
-								|| (relY == Relative.POSITIVE && y == minY)
-								|| (relY == Relative.NEGATIVE && y == maxY - 1)
-								|| (relZ == Relative.POSITIVE && z == minZ)
-								|| (relZ == Relative.NEGATIVE && z == maxZ - 1)) {
-							if (isVoxelVisible(playerLoc, new Vec3d(x, y, z),
-									EntityCullingMod.instance.debugHitboxes)) {
-								return true;
+						int cVal = getCacheValue(x, y, z);
+						if(cVal == 1)
+							return true;
+						if(cVal == 0) {
+							if (       (relX == Relative.POSITIVE && x == minX) 
+									|| (relX == Relative.NEGATIVE && x == maxX - 1)
+									|| (relY == Relative.POSITIVE && y == minY)
+									|| (relY == Relative.NEGATIVE && y == maxY - 1)
+									|| (relZ == Relative.POSITIVE && z == minZ)
+									|| (relZ == Relative.NEGATIVE && z == maxZ - 1)) {
+								blocks[slot++] = new Vec3d(x, y, z);
 							}
 						}
 					}
 				}
 			}
-
+			for(int i = 0; i < slot; i++) {
+				if (isVoxelVisible(playerLoc, blocks[i],
+						EntityCullingMod.instance.debugHitboxes)) {
+					return true;
+				}
+			}
 			return false;
 
 		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
 		return true;
+	}
+	
+	// -1 = invalid location, 0 = not checked yet, 1 = visible, 2 = blocked
+	private int getCacheValue(int x, int y, int z) {
+		int maxX = (int) Math.abs(x);
+		int maxY = (int) Math.abs(y);
+		int maxZ = (int) Math.abs(z);
+
+		if (maxX > reach - 2 || maxY > reach - 2 || maxZ > reach - 2)
+			return -1;
+		
+		{// check if target is already known
+			int cx = (int) Math.floor(x + reach);
+			int cy = (int) Math.floor(y + reach);
+			int cz = (int) Math.floor(z + reach);
+			int keyPos = cx + cy * (reach * 2) + cz * (reach * 2) * (reach * 2);
+			int entry = keyPos / 4;
+			int offset = (keyPos % 4) * 2;
+			int cVal = cache[entry] >> offset & 3;
+			return cVal;
+		}
 	}
 
 	private boolean isVoxelVisible(Vec3d playerLoc, Vec3d position, boolean showDebug) {
@@ -100,32 +131,6 @@ public class OcclusionCullingInstance {
 	 * Caching assumes that all Vec3d's are inside the same block
 	 */
 	private boolean isVisible(Vec3d start, Vec3d[] targets) {
-		int maxX = 0;
-		int maxY = 0;
-		int maxZ = 0;
-		for (int i = 0; i < targets.length; i++) {
-			maxX = Math.max(maxX, (int) Math.abs(targets[i].x));
-			maxY = Math.max(maxY, (int) Math.abs(targets[i].y));
-			maxZ = Math.max(maxZ, (int) Math.abs(targets[i].z));
-		}
-		if (maxX > reach - 2 || maxY > reach - 2 || maxZ > reach - 2)
-			return false;
-
-		for (int v = 0; v < targets.length; v++) {// check if target is already known
-			Vec3d target = targets[v];
-			int cx = (int) Math.floor(target.x + reach);
-			int cy = (int) Math.floor(target.y + reach);
-			int cz = (int) Math.floor(target.z + reach);
-			int keyPos = cx + cy * (reach * 2) + cz * (reach * 2) * (reach * 2);
-			int entry = keyPos / 4;
-			int offset = (keyPos % 4) * 2;
-			int cVal = cache[entry] >> offset & 3;
-			if (cVal == 2) {
-				return false;
-			} else if (cVal == 1) {
-				return true;
-			}
-		}
 
 		for (int v = 0; v < targets.length; v++) {
 			Vec3d target = targets[v];
