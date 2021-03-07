@@ -186,9 +186,9 @@ public class OcclusionCullingInstance {
 			double dz = Math.abs(z1 - z0);
 
 			// start cell coordinate
-			int x = (int) MathUtil.fastFloor(x0);
-			int y = (int) MathUtil.fastFloor(y0);
-			int z = (int) MathUtil.fastFloor(z0);
+			int x = (int) MathUtil.floor(x0);
+			int y = (int) MathUtil.floor(y0);
+			int z = (int) MathUtil.floor(z0);
 
 			// distance between horizontal intersection points with cell border as a
 			// fraction of the total Vec3d length
@@ -214,16 +214,16 @@ public class OcclusionCullingInstance {
 			} else if (x1 > x0) {
 				x_inc = 1; // target point is horizontally greater than starting point so increment every
 							// step by 1
-				n += (int) MathUtil.fastFloor(x1) - x; // increment total amount of intersecting cells
-				t_next_x = (float) ((MathUtil.fastFloor(x0) + 1 - x0) * dt_dx); // calculate the next horizontal
+				n += (int) MathUtil.floor(x1) - x; // increment total amount of intersecting cells
+				t_next_x = (float) ((MathUtil.floor(x0) + 1 - x0) * dt_dx); // calculate the next horizontal
 																				// intersection
 				// point based on the position inside
 				// the first cell
 			} else {
 				x_inc = -1; // target point is horizontally smaller than starting point so reduce every step
 							// by 1
-				n += x - (int) MathUtil.fastFloor(x1); // increment total amount of intersecting cells
-				t_next_x = (float) ((x0 - MathUtil.fastFloor(x0)) * dt_dx); // calculate the next horizontal
+				n += x - (int) MathUtil.floor(x1); // increment total amount of intersecting cells
+				t_next_x = (float) ((x0 - MathUtil.floor(x0)) * dt_dx); // calculate the next horizontal
 																			// intersection point
 				// based on the position inside
 				// the first cell
@@ -235,16 +235,16 @@ public class OcclusionCullingInstance {
 			} else if (y1 > y0) {
 				y_inc = 1; // target point is vertically greater than starting point so increment every
 							// step by 1
-				n += (int) MathUtil.fastFloor(y1) - y; // increment total amount of intersecting cells
-				t_next_y = (float) ((MathUtil.fastFloor(y0) + 1 - y0) * dt_dy); // calculate the next vertical
+				n += (int) MathUtil.floor(y1) - y; // increment total amount of intersecting cells
+				t_next_y = (float) ((MathUtil.floor(y0) + 1 - y0) * dt_dy); // calculate the next vertical
 																				// intersection
 				// point based on the position inside
 				// the first cell
 			} else {
 				y_inc = -1; // target point is vertically smaller than starting point so reduce every step
 							// by 1
-				n += y - (int) MathUtil.fastFloor(y1); // increment total amount of intersecting cells
-				t_next_y = (float) ((y0 - MathUtil.fastFloor(y0)) * dt_dy); // calculate the next vertical intersection
+				n += y - (int) MathUtil.floor(y1); // increment total amount of intersecting cells
+				t_next_y = (float) ((y0 - MathUtil.floor(y0)) * dt_dy); // calculate the next vertical intersection
 																			// point
 				// based on the position inside
 				// the first cell
@@ -256,16 +256,16 @@ public class OcclusionCullingInstance {
 			} else if (z1 > z0) {
 				z_inc = 1; // target point is vertically greater than starting point so increment every
 							// step by 1
-				n += (int) MathUtil.fastFloor(z1) - z; // increment total amount of intersecting cells
-				t_next_z = (float) ((MathUtil.fastFloor(z0) + 1 - z0) * dt_dz); // calculate the next vertical
+				n += (int) MathUtil.floor(z1) - z; // increment total amount of intersecting cells
+				t_next_z = (float) ((MathUtil.floor(z0) + 1 - z0) * dt_dz); // calculate the next vertical
 																				// intersection
 				// point based on the position inside
 				// the first cell
 			} else {
 				z_inc = -1; // target point is vertically smaller than starting point so reduce every step
 							// by 1
-				n += z - (int) MathUtil.fastFloor(z1); // increment total amount of intersecting cells
-				t_next_z = (float) ((z0 - MathUtil.fastFloor(z0)) * dt_dz); // calculate the next vertical intersection
+				n += z - (int) MathUtil.floor(z1); // increment total amount of intersecting cells
+				t_next_z = (float) ((z0 - MathUtil.floor(z0)) * dt_dz); // calculate the next vertical intersection
 																			// point
 				// based on the position inside
 				// the first cell
@@ -306,9 +306,9 @@ public class OcclusionCullingInstance {
 
 		// iterate through all intersecting cells (n times)
 		for (; n > 1; n--) { // n-1 times because we don't want to check the last block
-			int cx = (int) MathUtil.fastFloor((x - x0) + reach);
-			int cy = (int) MathUtil.fastFloor((y - y0) + reach);
-			int cz = (int) MathUtil.fastFloor((z - z0) + reach);
+			int cx = (int) MathUtil.fastFloor((x0 - x) + reach);
+			int cy = (int) MathUtil.fastFloor((y0 - y) + reach);
+			int cz = (int) MathUtil.fastFloor((z0 - z) + reach);
 
 			int keyPos = cx + cy * (reach * 2) + cz * (reach * 2) * (reach * 2);
 			int entry = keyPos / 4;
