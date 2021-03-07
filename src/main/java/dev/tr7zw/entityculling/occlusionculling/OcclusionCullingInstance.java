@@ -131,7 +131,7 @@ public class OcclusionCullingInstance {
 			targets[targetSize++] = position.add(0, 0, 0.95);
 		}
 		// Extra corner points
-		if ((faceEdgeData[4] && faceEdgeData[1] && faceEdgeData[3]) && (faceEdgeData[1] && faceEdgeData[3])) {
+		if ((faceEdgeData[4] && faceEdgeData[1] && faceEdgeData[3]) || (faceEdgeData[1] && faceEdgeData[3])) {
 			targets[targetSize++] = position.add(0.95, 0.95, 0);
 		}
 		if ((faceEdgeData[0] && faceEdgeData[5] && faceEdgeData[3]) || (faceEdgeData[5] && faceEdgeData[3])) {
