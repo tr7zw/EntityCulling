@@ -42,30 +42,36 @@ public class OcclusionCullingInstance {
 			}
 
 			Vec3d[] blocks = new Vec3d[(maxX-minX+1)*(maxY-minY+1)*(maxZ-minZ+1)];
+			boolean[][] faceEdgeData = new boolean[(maxX-minX+1)*(maxY-minY+1)*(maxZ-minZ+1)][];
 			int slot = 0;
 			
+			boolean[] onFaceEdge = new boolean[6];
 			for (int x = minX; x < maxX; x++) {
+				onFaceEdge[0] = (relX == Relative.POSITIVE && x == minX);
+				onFaceEdge[1] = (relX == Relative.NEGATIVE && x == maxX - 1);
 				for (int y = minY; y < maxY; y++) {
+					onFaceEdge[2] = (relY == Relative.POSITIVE && y == minY);
+					onFaceEdge[3] = (relY == Relative.NEGATIVE && y == maxY - 1);
 					for (int z = minZ; z < maxZ; z++) {
 						int cVal = getCacheValue(x, y, z);
-						if(cVal == 1)
+						if(cVal == 1) {
 							return true;
+						}
 						if(cVal == 0) {
-							if (       (relX == Relative.POSITIVE && x == minX) 
-									|| (relX == Relative.NEGATIVE && x == maxX - 1)
-									|| (relY == Relative.POSITIVE && y == minY)
-									|| (relY == Relative.NEGATIVE && y == maxY - 1)
-									|| (relZ == Relative.POSITIVE && z == minZ)
-									|| (relZ == Relative.NEGATIVE && z == maxZ - 1)) {
-								blocks[slot++] = new Vec3d(x, y, z);
+							onFaceEdge[4] = (relZ == Relative.POSITIVE && z == minZ);
+							onFaceEdge[5] = (relZ == Relative.NEGATIVE && z == maxZ - 1);
+							if (onFaceEdge[0] || onFaceEdge[1] || onFaceEdge[2] || onFaceEdge[3] || onFaceEdge[4] || onFaceEdge[5]) {
+								blocks[slot] = new Vec3d(x, y, z);
+								faceEdgeData[slot] = Arrays.copyOf(onFaceEdge, 6);
+								slot++;
 							}
 						}
 					}
 				}
 			}
 			for(int i = 0; i < slot; i++) {
-				if (isVoxelVisible(playerLoc, blocks[i],
-						EntityCullingMod.instance.debugHitboxes)) {
+				if (isVoxelVisible(playerLoc, blocks[i], faceEdgeData[i],
+						EntityCullingMod.instance.debugHitboxes && !entity)) {
 					return true;
 				}
 			}
@@ -98,7 +104,33 @@ public class OcclusionCullingInstance {
 		}
 	}
 
-	private boolean isVoxelVisible(Vec3d playerLoc, Vec3d position, boolean showDebug) {
+	private boolean isVoxelVisible(Vec3d playerLoc, Vec3d position, boolean[] faceEdgeData, boolean showDebug) {
+		int targetSize = 0;
+		boolean onMinX = faceEdgeData[0];
+		boolean onMaxX = faceEdgeData[1];
+		boolean onMinY = faceEdgeData[2];
+		boolean onMaxY = faceEdgeData[3];
+		boolean onMinZ = faceEdgeData[4];
+		boolean onMaxZ = faceEdgeData[5];
+		if(onMinX || onMinZ) {
+			targets[targetSize++] = position;
+		}
+		if(onMaxX) {
+			targets[targetSize++] = position.add(0.95, 0, 0);
+		}
+		if(onMaxZ) {
+			targets[targetSize++] = position.add(0, 0, 0.95);
+		}
+		if(onMinX && onMaxZ) {
+			targets[targetSize++] = position.add(0, 0.95, 0);
+		}
+		if(onMinX && onMaxY) {
+			targets[targetSize++] = position.add(0, 0.95, 0);
+		}
+		if(onMaxX && onMaxY && onMaxZ) {
+			targets[targetSize++] = position.add(0.95, 0.95, 0.95);
+		}
+		/*
 		targets[0] = position;
 		targets[1] = position.add(0.95, 0, 0);
 		targets[2] = position.add(0, 0.95, 0);
@@ -107,13 +139,15 @@ public class OcclusionCullingInstance {
 		targets[5] = position.add(0.95, 0, 0.95);
 		targets[6] = position.add(0, 0.95, 0.95);
 		targets[7] = position.add(0.95, 0.95, 0.95);
+		*/
 		if (showDebug) {
-			for (Vec3d target : targets) {
+			for (int i = 0; i < targetSize; i++) {
+				Vec3d target = targets[i];
 				client.world.addImportantParticle(ParticleTypes.HAPPY_VILLAGER, true, ((int) playerLoc.x) + target.x,
 						((int) playerLoc.y) + target.y, ((int) playerLoc.z) + target.z, 0, 0, 0);
 			}
 		}
-		return isVisible(playerLoc, targets);
+		return isVisible(playerLoc, targets, targetSize);
 	}
 
 	private final int reach = 64;
@@ -130,9 +164,9 @@ public class OcclusionCullingInstance {
 	 * 
 	 * Caching assumes that all Vec3d's are inside the same block
 	 */
-	private boolean isVisible(Vec3d start, Vec3d[] targets) {
+	private boolean isVisible(Vec3d start, Vec3d[] targets, int size) {
 
-		for (int v = 0; v < targets.length; v++) {
+		for (int v = 0; v < size; v++) {
 			Vec3d target = targets[v];
 			// coordinates of start and target point
 			double x0 = start.getX();
@@ -262,9 +296,9 @@ public class OcclusionCullingInstance {
 
 		// iterate through all intersecting cells (n times)
 		for (; n > 1; n--) { // n-1 times because we don't want to check the last block
-			int cx = (int) Math.floor((x0 - x) + reach);
-			int cy = (int) Math.floor((y0 - y) + reach);
-			int cz = (int) Math.floor((z0 - z) + reach);
+			int cx = (int) Math.floor((x - x0) + reach);
+			int cy = (int) Math.floor((y - y0) + reach);
+			int cz = (int) Math.floor((z - z0) + reach);
 
 			int keyPos = cx + cy * (reach * 2) + cz * (reach * 2) * (reach * 2);
 			int entry = keyPos / 4;
