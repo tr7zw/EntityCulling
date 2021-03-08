@@ -17,6 +17,7 @@ public class EntityCullingMod implements ModInitializer {
 	public boolean debug = false;
 	public boolean debugHitboxes = false;
 	private CullTask cullTask = new CullTask(culling, unCullable);
+	private Thread cullThread;
 
 	@Override
 	public void onInitialize() {
@@ -25,10 +26,14 @@ public class EntityCullingMod implements ModInitializer {
 		// Proceed with mild caution.
 		instance = this;
 		ClientTickEvents.START_WORLD_TICK.register((event) -> {
-			culling.resetCache();
 			cullTask.requestCull = true;
 		});
 		unCullable.add(BlockEntityType.BEACON);// TODO: Move to config
-		new Thread(cullTask, "CullThread").start();
+		cullThread = new Thread(cullTask, "CullThread");
+		cullThread.setUncaughtExceptionHandler((thread, ex) -> {
+			System.out.println("The CullingThread has crashed! Please report the following stacktrace!");
+			ex.printStackTrace();
+		});
+		cullThread.start();
 	}
 }

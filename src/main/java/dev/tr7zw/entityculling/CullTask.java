@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import dev.tr7zw.entityculling.access.Cullable;
+import dev.tr7zw.entityculling.access.EntityAccessor;
 import dev.tr7zw.entityculling.occlusionculling.AxisAlignedBB;
 import dev.tr7zw.entityculling.occlusionculling.OcclusionCullingInstance;
 import net.minecraft.block.entity.BlockEntity;
@@ -84,7 +85,7 @@ public class CullTask implements Runnable {
 							}
 							Cullable cullable = (Cullable) entity;
 							if (!cullable.isForcedVisible()) {
-								if (spectator || entity.isGlowing()) {
+								if (spectator || ((EntityAccessor)entity).isUnsafeGlowing()) {
 									cullable.setCulled(false);
 								} else {
 									Box boundingBox = entity.getVisibilityBoundingBox();
@@ -108,5 +109,6 @@ public class CullTask implements Runnable {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("Shutting down culling task!");
 	}
 }

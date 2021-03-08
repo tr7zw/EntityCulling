@@ -303,6 +303,7 @@ public class OcclusionCullingInstance {
 		int chunkZ = 0;
 		WorldChunk snapshot = null;
 		ClientWorld world = client.world;
+		if(world == null)return false;
 
 		// iterate through all intersecting cells (n times)
 		for (; n > 1; n--) { // n-1 times because we don't want to check the last block
