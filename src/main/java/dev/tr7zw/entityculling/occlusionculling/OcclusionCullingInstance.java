@@ -306,9 +306,9 @@ public class OcclusionCullingInstance {
 
 		// iterate through all intersecting cells (n times)
 		for (; n > 1; n--) { // n-1 times because we don't want to check the last block
-			int cx = (int) MathUtil.fastFloor((x - (int) x0) + reach);
-			int cy = (int) MathUtil.fastFloor((y - (int) y0) + reach);
-			int cz = (int) MathUtil.fastFloor((z - (int) z0) + reach);
+			int cx = (int) MathUtil.fastFloor((x0 - x) + reach);
+			int cy = (int) MathUtil.fastFloor((y0 - y) + reach);
+			int cz = (int) MathUtil.fastFloor((z0 - z) + reach);
 
 			int keyPos = cx + cy * (reach * 2) + cz * (reach * 2) * (reach * 2);
 			int entry = keyPos / 4;
