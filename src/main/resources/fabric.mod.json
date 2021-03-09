@@ -12,10 +12,10 @@
 
   },
 
-  "license": "CC0-1.0",
+  "license": "MIT",
   "icon": "assets/entityculling/icon.png",
 
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "main": [
       "dev.tr7zw.entityculling.EntityCullingMod"

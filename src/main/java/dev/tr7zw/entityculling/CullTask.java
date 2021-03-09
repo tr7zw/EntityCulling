@@ -1,5 +1,6 @@
 package dev.tr7zw.entityculling;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -54,7 +55,15 @@ public class CullTask implements Runnable {
 							for (int z = -3; z <= 3; z++) {
 								WorldChunk chunk = client.world.getChunk(client.player.chunkX + x,
 										client.player.chunkZ + z);
-								for (Entry<BlockPos, BlockEntity> entry : chunk.getBlockEntities().entrySet()) {
+								Iterator<Entry<BlockPos, BlockEntity>> iterator = chunk.getBlockEntities().entrySet().iterator();
+								Entry<BlockPos, BlockEntity> entry;
+								while(iterator.hasNext()) {
+									try {
+										entry = iterator.next();
+									}catch(NullPointerException | ConcurrentModificationException ex) {
+										break; // We are not synced to the main thread, so NPE's are allowed here and way less
+										// overhead probably than trying to sync stuff up for no really good reason
+									}
 									if(unCullable.contains(entry.getValue().getType())) {
 										continue;
 									}
