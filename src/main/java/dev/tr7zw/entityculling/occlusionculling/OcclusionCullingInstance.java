@@ -347,9 +347,8 @@ public class OcclusionCullingInstance {
 					cache[entry] |= 1 << offset + 1;
 					return false;
 				}
-				if (y < 0 || y > 255) {
-					cache[entry] |= 1 << offset + 1;
-					return false;
+				if (y < 0 || y > 255) { // out of world // TODO fix for 1.17
+					return true;
 				}
 				BlockPos pos = new BlockPos(x, y, z);
 				BlockState state = snapshot.getBlockState(pos);
