@@ -96,10 +96,7 @@ public class OcclusionCullingInstance {
 			return -1;
 
 		// check if target is already known
-		int cx = MathUtil.fastFloor(x + reach);
-		int cy = MathUtil.fastFloor(y + reach);
-		int cz = MathUtil.fastFloor(z + reach);
-		return cache.getState(cx, cy, cz);
+		return cache.getState(x + reach, y + reach, z + reach);
 		
 	}
 
