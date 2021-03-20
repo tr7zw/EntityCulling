@@ -6,3 +6,4 @@ bin
 *.launch
 .project
 .classpath
+.idea
