@@ -17,9 +17,9 @@ repositories {
     }
     maven { url 'https://jitpack.io' } //fabric asm
     maven {
-        url "https://repo.codemc.io"
+        url "https://repo.codemc.io/repository/maven-public/"
     }
-    mavenLocal()
+    //mavenLocal() // comment out for local testing
 }
 
 configurations {
