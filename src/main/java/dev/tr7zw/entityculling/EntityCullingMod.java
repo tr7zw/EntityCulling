@@ -6,7 +6,9 @@ import java.util.Set;
 import dev.tr7zw.entityculling.occlusionculling.OcclusionCullingInstance;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.client.options.KeyBinding;
 
 public class EntityCullingMod implements ModInitializer {
 
@@ -16,8 +18,11 @@ public class EntityCullingMod implements ModInitializer {
 	public boolean nametags = true;
 	public boolean debug = false;
 	public boolean debugHitboxes = false;
+	public static boolean enabled = true; //public static to make it faster for the jvm
 	private CullTask cullTask = new CullTask(culling, unCullable);
 	private Thread cullThread;
+	private KeyBinding keybind = new KeyBinding("key.entityculling.toggle", -1, "EntityCulling");
+	private boolean pressed = false;
 
 	@Override
 	public void onInitialize() {
@@ -28,6 +33,16 @@ public class EntityCullingMod implements ModInitializer {
 		ClientTickEvents.START_WORLD_TICK.register((event) -> {
 			cullTask.requestCull = true;
 		});
+	    ClientTickEvents.START_CLIENT_TICK.register(e ->
+	    {
+	        if(keybind.isPressed()) {
+	        	if(pressed)return;
+	        	pressed = true;
+	        	enabled = !enabled;
+	        }else {
+	        	pressed = false;
+	        }
+	    });
 		unCullable.add(BlockEntityType.BEACON);// TODO: Move to config
 		cullThread = new Thread(cullTask, "CullThread");
 		cullThread.setUncaughtExceptionHandler((thread, ex) -> {
@@ -35,5 +50,6 @@ public class EntityCullingMod implements ModInitializer {
 			ex.printStackTrace();
 		});
 		cullThread.start();
+		KeyBindingHelper.registerKeyBinding(keybind);
 	}
 }

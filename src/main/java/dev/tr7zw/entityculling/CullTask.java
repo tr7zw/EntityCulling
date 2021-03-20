@@ -41,7 +41,7 @@ public class CullTask implements Runnable {
 			try {
 				Thread.sleep(sleepDelay);
 
-				if (client.world != null && client.player != null && client.player.age > 10) {
+				if (EntityCullingMod.enabled && client.world != null && client.player != null && client.player.age > 10) {
 					Vec3d camera = EntityCullingMod.instance.debug
 							? client.player.getCameraPosVec(client.getTickDelta())
 							: client.gameRenderer.getCamera().getPos();

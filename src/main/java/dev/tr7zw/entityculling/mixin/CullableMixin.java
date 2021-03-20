@@ -2,6 +2,7 @@ package dev.tr7zw.entityculling.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 
+import dev.tr7zw.entityculling.EntityCullingMod;
 import dev.tr7zw.entityculling.access.Cullable;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
@@ -14,7 +15,7 @@ public class CullableMixin implements Cullable {
 	
 	@Override
 	public void setTimeout() {
-		lasttime = System.currentTimeMillis() + 250;
+		lasttime = System.currentTimeMillis() + 1000;
 	}
 
 	@Override
@@ -32,6 +33,7 @@ public class CullableMixin implements Cullable {
 
 	@Override
 	public boolean isCulled() {
+		if(!EntityCullingMod.enabled)return false;
 		return culled;
 	}
 
