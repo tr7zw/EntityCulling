@@ -20,6 +20,7 @@ public class OcclusionCullingInstance {
 
 	public boolean isAABBVisible(Vec3d aabbBlock, AxisAlignedBB aabb, Vec3d playerLoc, boolean entity) {
 		try {
+			if(!playerLoc.isInRange(aabbBlock, reach))return false; //Don't even check stuff too far away
 			if (entity) {
 				aabb.maxx -= aabbBlock.x;
 				aabb.minx -= aabbBlock.x;
