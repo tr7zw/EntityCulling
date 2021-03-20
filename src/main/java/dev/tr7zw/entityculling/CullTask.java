@@ -99,11 +99,10 @@ public class CullTask implements Runnable {
 								} else {
 									Box boundingBox = entity.getVisibilityBoundingBox();
 									boolean visible = culling.isAABBVisible(
-											new Vec3d(entity.getPos().getX(), entity.getPos().getY(),
-													entity.getPos().getZ()),
-											new AxisAlignedBB(boundingBox.minX - 0.05, boundingBox.minY,
-													boundingBox.minZ - 0.05, boundingBox.maxX + 0.05, boundingBox.maxY,
-													boundingBox.maxZ + 0.05),
+											entity.getPos(),
+											new AxisAlignedBB(boundingBox.minX, boundingBox.minY,
+													boundingBox.minZ, boundingBox.maxX, boundingBox.maxY,
+													boundingBox.maxZ),
 											camera, true);
 									cullable.setCulled(!visible);
 								}
