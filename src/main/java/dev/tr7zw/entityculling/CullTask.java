@@ -2,20 +2,21 @@ package dev.tr7zw.entityculling;
 
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
+
+import com.logisticscraft.occlusionculling.util.AxisAlignedBB;
+import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 
 import dev.tr7zw.entityculling.access.Cullable;
 import dev.tr7zw.entityculling.access.EntityAccessor;
-import dev.tr7zw.entityculling.occlusionculling.AxisAlignedBB;
-import dev.tr7zw.entityculling.occlusionculling.OcclusionCullingInstance;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
+import com.logisticscraft.occlusionculling.util.Vec3d;
 import net.minecraft.world.chunk.WorldChunk;
 
 public class CullTask implements Runnable {
@@ -24,7 +25,6 @@ public class CullTask implements Runnable {
 
 	private final OcclusionCullingInstance culling;
 	private final MinecraftClient client = MinecraftClient.getInstance();
-	private final AxisAlignedBB blockAABB = new AxisAlignedBB(0d, 0d, 0d, 1d, 1d, 1d);
 	private final int sleepDelay = 10;
 	private final Set<BlockEntityType<?>> unCullable;
 	private Vec3d lastPos = new Vec3d(0, 0, 0);
@@ -42,9 +42,10 @@ public class CullTask implements Runnable {
 				Thread.sleep(sleepDelay);
 
 				if (EntityCullingMod.enabled && client.world != null && client.player != null && client.player.age > 10) {
-					Vec3d camera = EntityCullingMod.instance.debug
+					net.minecraft.util.math.Vec3d cameraMC = EntityCullingMod.instance.debug
 							? client.player.getCameraPosVec(client.getTickDelta())
 							: client.gameRenderer.getCamera().getPos();
+					Vec3d camera = new Vec3d(cameraMC.x, cameraMC.y, cameraMC.z);
 					if (requestCull || !lastPos.equals(camera)) {
 						long start = System.currentTimeMillis();
 						requestCull = false;
@@ -75,8 +76,7 @@ public class CullTask implements Runnable {
 										}
 										BlockPos pos = entry.getKey();
 										boolean visible = culling.isAABBVisible(
-												new Vec3d(pos.getX(), pos.getY(), pos.getZ()), blockAABB, camera,
-												false);
+										        new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1d, +pos.getY()+1d, pos.getZ()+1d), camera);
 										cullable.setCulled(!visible);
 									}
 								}
@@ -99,11 +99,10 @@ public class CullTask implements Runnable {
 								} else {
 									Box boundingBox = entity.getVisibilityBoundingBox();
 									boolean visible = culling.isAABBVisible(
-											entity.getPos(),
 											new AxisAlignedBB(boundingBox.minX, boundingBox.minY,
 													boundingBox.minZ, boundingBox.maxX, boundingBox.maxY,
 													boundingBox.maxZ),
-											camera, true);
+											camera);
 									cullable.setCulled(!visible);
 								}
 							}

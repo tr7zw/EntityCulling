@@ -10,6 +10,23 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
+repositories {
+    jcenter()
+    maven {
+        url "https://www.cursemaven.com"
+    }
+    maven { url 'https://jitpack.io' } //fabric asm
+    maven {
+        url "https://repo.codemc.io"
+    }
+    mavenLocal()
+}
+
+configurations {
+    // configuration that holds jars to include in the jar
+    extraLibs
+}
+
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -21,6 +38,8 @@ dependencies {
 
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.
+	compile "com.logisticscraft:occlusionculling:0.0.1-SNAPSHOT"
+    extraLibs "com.logisticscraft:occlusionculling:0.0.1-SNAPSHOT"
 }
 
 processResources {
@@ -58,6 +77,9 @@ jar {
 	from("LICENSE") {
 		rename { "${it}_${project.archivesBaseName}"}
 	}
+	from {
+        configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
 
 // configure the maven publication
