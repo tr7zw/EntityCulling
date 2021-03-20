@@ -15,6 +15,8 @@ public class OcclusionCullingInstance {
 
 	private Vec3d[] targets = new Vec3d[8];
 	private MinecraftClient client = MinecraftClient.getInstance();
+	private final int reach = 64;
+	private Cache cache = new ArrayCache(reach);
 
 	public boolean isAABBVisible(Vec3d aabbBlock, AxisAlignedBB aabb, Vec3d playerLoc, boolean entity) {
 		try {
@@ -90,23 +92,15 @@ public class OcclusionCullingInstance {
 
 	// -1 = invalid location, 0 = not checked yet, 1 = visible, 2 = blocked
 	private int getCacheValue(int x, int y, int z) {
-		int maxX = (int) Math.abs(x);
-		int maxY = (int) Math.abs(y);
-		int maxZ = (int) Math.abs(z);
-
-		if (maxX > reach - 2 || maxY > reach - 2 || maxZ > reach - 2)
+		if (Math.abs(x) > reach - 2 || Math.abs(y) > reach - 2 || Math.abs(z) > reach - 2)
 			return -1;
 
-		{// check if target is already known
-			int cx = (int) MathUtil.fastFloor(x + reach);
-			int cy = (int) MathUtil.fastFloor(y + reach);
-			int cz = (int) MathUtil.fastFloor(z + reach);
-			int keyPos = cx + cy * (reach * 2) + cz * (reach * 2) * (reach * 2);
-			int entry = keyPos / 4;
-			int offset = (keyPos % 4) * 2;
-			int cVal = cache[entry] >> offset & 3;
-			return cVal;
-		}
+		// check if target is already known
+		int cx = (int) MathUtil.fastFloor(x + reach);
+		int cy = (int) MathUtil.fastFloor(y + reach);
+		int cz = (int) MathUtil.fastFloor(z + reach);
+		return cache.getState(cx, cy, cz);
+		
 	}
 
 	private boolean isVoxelVisible(Vec3d playerLoc, Vec3d position, boolean[] faceEdgeData, boolean showDebug) {
@@ -154,12 +148,7 @@ public class OcclusionCullingInstance {
 		return isVisible(playerLoc, targets, targetSize);
 	}
 
-	private final int reach = 64;
-	private final byte[] cache = new byte[((reach * 2) * (reach * 2) * (reach * 2)) / 4];
 
-	public void resetCache() {
-		Arrays.fill(cache, (byte) 0);
-	}
 
 	/**
 	 * returns the grid cells that intersect with this Vec3d<br>
@@ -286,13 +275,10 @@ public class OcclusionCullingInstance {
 		int cx = (int) MathUtil.fastFloor(vector.x + reach);
 		int cy = (int) MathUtil.fastFloor(vector.y + reach);
 		int cz = (int) MathUtil.fastFloor(vector.z + reach);
-		int keyPos = cx + cy * (reach * 2) + cz * (reach * 2) * (reach * 2);
-		int entry = keyPos / 4;
-		int offset = (keyPos % 4) * 2;
 		if (result) {
-			cache[entry] |= 1 << offset;
+			cache.setVisible(cx, cy, cz);
 		} else {
-			cache[entry] |= 1 << offset + 1;
+			cache.setHidden(cx, cy, cz);
 		}
 	}
 
@@ -311,10 +297,7 @@ public class OcclusionCullingInstance {
 			int cy = (int) MathUtil.fastFloor((y0 - y) + reach);
 			int cz = (int) MathUtil.fastFloor((z0 - z) + reach);
 
-			int keyPos = cx + cy * (reach * 2) + cz * (reach * 2) * (reach * 2);
-			int entry = keyPos / 4;
-			int offset = (keyPos % 4) * 2;
-			int cVal = cache[entry] >> offset & 3;
+			int cVal = cache.getState(cx, cy, cz);
 			if (cVal == 2) {
 				return false;
 			}
@@ -340,11 +323,11 @@ public class OcclusionCullingInstance {
 					relativeZ = 16 + relativeZ;
 				}
 				if (relativeX < 0) {
-					cache[entry] |= 1 << offset + 1;
+					cache.setLastHidden();
 					return false;
 				}
 				if (relativeZ < 0) {
-					cache[entry] |= 1 << offset + 1;
+					cache.setLastHidden();
 					return false;
 				}
 				if (y < 0 || y > 255) { // out of world // TODO fix for 1.17
@@ -353,10 +336,10 @@ public class OcclusionCullingInstance {
 				BlockPos pos = new BlockPos(x, y, z);
 				BlockState state = snapshot.getBlockState(pos);
 				if (state.isOpaqueFullCube(world, pos)) {
-					cache[entry] |= 1 << offset + 1;
+					cache.setLastHidden();
 					return false;
 				}
-				cache[entry] |= 1 << offset;
+				cache.setLastVisible();
 			}
 
 			if (t_next_y < t_next_x && t_next_y < t_next_z) { // next cell is upwards/downwards because the distance to
@@ -387,6 +370,10 @@ public class OcclusionCullingInstance {
 			}
 			return INSIDE;
 		}
+	}
+
+	public void resetCache() {
+		this.cache.resetCache();
 	}
 
 }
