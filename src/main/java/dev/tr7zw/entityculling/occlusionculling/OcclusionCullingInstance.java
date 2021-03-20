@@ -13,10 +13,11 @@ import net.minecraft.world.chunk.WorldChunk;
 
 public class OcclusionCullingInstance {
 
-	private Vec3d[] targets = new Vec3d[8];
-	private MinecraftClient client = MinecraftClient.getInstance();
+	//these can be final?
+	private final Vec3d[] targets = new Vec3d[8];
+	private final MinecraftClient client = MinecraftClient.getInstance();
 	private final int reach = 64;
-	private Cache cache = new ArrayCache(reach);
+	private final Cache cache = new ArrayCache(reach);
 
 	public boolean isAABBVisible(Vec3d aabbBlock, AxisAlignedBB aabb, Vec3d playerLoc, boolean entity) {
 		try {
@@ -29,12 +30,12 @@ public class OcclusionCullingInstance {
 				aabb.minz -= aabbBlock.z;
 			}
 			aabbBlock = aabbBlock.subtract(((int) playerLoc.x), ((int) playerLoc.y), ((int) playerLoc.z));
-			int maxX = (int) MathUtil.ceil(aabbBlock.x + aabb.maxx + 0.25);
-			int maxY = (int) MathUtil.ceil(aabbBlock.y + aabb.maxy + 0.25);
-			int maxZ = (int) MathUtil.ceil(aabbBlock.z + aabb.maxz + 0.25);
-			int minX = (int) MathUtil.fastFloor(aabbBlock.x + aabb.minx - 0.25);
-			int minY = (int) MathUtil.fastFloor(aabbBlock.y + aabb.miny - 0.25);
-			int minZ = (int) MathUtil.fastFloor(aabbBlock.z + aabb.minz - 0.25);
+			int maxX = MathUtil.ceil(aabbBlock.x + aabb.maxx + 0.25);
+			int maxY = MathUtil.ceil(aabbBlock.y + aabb.maxy + 0.25);
+			int maxZ = MathUtil.ceil(aabbBlock.z + aabb.maxz + 0.25);
+			int minX = MathUtil.fastFloor(aabbBlock.x + aabb.minx - 0.25);
+			int minY = MathUtil.fastFloor(aabbBlock.y + aabb.miny - 0.25);
+			int minZ = MathUtil.fastFloor(aabbBlock.z + aabb.minz - 0.25);
 
 			Relative relX = Relative.from(minX, maxX);
 			Relative relY = Relative.from(minY, maxY);
@@ -42,9 +43,9 @@ public class OcclusionCullingInstance {
 			if (minX <= 0 && maxX > 0 && minY <= 0 && maxY >= 0 && minZ < 0 && maxZ >= 0) {
 				return true; // We are inside of the AABB, don't cull
 			}
-
-			Vec3d[] blocks = new Vec3d[(maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1)];
-			boolean[][] faceEdgeData = new boolean[(maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1)][];
+			int blockCount =(maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1);
+			Vec3d[] blocks = new Vec3d[blockCount];
+			boolean[][] faceEdgeData = new boolean[blockCount][];
 			int slot = 0;
 
 			boolean[] onFaceEdge = new boolean[6];
@@ -96,9 +97,9 @@ public class OcclusionCullingInstance {
 			return -1;
 
 		// check if target is already known
-		int cx = (int) MathUtil.fastFloor(x + reach);
-		int cy = (int) MathUtil.fastFloor(y + reach);
-		int cz = (int) MathUtil.fastFloor(z + reach);
+		int cx = MathUtil.fastFloor(x + reach);
+		int cy = MathUtil.fastFloor(y + reach);
+		int cz = MathUtil.fastFloor(z + reach);
 		return cache.getState(cx, cy, cz);
 		
 	}
@@ -112,30 +113,31 @@ public class OcclusionCullingInstance {
 		// boolean onMinZ = faceEdgeData[4];
 		// boolean onMaxZ = faceEdgeData[5];
 		// main points for all faces
+		position = position.add(0.05,0.05,0.05);
 		if (faceEdgeData[0] || faceEdgeData[4] || faceEdgeData[2]) {
 			targets[targetSize++] = position;
 		}
 		if (faceEdgeData[1]) {
-			targets[targetSize++] = position.add(0.95, 0, 0);
+			targets[targetSize++] = position.add(0.90, 0, 0);
 		}
 		if (faceEdgeData[3]) {
-			targets[targetSize++] = position.add(0, 0.95, 0);
+			targets[targetSize++] = position.add(0, 0.90, 0);
 		}
 		if (faceEdgeData[5]) {
-			targets[targetSize++] = position.add(0, 0, 0.95);
+			targets[targetSize++] = position.add(0, 0, 0.90);
 		}
 		// Extra corner points
 		if ((faceEdgeData[4] && faceEdgeData[1] && faceEdgeData[3]) || (faceEdgeData[1] && faceEdgeData[3])) {
-			targets[targetSize++] = position.add(0.95, 0.95, 0);
+			targets[targetSize++] = position.add(0.90, 0.90, 0);
 		}
 		if ((faceEdgeData[0] && faceEdgeData[5] && faceEdgeData[3]) || (faceEdgeData[5] && faceEdgeData[3])) {
-			targets[targetSize++] = position.add(0, 0.95, 0.95);
+			targets[targetSize++] = position.add(0, 0.90, 0.90);
 		}
 		if (faceEdgeData[5] && faceEdgeData[1]) {
-			targets[targetSize++] = position.add(0.95, 0, 0.95);
+			targets[targetSize++] = position.add(0.90, 0, 0.90);
 		}
 		if (faceEdgeData[1] && faceEdgeData[3] && faceEdgeData[5]) {
-			targets[targetSize++] = position.add(0.95, 0.95, 0.95);
+			targets[targetSize++] = position.add(0.90, 0.90, 0.90);
 		}
 
 		if (showDebug) {
@@ -160,107 +162,111 @@ public class OcclusionCullingInstance {
 	private boolean isVisible(Vec3d start, Vec3d[] targets, int size) {
 
 		for (int v = 0; v < size; v++) {
+			///raycasting target
 			Vec3d target = targets[v];
+
 			// coordinates of start and target point
-			double x0 = start.getX();
-			double y0 = start.getY();
-			double z0 = start.getZ();
-			double x1 = x0 + target.getX();
-			double y1 = y0 + target.getY();
-			double z1 = z0 + target.getZ();
+			double startX = start.getX();
+			double startY = start.getY();
+			double startZ = start.getZ();
+
+			double relativeX = startX + target.getX();
+			double relativeY = startY + target.getY();
+			double relativeZ = startZ + target.getZ();
 
 			// horizontal and vertical cell amount spanned
-			double dx = Math.abs(x1 - x0);
-			double dy = Math.abs(y1 - y0);
-			double dz = Math.abs(z1 - z0);
+			double dimensionX = Math.abs(relativeX - startX);
+			double dimensionY = Math.abs(relativeY - startY);
+			double dimensionZ = Math.abs(relativeZ - startZ);
 
 			// start cell coordinate
-			int x = (int) MathUtil.floor(x0);
-			int y = (int) MathUtil.floor(y0);
-			int z = (int) MathUtil.floor(z0);
+			int x = MathUtil.floor(startX);
+			int y = MathUtil.floor(startY);
+			int z = MathUtil.floor(startZ);
 
 			// distance between horizontal intersection points with cell border as a
 			// fraction of the total Vec3d length
-			double dt_dx = 1f / dx;
+			double dimFracX = 1f / dimensionX;
 			// distance between vertical intersection points with cell border as a fraction
 			// of the total Vec3d length
-			double dt_dy = 1f / dy;
-			double dt_dz = 1f / dz;
+			double dimFracY = 1f / dimensionY;
+			double dimFracZ = 1f / dimensionZ;
 
 			// total amount of intersected cells
-			int n = 1;
+			int intersectCount = 1;
 
 			// 1, 0 or -1
 			// determines the direction of the next cell (horizontally / vertically)
 			int x_inc, y_inc, z_inc;
+
 			// the distance to the next horizontal / vertical intersection point with a cell
 			// border as a fraction of the total Vec3d length
 			double t_next_y, t_next_x, t_next_z;
 
-			if (dx == 0f) {
+			if (dimensionX == 0f) {
 				x_inc = 0;
-				t_next_x = dt_dx; // don't increment horizontally because the Vec3d is perfectly vertical
-			} else if (x1 > x0) {
+				t_next_x = dimFracX; // don't increment horizontally because the Vec3d is perfectly vertical
+			} else if (relativeX > startX) {
 				x_inc = 1; // target point is horizontally greater than starting point so increment every
 							// step by 1
-				n += (int) MathUtil.floor(x1) - x; // increment total amount of intersecting cells
-				t_next_x = (float) ((MathUtil.floor(x0) + 1 - x0) * dt_dx); // calculate the next horizontal
+				intersectCount += MathUtil.floor(relativeX) - x; // increment total amount of intersecting cells
+				t_next_x = (float) ((MathUtil.floor(startX) + 1 - startX) * dimFracX); // calculate the next horizontal
 																				// intersection
 				// point based on the position inside
 				// the first cell
 			} else {
 				x_inc = -1; // target point is horizontally smaller than starting point so reduce every step
 							// by 1
-				n += x - (int) MathUtil.floor(x1); // increment total amount of intersecting cells
-				t_next_x = (float) ((x0 - MathUtil.floor(x0)) * dt_dx); // calculate the next horizontal
+				intersectCount += x - MathUtil.floor(relativeX); // increment total amount of intersecting cells
+				t_next_x = (float) ((startX - MathUtil.floor(startX)) * dimFracX); // calculate the next horizontal
 																			// intersection point
 				// based on the position inside
 				// the first cell
 			}
 
-			if (dy == 0f) {
+			if (dimensionY == 0f) {
 				y_inc = 0;
-				t_next_y = dt_dy; // don't increment vertically because the Vec3d is perfectly horizontal
-			} else if (y1 > y0) {
+				t_next_y = dimFracY; // don't increment vertically because the Vec3d is perfectly horizontal
+			} else if (relativeY > startY) {
 				y_inc = 1; // target point is vertically greater than starting point so increment every
 							// step by 1
-				n += (int) MathUtil.floor(y1) - y; // increment total amount of intersecting cells
-				t_next_y = (float) ((MathUtil.floor(y0) + 1 - y0) * dt_dy); // calculate the next vertical
+				intersectCount += MathUtil.floor(relativeY) - y; // increment total amount of intersecting cells
+				t_next_y = (float) ((MathUtil.floor(startY) + 1 - startY) * dimFracY); // calculate the next vertical
 																				// intersection
 				// point based on the position inside
 				// the first cell
 			} else {
 				y_inc = -1; // target point is vertically smaller than starting point so reduce every step
 							// by 1
-				n += y - (int) MathUtil.floor(y1); // increment total amount of intersecting cells
-				t_next_y = (float) ((y0 - MathUtil.floor(y0)) * dt_dy); // calculate the next vertical intersection
+				intersectCount += y - MathUtil.floor(relativeY); // increment total amount of intersecting cells
+				t_next_y = (float) ((startY - MathUtil.floor(startY)) * dimFracY); // calculate the next vertical intersection
 																			// point
 				// based on the position inside
 				// the first cell
 			}
 
-			if (dz == 0f) {
+			if (dimensionZ == 0f) {
 				z_inc = 0;
-				t_next_z = dt_dz; // don't increment vertically because the Vec3d is perfectly horizontal
-			} else if (z1 > z0) {
+				t_next_z = dimFracZ; // don't increment vertically because the Vec3d is perfectly horizontal
+			} else if (relativeZ > startZ) {
 				z_inc = 1; // target point is vertically greater than starting point so increment every
 							// step by 1
-				n += (int) MathUtil.floor(z1) - z; // increment total amount of intersecting cells
-				t_next_z = (float) ((MathUtil.floor(z0) + 1 - z0) * dt_dz); // calculate the next vertical
+				intersectCount += MathUtil.floor(relativeZ) - z; // increment total amount of intersecting cells
+				t_next_z = (float) ((MathUtil.floor(startZ) + 1 - startZ) * dimFracZ); // calculate the next vertical
 																				// intersection
 				// point based on the position inside
 				// the first cell
 			} else {
 				z_inc = -1; // target point is vertically smaller than starting point so reduce every step
 							// by 1
-				n += z - (int) MathUtil.floor(z1); // increment total amount of intersecting cells
-				t_next_z = (float) ((z0 - MathUtil.floor(z0)) * dt_dz); // calculate the next vertical intersection
+				intersectCount += z - MathUtil.floor(relativeZ); // increment total amount of intersecting cells
+				t_next_z = (float) ((startZ - MathUtil.floor(startZ)) * dimFracZ); // calculate the next vertical intersection
 																			// point
 				// based on the position inside
 				// the first cell
 			}
 
-			boolean finished = stepRay(start, x0, y0, z0, x, y, z, dt_dx, dt_dy, dt_dz, n, x_inc, y_inc, z_inc,
+			boolean finished = stepRay(start, startX, startY, startZ, x, y, z, dimFracX, dimFracY, dimFracZ, intersectCount, x_inc, y_inc, z_inc,
 					t_next_y, t_next_x, t_next_z);
 			if (finished) {
 				cacheResult(targets[0], true);
@@ -272,9 +278,9 @@ public class OcclusionCullingInstance {
 	}
 
 	private void cacheResult(Vec3d vector, boolean result) {
-		int cx = (int) MathUtil.fastFloor(vector.x + reach);
-		int cy = (int) MathUtil.fastFloor(vector.y + reach);
-		int cz = (int) MathUtil.fastFloor(vector.z + reach);
+		int cx = MathUtil.fastFloor(vector.x + reach);
+		int cy = MathUtil.fastFloor(vector.y + reach);
+		int cz = MathUtil.fastFloor(vector.z + reach);
 		if (result) {
 			cache.setVisible(cx, cy, cz);
 		} else {
@@ -282,8 +288,8 @@ public class OcclusionCullingInstance {
 		}
 	}
 
-	private boolean stepRay(Vec3d start, double x0, double y0, double z0, int x, int y, int z, double dt_dx,
-			double dt_dy, double dt_dz, int n, int x_inc, int y_inc, int z_inc, double t_next_y, double t_next_x,
+	private boolean stepRay(Vec3d start, double startX, double startY, double startZ, int currentX, int currentY, int currentZ, double distInX,
+			double distInY, double distInZ, int n, int x_inc, int y_inc, int z_inc, double t_next_y, double t_next_x,
 			double t_next_z) {
 		int chunkX = 0;
 		int chunkZ = 0;
@@ -293,18 +299,19 @@ public class OcclusionCullingInstance {
 
 		// iterate through all intersecting cells (n times)
 		for (; n > 1; n--) { // n-1 times because we don't want to check the last block
-			int cx = (int) MathUtil.fastFloor((x0 - x) + reach);
-			int cy = (int) MathUtil.fastFloor((y0 - y) + reach);
-			int cz = (int) MathUtil.fastFloor((z0 - z) + reach);
+			// towards - where from
+			int curToStartX = MathUtil.fastFloor((startX - currentX) + reach);
+			int curToStartY = MathUtil.fastFloor((startY - currentY) + reach);
+			int curToStartZ = MathUtil.fastFloor((startZ - currentZ) + reach);
 
-			int cVal = cache.getState(cx, cy, cz);
+			int cVal = cache.getState(curToStartX, curToStartY, curToStartZ);
 			if (cVal == 2) {
 				return false;
 			}
 			if (cVal == 0) {
 				// save current cell
-				int tchunkX = (int) MathUtil.fastFloor(x / 16d);
-				int tchunkZ = (int) MathUtil.fastFloor(z / 16d);
+				int tchunkX = currentX >> 4;
+				int tchunkZ = currentZ >> 4;
 				if (snapshot == null || chunkX != tchunkX || chunkZ != tchunkZ) {
 					chunkX = tchunkX;
 					chunkZ = tchunkZ;
@@ -314,11 +321,11 @@ public class OcclusionCullingInstance {
 					}
 				}
 
-				int relativeX = x % 16;
+				int relativeX = currentX % 16;
 				if (relativeX < 0) {
 					relativeX = 16 + relativeX;
 				}
-				int relativeZ = z % 16;
+				int relativeZ = currentZ % 16;
 				if (relativeZ < 0) {
 					relativeZ = 16 + relativeZ;
 				}
@@ -330,14 +337,15 @@ public class OcclusionCullingInstance {
 					cache.setLastHidden();
 					return false;
 				}
-				if (y < 0 || y > 255) { // out of world // TODO fix for 1.17
+				if (currentY < 0 || currentY > snapshot.getHeight()) { // out of world // TODO fix for 1.17
 					return true;
-				}
-				BlockPos pos = new BlockPos(x, y, z);
-				BlockState state = snapshot.getBlockState(pos);
-				if (state.isOpaqueFullCube(world, pos)) {
-					cache.setLastHidden();
-					return false;
+				}else{
+					BlockPos pos = new BlockPos(currentX, currentY, currentZ);
+					BlockState state = snapshot.getBlockState(pos);
+					if (state.isOpaqueFullCube(world, pos)) {
+						cache.setLastHidden();
+						return false;
+					}
 				}
 				cache.setLastVisible();
 			}
@@ -345,14 +353,14 @@ public class OcclusionCullingInstance {
 			if (t_next_y < t_next_x && t_next_y < t_next_z) { // next cell is upwards/downwards because the distance to
 																// the next vertical
 				// intersection point is smaller than to the next horizontal intersection point
-				y += y_inc; // move up/down
-				t_next_y += dt_dy; // update next vertical intersection point
+				currentY += y_inc; // move up/down
+				t_next_y += distInY; // update next vertical intersection point
 			} else if (t_next_x < t_next_y && t_next_x < t_next_z) { // next cell is right/left
-				x += x_inc; // move right/left
-				t_next_x += dt_dx; // update next horizontal intersection point
+				currentX += x_inc; // move right/left
+				t_next_x += distInX; // update next horizontal intersection point
 			} else {
-				z += z_inc; // move right/left
-				t_next_z += dt_dz; // update next horizontal intersection point
+				currentZ += z_inc; // move right/left
+				t_next_z += distInZ; // update next horizontal intersection point
 			}
 
 		}
