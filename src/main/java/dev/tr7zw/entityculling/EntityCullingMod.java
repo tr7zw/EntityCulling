@@ -14,7 +14,7 @@ import net.minecraft.client.options.KeyBinding;
 public class EntityCullingMod implements ModInitializer {
 
 	public static EntityCullingMod instance;
-	public final OcclusionCullingInstance culling = new OcclusionCullingInstance(64, new FabricProvider());
+	public final OcclusionCullingInstance culling = new OcclusionCullingInstance(128, new FabricProvider());
 	public Set<BlockEntityType<?>> unCullable = new HashSet<>();
 	public boolean nametags = true;
 	public boolean debug = false;

@@ -52,8 +52,8 @@ public class CullTask implements Runnable {
 						lastPos = camera;
 						culling.resetCache();
 						boolean spectator = client.player.isSpectator();
-						for (int x = -3; x <= 3; x++) {
-							for (int z = -3; z <= 3; z++) {
+						for (int x = -8; x <= 8; x++) {
+							for (int z = -8; z <= 8; z++) {
 								WorldChunk chunk = client.world.getChunk(client.player.chunkX + x,
 										client.player.chunkZ + z);
 								Iterator<Entry<BlockPos, BlockEntity>> iterator = chunk.getBlockEntities().entrySet().iterator();
@@ -75,9 +75,11 @@ public class CullTask implements Runnable {
 											continue;
 										}
 										BlockPos pos = entry.getKey();
-										boolean visible = culling.isAABBVisible(
-										        new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1d, +pos.getY()+1d, pos.getZ()+1d), camera);
-										cullable.setCulled(!visible);
+										if(pos.isWithinDistance(cameraMC, 64)) { // 64 is the fixed max tile view distance
+    										boolean visible = culling.isAABBVisible(
+    										        new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1d, +pos.getY()+1d, pos.getZ()+1d), camera);
+    										cullable.setCulled(!visible);
+										}
 									}
 								}
 
@@ -97,13 +99,17 @@ public class CullTask implements Runnable {
 								if (spectator || ((EntityAccessor)entity).isUnsafeGlowing()) {
 									cullable.setCulled(false);
 								} else {
-									Box boundingBox = entity.getVisibilityBoundingBox();
-									boolean visible = culling.isAABBVisible(
-											new AxisAlignedBB(boundingBox.minX, boundingBox.minY,
-													boundingBox.minZ, boundingBox.maxX, boundingBox.maxY,
-													boundingBox.maxZ),
-											camera);
-									cullable.setCulled(!visible);
+								    if(entity.getPos().isInRange(cameraMC, 128)) { // Max supported range currently for this mod
+    									Box boundingBox = entity.getVisibilityBoundingBox();
+    									boolean visible = culling.isAABBVisible(
+    											new AxisAlignedBB(boundingBox.minX, boundingBox.minY,
+    													boundingBox.minZ, boundingBox.maxX, boundingBox.maxY,
+    													boundingBox.maxZ),
+    											camera);
+    									cullable.setCulled(!visible);
+								    } else {
+								        cullable.setCulled(false); // If your entity view distance is larger than 128 blocks just render it
+								    }
 								}
 							}
 						}
