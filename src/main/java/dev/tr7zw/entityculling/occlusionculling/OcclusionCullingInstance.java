@@ -13,7 +13,6 @@ import net.minecraft.world.chunk.WorldChunk;
 
 public class OcclusionCullingInstance {
 
-	//these can be final?
 	private final Vec3d[] targets = new Vec3d[8];
 	private final MinecraftClient client = MinecraftClient.getInstance();
 	private final int reach = 64;
@@ -269,15 +268,16 @@ public class OcclusionCullingInstance {
 			boolean finished = stepRay(start, startX, startY, startZ, x, y, z, dimFracX, dimFracY, dimFracZ, intersectCount, x_inc, y_inc, z_inc,
 					t_next_y, t_next_x, t_next_z);
 			if (finished) {
-				cacheResult(targets[0], true);
+				//cacheResult(targets[0], true);
 				return true;
 			}
 		}
-		cacheResult(targets[0], false);
+		//cacheResult(targets[0], false);
 		return false;
 	}
 
-	private void cacheResult(Vec3d vector, boolean result) {
+	// TODO not working, causing visual issues
+	/*private void cacheResult(Vec3d vector, boolean result) {
 		int cx = MathUtil.fastFloor(vector.x + reach);
 		int cy = MathUtil.fastFloor(vector.y + reach);
 		int cz = MathUtil.fastFloor(vector.z + reach);
@@ -286,7 +286,7 @@ public class OcclusionCullingInstance {
 		} else {
 			cache.setHidden(cx, cy, cz);
 		}
-	}
+	}*/
 
 	private boolean stepRay(Vec3d start, double startX, double startY, double startZ, int currentX, int currentY, int currentZ, double distInX,
 			double distInY, double distInZ, int n, int x_inc, int y_inc, int z_inc, double t_next_y, double t_next_x,
