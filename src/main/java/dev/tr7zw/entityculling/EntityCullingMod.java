@@ -3,7 +3,8 @@ package dev.tr7zw.entityculling;
 import java.util.HashSet;
 import java.util.Set;
 
-import dev.tr7zw.entityculling.occlusionculling.OcclusionCullingInstance;
+import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
+
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -13,7 +14,7 @@ import net.minecraft.client.options.KeyBinding;
 public class EntityCullingMod implements ModInitializer {
 
 	public static EntityCullingMod instance;
-	public final OcclusionCullingInstance culling = new OcclusionCullingInstance();
+	public final OcclusionCullingInstance culling = new OcclusionCullingInstance(128, new FabricProvider());
 	public Set<BlockEntityType<?>> unCullable = new HashSet<>();
 	public boolean nametags = true;
 	public boolean debug = false;
