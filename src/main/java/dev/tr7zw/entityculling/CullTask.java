@@ -62,7 +62,7 @@ public class CullTask implements Runnable {
 									try {
 										entry = iterator.next();
 									}catch(NullPointerException | ConcurrentModificationException ex) {
-										break; // We are not synced to the main thread, so NPE's are allowed here and way less
+										break; // We are not synced to the main thread, so NPE's/CME are allowed here and way less
 										// overhead probably than trying to sync stuff up for no really good reason
 									}
 									if(unCullable.contains(entry.getValue().getType())) {
@@ -90,8 +90,8 @@ public class CullTask implements Runnable {
 						while (iterable.hasNext()) {
 							try {
 								entity = iterable.next();
-							} catch (NullPointerException npe) {
-								break; // We are not synced to the main thread, so NPE's are allowed here and way less
+							} catch (NullPointerException | ConcurrentModificationException ex) {
+								break; // We are not synced to the main thread, so NPE's/CME are allowed here and way less
 										// overhead probably than trying to sync stuff up for no really good reason
 							}
 							Cullable cullable = (Cullable) entity;
