@@ -10,5 +10,6 @@ public class Config {
     public boolean renderNametagsThroughWalls = true;
     public Set<String> blockEntityWhitelist = new HashSet<>(Arrays.asList("minecraft:beacon", "create:rope_pulley"));
     public int tracingDistance = 128;
+    public boolean debugMode = false;
     
 }

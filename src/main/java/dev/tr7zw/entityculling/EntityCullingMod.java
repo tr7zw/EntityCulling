@@ -25,7 +25,6 @@ public class EntityCullingMod implements ModInitializer {
 	public static EntityCullingMod instance;
 	public OcclusionCullingInstance culling;
 	public Set<BlockEntityType<?>> unCullable = new HashSet<>();
-	public boolean debug = false;
 	public boolean debugHitboxes = false;
 	public static boolean enabled = true;
 	public CullTask cullTask;
@@ -73,7 +72,6 @@ public class EntityCullingMod implements ModInitializer {
 	        	pressed = false;
 	        }
 	    });
-	    ;
 		for(String blockId : config.blockEntityWhitelist) {
 		    Optional<BlockEntityType<?>> block = Registry.BLOCK_ENTITY_TYPE.getOrEmpty(new Identifier(blockId));
 		    block.ifPresent(b -> {

@@ -14,17 +14,16 @@ import net.minecraft.client.util.math.MatrixStack;
 
 @Mixin(BlockEntityRenderDispatcher.class)
 public class BlockEntityRenderDispatcherMixin {
-	
-	@Inject(method = "Lnet/minecraft/client/render/block/entity/BlockEntityRenderDispatcher;render(Lnet/minecraft/block/entity/BlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;)V", at = @At("HEAD"), cancellable = true)
-	public <E extends BlockEntity> void render(E blockEntity, float tickDelta, MatrixStack matrix,
-			VertexConsumerProvider vertexConsumerProvider, CallbackInfo info) {
-		if (!((Cullable)blockEntity).isForcedVisible() && ((Cullable)blockEntity).isCulled()) {
-		    EntityCullingMod.instance.skippedBlockEntities++;
-			info.cancel();
-			return;
-		}else {
-		    EntityCullingMod.instance.renderedBlockEntities++;
-		}
-	}
+
+    @Inject(method = "Lnet/minecraft/client/render/block/entity/BlockEntityRenderDispatcher;render(Lnet/minecraft/block/entity/BlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;)V", at = @At("HEAD"), cancellable = true)
+    public <E extends BlockEntity> void render(E blockEntity, float tickDelta, MatrixStack matrix,
+            VertexConsumerProvider vertexConsumerProvider, CallbackInfo info) {
+        if (!((Cullable) blockEntity).isForcedVisible() && ((Cullable) blockEntity).isCulled()) {
+            EntityCullingMod.instance.skippedBlockEntities++;
+            info.cancel();
+            return;
+        }
+        EntityCullingMod.instance.renderedBlockEntities++;
+    }
 
 }
