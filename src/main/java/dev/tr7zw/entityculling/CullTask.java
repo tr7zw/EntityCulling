@@ -28,7 +28,7 @@ public class CullTask implements Runnable {
 	private final int sleepDelay = 10;
 	private final Set<BlockEntityType<?>> unCullable;
 	private Vec3d lastPos = new Vec3d(0, 0, 0);
-	private long lastTime = 0;
+	public long lastTime = 0;
 
 	public CullTask(OcclusionCullingInstance culling, Set<BlockEntityType<?>> unCullable) {
 		this.culling = culling;
@@ -115,8 +115,6 @@ public class CullTask implements Runnable {
 						}
 						lastTime = (System.currentTimeMillis()-start);
 					}
-					if(!client.fpsDebugString.contains("CullTime"))
-						client.fpsDebugString += " CullTime: " + lastTime + "ms"; // Bit hacky, but works for now :shrug:
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

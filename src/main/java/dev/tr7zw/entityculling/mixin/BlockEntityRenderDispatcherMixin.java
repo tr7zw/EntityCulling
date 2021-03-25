@@ -5,6 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import dev.tr7zw.entityculling.EntityCullingMod;
 import dev.tr7zw.entityculling.access.Cullable;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -18,8 +19,11 @@ public class BlockEntityRenderDispatcherMixin {
 	public <E extends BlockEntity> void render(E blockEntity, float tickDelta, MatrixStack matrix,
 			VertexConsumerProvider vertexConsumerProvider, CallbackInfo info) {
 		if (!((Cullable)blockEntity).isForcedVisible() && ((Cullable)blockEntity).isCulled()) {
+		    EntityCullingMod.instance.skippedBlockEntities++;
 			info.cancel();
 			return;
+		}else {
+		    EntityCullingMod.instance.renderedBlockEntities++;
 		}
 	}
 

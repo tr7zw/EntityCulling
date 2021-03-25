@@ -39,6 +39,7 @@ public class WorldRendererMixin {
 			MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo info) {
 		Cullable cullable = (Cullable) entity;
 		if(cullable.isForcedVisible()) {
+		    EntityCullingMod.instance.renderedEntities++;
 			return;
 		}
 		if(cullable.isCulled()) {
@@ -59,8 +60,11 @@ public class WorldRendererMixin {
 				entityRendererInter.shadowRenderLabelIfPresent(entity, entity.getDisplayName(), matrices, vertexConsumers, this.entityRenderDispatcher.getLight(entity, tickDelta));
 				matrices.pop();
 			}
+			EntityCullingMod.instance.skippedEntities++;
 			info.cancel();
 			return;
+		}else {
+		    EntityCullingMod.instance.renderedEntities++;
 		}
 	}
 	

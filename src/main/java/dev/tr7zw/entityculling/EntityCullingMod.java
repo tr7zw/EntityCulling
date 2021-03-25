@@ -20,10 +20,16 @@ public class EntityCullingMod implements ModInitializer {
 	public boolean debug = false;
 	public boolean debugHitboxes = false;
 	public static boolean enabled = true; //public static to make it faster for the jvm
-	private CullTask cullTask = new CullTask(culling, unCullable);
+	public final CullTask cullTask = new CullTask(culling, unCullable);
 	private Thread cullThread;
 	private KeyBinding keybind = new KeyBinding("key.entityculling.toggle", -1, "EntityCulling");
 	private boolean pressed = false;
+	
+	//stats
+	public int renderedBlockEntities = 0;
+	public int skippedBlockEntities = 0;
+	public int renderedEntities = 0;
+	public int skippedEntities = 0;
 
 	@Override
 	public void onInitialize() {
