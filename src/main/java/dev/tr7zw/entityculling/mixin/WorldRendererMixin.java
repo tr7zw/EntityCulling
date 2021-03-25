@@ -47,7 +47,7 @@ public class WorldRendererMixin {
 			EntityRenderer<Entity> entityRenderer = (EntityRenderer<Entity>) entityRenderDispatcher.getRenderer(entity);
 			@SuppressWarnings("unchecked")
 			EntityRendererInter<Entity> entityRendererInter = (EntityRendererInter<Entity>) entityRenderer;
-			if(EntityCullingMod.instance.nametags && matrices != null && vertexConsumers != null && entityRendererInter.shadowHasLabel(entity)) {
+			if(EntityCullingMod.instance.config.renderNametagsThroughWalls && matrices != null && vertexConsumers != null && entityRendererInter.shadowHasLabel(entity)) {
 				double x = MathHelper.lerp((double) tickDelta, (double) entity.lastRenderX, (double) entity.getX()) - cameraX;
 				double y = MathHelper.lerp((double) tickDelta, (double) entity.lastRenderY, (double) entity.getY()) - cameraY;
 				double z = MathHelper.lerp((double) tickDelta, (double) entity.lastRenderZ, (double) entity.getZ()) - cameraZ;
