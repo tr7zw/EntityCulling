@@ -25,7 +25,8 @@ public class CullTask implements Runnable {
 
 	private final OcclusionCullingInstance culling;
 	private final MinecraftClient client = MinecraftClient.getInstance();
-	private final int sleepDelay = 10;
+	private final int sleepDelay = EntityCullingMod.instance.config.sleepDelay;
+	private final int hitboxLimit = EntityCullingMod.instance.config.hitboxLimit;
 	private final Set<BlockEntityType<?>> unCullable;
 	private Vec3d lastPos = new Vec3d(0, 0, 0);
 	public long lastTime = 0;
@@ -101,12 +102,16 @@ public class CullTask implements Runnable {
 								} else {
 								    if(entity.getPos().isInRange(cameraMC, 128)) { // Max supported range currently for this mod
     									Box boundingBox = entity.getVisibilityBoundingBox();
-    									boolean visible = culling.isAABBVisible(
-    											new AxisAlignedBB(boundingBox.minX, boundingBox.minY,
-    													boundingBox.minZ, boundingBox.maxX, boundingBox.maxY,
-    													boundingBox.maxZ),
-    											camera);
-    									cullable.setCulled(!visible);
+    									if(boundingBox.getXLength() > hitboxLimit || boundingBox.getYLength() > hitboxLimit || boundingBox.getZLength() > hitboxLimit) {
+    									    cullable.setCulled(false); // To big to bother to cull
+    									} else {
+        									boolean visible = culling.isAABBVisible(
+        											new AxisAlignedBB(boundingBox.minX, boundingBox.minY,
+        													boundingBox.minZ, boundingBox.maxX, boundingBox.maxY,
+        													boundingBox.maxZ),
+        											camera);
+        									cullable.setCulled(!visible);
+    									}
 								    } else {
 								        cullable.setCulled(false); // If your entity view distance is larger than 128 blocks just render it
 								    }

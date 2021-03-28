@@ -56,6 +56,10 @@ public class EntityCullingMod implements ModInitializer {
         if (config == null) {
             config = new Config();
             writeConfig();
+        } else {
+            if(ConfigUpgrader.upgradeConfig(config)) {
+                writeConfig(); // Config got modified
+            }
         }
         culling = new OcclusionCullingInstance(config.tracingDistance, new FabricProvider());
         cullTask = new CullTask(culling, unCullable);
