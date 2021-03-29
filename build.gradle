@@ -38,8 +38,8 @@ dependencies {
 
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.
-	compile "com.logisticscraft:occlusionculling:0.0.2-SNAPSHOT"
-    extraLibs "com.logisticscraft:occlusionculling:0.0.2-SNAPSHOT"
+	compile "com.logisticscraft:occlusionculling:0.0.3-SNAPSHOT"
+    extraLibs "com.logisticscraft:occlusionculling:0.0.3-SNAPSHOT"
 }
 
 processResources {

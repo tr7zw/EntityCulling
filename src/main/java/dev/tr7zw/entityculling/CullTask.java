@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.logisticscraft.occlusionculling.util.AxisAlignedBB;
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
+import com.logisticscraft.occlusionculling.util.Vec3d;
 
 import dev.tr7zw.entityculling.access.Cullable;
 import dev.tr7zw.entityculling.access.EntityAccessor;
@@ -16,7 +16,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import com.logisticscraft.occlusionculling.util.Vec3d;
 import net.minecraft.world.chunk.WorldChunk;
 
 public class CullTask implements Runnable {
@@ -28,8 +27,12 @@ public class CullTask implements Runnable {
 	private final int sleepDelay = EntityCullingMod.instance.config.sleepDelay;
 	private final int hitboxLimit = EntityCullingMod.instance.config.hitboxLimit;
 	private final Set<BlockEntityType<?>> unCullable;
-	private Vec3d lastPos = new Vec3d(0, 0, 0);
 	public long lastTime = 0;
+	
+	// reused preallocated vars
+	private Vec3d lastPos = new Vec3d(0, 0, 0);
+	private Vec3d aabbMin = new Vec3d(0, 0, 0);
+	private Vec3d aabbMax = new Vec3d(0, 0, 0);
 
 	public CullTask(OcclusionCullingInstance culling, Set<BlockEntityType<?>> unCullable) {
 		this.culling = culling;
@@ -46,11 +49,12 @@ public class CullTask implements Runnable {
 					net.minecraft.util.math.Vec3d cameraMC = EntityCullingMod.instance.config.debugMode
 							? client.player.getCameraPosVec(client.getTickDelta())
 							: client.gameRenderer.getCamera().getPos();
-					Vec3d camera = new Vec3d(cameraMC.x, cameraMC.y, cameraMC.z);
-					if (requestCull || !lastPos.equals(camera)) {
+					
+					if (requestCull || !(cameraMC.x == lastPos.x && cameraMC.y == lastPos.y && cameraMC.z == lastPos.z)) {
 						long start = System.currentTimeMillis();
 						requestCull = false;
-						lastPos = camera;
+						lastPos.set(cameraMC.x, cameraMC.y, cameraMC.z);
+						Vec3d camera = lastPos;
 						culling.resetCache();
 						boolean spectator = client.player.isSpectator();
 						for (int x = -8; x <= 8; x++) {
@@ -77,8 +81,9 @@ public class CullTask implements Runnable {
 										}
 										BlockPos pos = entry.getKey();
 										if(pos.isWithinDistance(cameraMC, 64)) { // 64 is the fixed max tile view distance
-    										boolean visible = culling.isAABBVisible(
-    										        new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1d, +pos.getY()+1d, pos.getZ()+1d), camera);
+										    aabbMin.set(pos.getX(), pos.getY(), pos.getZ());
+										    aabbMax.set(pos.getX()+1d, pos.getY()+1d, pos.getZ()+1d);
+    										boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
     										cullable.setCulled(!visible);
 										}
 									}
@@ -105,11 +110,9 @@ public class CullTask implements Runnable {
     									if(boundingBox.getXLength() > hitboxLimit || boundingBox.getYLength() > hitboxLimit || boundingBox.getZLength() > hitboxLimit) {
     									    cullable.setCulled(false); // To big to bother to cull
     									} else {
-        									boolean visible = culling.isAABBVisible(
-        											new AxisAlignedBB(boundingBox.minX, boundingBox.minY,
-        													boundingBox.minZ, boundingBox.maxX, boundingBox.maxY,
-        													boundingBox.maxZ),
-        											camera);
+    									    aabbMin.set(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
+    									    aabbMax.set(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ);
+        									boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
         									cullable.setCulled(!visible);
     									}
 								    } else {
