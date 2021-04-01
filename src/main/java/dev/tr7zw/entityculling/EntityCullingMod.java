@@ -16,8 +16,13 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.options.KeyBinding;
+import net.minecraft.text.LiteralText;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
 
 public class EntityCullingMod implements ModInitializer {
@@ -72,6 +77,18 @@ public class EntityCullingMod implements ModInitializer {
 	        	if(pressed)return;
 	        	pressed = true;
 	        	enabled = !enabled;
+	        	 ClientPlayerEntity player = MinecraftClient.getInstance().player;
+	        	if(enabled) {
+	        	    if (player != null) {
+	                    player.sendSystemMessage(new LiteralText("Culling on").formatted(Formatting.GREEN),
+	                            Util.NIL_UUID);
+	                }
+	        	} else {
+                    if (player != null) {
+                        player.sendSystemMessage(new LiteralText("Culling off").formatted(Formatting.RED),
+                                Util.NIL_UUID);
+                    }
+	        	}
 	        }else {
 	        	pressed = false;
 	        }
