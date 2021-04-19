@@ -13,22 +13,25 @@ import net.minecraft.world.World;
 @Mixin(Entity.class)
 public class EntityMixin implements EntityAccessor {
 
-	@Shadow
-	private boolean glowing;
-	@Shadow
-	private World world;
-	@Shadow
-	private DataTracker dataTracker;
-	@Shadow
-	private static TrackedData<Byte> FLAGS;
-	
-	@Override
-	public boolean isUnsafeGlowing() {
-		return this.glowing || this.world.isClient && this.getUnsafeFlag(6);
-	}
-	
-	private boolean getUnsafeFlag(int index) {
-		return ((Byte) ((DataTrackerAccessor)dataTracker).getUnsafe(FLAGS) & 1 << index) != 0;
-	}
+    @Shadow
+    private boolean glowing;
+    @Shadow
+    private World world;
+    @Shadow
+    private DataTracker dataTracker;
+    @Shadow
+    private static TrackedData<Byte> FLAGS;
+
+    @Override
+    public boolean isUnsafeGlowing() {
+        return this.glowing || this.world.isClient && this.getUnsafeFlag(6);
+    }
+
+    private boolean getUnsafeFlag(int index) {
+        Byte flagValues = ((DataTrackerAccessor) dataTracker).getUnsafe(FLAGS);
+        if (flagValues == null)
+            return false;
+        return ((Byte) flagValues & 1 << index) != 0;
+    }
 
 }

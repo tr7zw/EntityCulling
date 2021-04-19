@@ -13,13 +13,14 @@ import net.minecraft.entity.data.TrackedData;
 @Mixin(DataTracker.class)
 public class DataTrackerMixin implements DataTrackerAccessor {
 
-	@Shadow
-	private Map<Integer, Entry<?>> entries;
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getUnsafe(TrackedData<T> trackedData) {
-		return (T) this.entries.get(trackedData.getId()).get();
-	}
+    @Shadow
+    private Map<Integer, Entry<?>> entries;
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getUnsafe(TrackedData<T> trackedData) {
+        Entry<?> entry = this.entries.get(trackedData.getId());
+        return entry == null ? null : (T) entry.get();
+    }
 
 }
