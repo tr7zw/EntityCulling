@@ -9,7 +9,9 @@
     "tr7zw"
   ],
   "contact": {
-
+    "homepage": "https://github.com/tr7zw/EntityCulling-Fabric",
+    "sources": "https://github.com/tr7zw/EntityCulling-Fabric",
+    "issues": "https://github.com/tr7zw/EntityCulling-Fabric/issues"
   },
 
   "license": "MIT",
