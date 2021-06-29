@@ -39,11 +39,7 @@ public class WorldRendererMixin {
     private void renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta,
             MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo info) {
         Cullable cullable = (Cullable) entity;
-        if (cullable.isForcedVisible()) {
-            EntityCullingMod.instance.renderedEntities++;
-            return;
-        }
-        if (cullable.isCulled()) {
+        if (!cullable.isForcedVisible() && cullable.isCulled()) {
             @SuppressWarnings("unchecked")
             EntityRenderer<Entity> entityRenderer = (EntityRenderer<Entity>) entityRenderDispatcher.getRenderer(entity);
             @SuppressWarnings("unchecked")
@@ -71,7 +67,7 @@ public class WorldRendererMixin {
             return;
         }
         EntityCullingMod.instance.renderedEntities++;
-
+        cullable.setOutOfCamera(false);
     }
 
 }
