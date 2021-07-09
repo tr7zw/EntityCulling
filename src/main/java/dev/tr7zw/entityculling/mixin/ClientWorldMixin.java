@@ -10,6 +10,7 @@ import dev.tr7zw.entityculling.access.Cullable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 
 @Mixin(ClientWorld.class)
 public class ClientWorldMixin {
@@ -33,8 +34,7 @@ public class ClientWorldMixin {
         if(entity instanceof Cullable) {
             Cullable cull = (Cullable) entity;
             if(cull.isCulled() || cull.isOutOfCamera()) {
-                entity.resetPosition();
-                ++entity.age;
+                basicTick(entity);
                 EntityCullingMod.instance.skippedEntityTicks++;
                 info.cancel();
                 return;
@@ -43,6 +43,15 @@ public class ClientWorldMixin {
             }
         }
         EntityCullingMod.instance.tickedEntities++;
+    }
+    
+    private void basicTick(Entity entity) {
+        entity.resetPosition();
+        ++entity.age;
+        if(entity instanceof LivingEntity living) {
+            living.tickMovement();
+        }
+        
     }
     
 }
