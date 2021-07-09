@@ -23,9 +23,9 @@ public class ClientWorldMixin {
             EntityCullingMod.instance.tickedEntities++;
             return; // disabled
         }
-        if(entity == mc.player || entity == mc.cameraEntity || entity == mc.player.getVehicle()) {
+        if(entity == mc.player || entity == mc.cameraEntity || entity.hasVehicle() || entity.hasPassengers()) {
             EntityCullingMod.instance.tickedEntities++;
-            return; // never skip the client tick for the player itself
+            return; // never skip the client tick for the player or entities in vehicles/with passengers
         }
         if(EntityCullingMod.instance.tickCullWhistelist.contains(entity.getType())) {
             EntityCullingMod.instance.tickedEntities++;
