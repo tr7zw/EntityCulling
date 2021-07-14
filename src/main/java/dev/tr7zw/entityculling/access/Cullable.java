@@ -8,4 +8,7 @@ public interface Cullable {
 	public void setCulled(boolean value);
 	public boolean isCulled();
 	
+	public void setOutOfCamera(boolean value);
+	public boolean isOutOfCamera();
+	
 }

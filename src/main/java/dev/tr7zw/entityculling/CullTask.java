@@ -9,7 +9,6 @@ import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 import com.logisticscraft.occlusionculling.util.Vec3d;
 
 import dev.tr7zw.entityculling.access.Cullable;
-import dev.tr7zw.entityculling.access.EntityAccessor;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
@@ -59,8 +58,8 @@ public class CullTask implements Runnable {
 						boolean spectator = client.player.isSpectator();
 						for (int x = -8; x <= 8; x++) {
 							for (int z = -8; z <= 8; z++) {
-								WorldChunk chunk = client.world.getChunk(client.player.chunkX + x,
-										client.player.chunkZ + z);
+								WorldChunk chunk = client.world.getChunk(client.player.getChunkPos().x + x,
+										client.player.getChunkPos().z + z);
 								Iterator<Entry<BlockPos, BlockEntity>> iterator = chunk.getBlockEntities().entrySet().iterator();
 								Entry<BlockPos, BlockEntity> entry;
 								while(iterator.hasNext()) {
@@ -102,7 +101,7 @@ public class CullTask implements Runnable {
 							}
 							Cullable cullable = (Cullable) entity;
 							if (!cullable.isForcedVisible()) {
-								if (spectator || ((EntityAccessor)entity).isUnsafeGlowing()) {
+								if (spectator || entity.isGlowing()) {
 									cullable.setCulled(false);
 								} else {
 								    if(entity.getPos().isInRange(cameraMC, 128)) { // Max supported range currently for this mod

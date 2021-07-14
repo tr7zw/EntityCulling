@@ -12,6 +12,7 @@ public class CullableMixin implements Cullable {
 
 	private long lasttime = 0;
 	private boolean culled = false;
+	private boolean outOfCamera = false;
 	
 	@Override
 	public void setTimeout() {
@@ -36,5 +37,16 @@ public class CullableMixin implements Cullable {
 		if(!EntityCullingMod.enabled)return false;
 		return culled;
 	}
+
+    @Override
+    public void setOutOfCamera(boolean value) {
+        this.outOfCamera = value;
+    }
+
+    @Override
+    public boolean isOutOfCamera() {
+        if(!EntityCullingMod.enabled)return false;
+        return outOfCamera;
+    }
 
 }
