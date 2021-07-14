@@ -7,10 +7,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import dev.tr7zw.entityculling.EntityCullingMod;
 import dev.tr7zw.entityculling.access.Cullable;
+import net.minecraft.block.AbstractRailBlock;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.vehicle.AbstractMinecartEntity;
+import net.minecraft.util.math.BlockPos;
 
 @Mixin(ClientWorld.class)
 public class ClientWorldMixin {
@@ -23,7 +27,8 @@ public class ClientWorldMixin {
             EntityCullingMod.instance.tickedEntities++;
             return; // disabled
         }
-        if(entity == mc.player || entity == mc.cameraEntity || entity.hasVehicle() || entity.hasPassengers()) {
+        // Use abstract minecart instead of whitelist to also catch modded Minecarts
+        if(entity == mc.player || entity == mc.cameraEntity || entity.hasVehicle() || entity.hasPassengers() || (entity instanceof AbstractMinecartEntity)) { 
             EntityCullingMod.instance.tickedEntities++;
             return; // never skip the client tick for the player or entities in vehicles/with passengers
         }

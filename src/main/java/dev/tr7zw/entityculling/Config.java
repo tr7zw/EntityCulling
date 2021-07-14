@@ -15,6 +15,6 @@ public class Config {
     public int hitboxLimit = 50;
     public boolean skipMarkerArmorStands = true;
     public boolean tickCulling = true;
-    public Set<String> tickCullingWhitelist = new HashSet<>(Arrays.asList("minecraft:firework_rocket"));
+    public Set<String> tickCullingWhitelist = new HashSet<>(Arrays.asList("minecraft:firework_rocket", "minecraft:boat"));
     
 }
