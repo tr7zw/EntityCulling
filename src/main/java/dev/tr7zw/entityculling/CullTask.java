@@ -102,27 +102,23 @@ public class CullTask implements Runnable {
 							}
 							Cullable cullable = (Cullable) entity;
 							if (!cullable.isForcedVisible()) {
-								if (spectator || entity.isGlowing()) {
+								if (spectator || entity.isGlowing() || isSkippableArmorstand(entity)) {
 									cullable.setCulled(false);
-								} else {
-								    if(entity.getPos().isInRange(cameraMC, 128)) { // Max supported range currently for this mod
-    									Box boundingBox = entity.getVisibilityBoundingBox();
-    									if(boundingBox.getXLength() > hitboxLimit || boundingBox.getYLength() > hitboxLimit || boundingBox.getZLength() > hitboxLimit) {
-    									    cullable.setCulled(false); // To big to bother to cull
-    									} else {
-    									    aabbMin.set(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
-    									    aabbMax.set(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ);
-        									boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
-        									if (EntityCullingMod.instance.config.skipMarkerArmorStands && cullable instanceof ArmorStandEntity && ((ArmorStandEntity) cullable).isMarker()) {
-        										cullable.setCulled(false);
-        									} else {
-        										cullable.setCulled(!visible);
-        									}
-    									}
-								    } else {
-								        cullable.setCulled(false); // If your entity view distance is larger than 128 blocks just render it
-								    }
+									continue;
 								}
+							    if(!entity.getPos().isInRange(cameraMC, EntityCullingMod.instance.config.tracingDistance)) {
+							        cullable.setCulled(false); // If your entity view distance is larger than tracingDistance just render it
+							        continue;
+							    }
+								Box boundingBox = entity.getVisibilityBoundingBox();
+								if(boundingBox.getXLength() > hitboxLimit || boundingBox.getYLength() > hitboxLimit || boundingBox.getZLength() > hitboxLimit) {
+								    cullable.setCulled(false); // To big to bother to cull
+								    continue;
+								}
+							    aabbMin.set(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
+							    aabbMax.set(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ);
+								boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
+								cullable.setCulled(!visible);
 							}
 						}
 						lastTime = (System.currentTimeMillis()-start);
@@ -133,5 +129,10 @@ public class CullTask implements Runnable {
 			}
 		}
 		System.out.println("Shutting down culling task!");
+	}
+	
+	private boolean isSkippableArmorstand(Entity entity) {
+	    if(!EntityCullingMod.instance.config.skipMarkerArmorStands)return false;
+	    return entity instanceof ArmorStandEntity && ((ArmorStandEntity) entity).isMarker();
 	}
 }
