@@ -100,6 +100,9 @@ public class CullTask implements Runnable {
 								break; // We are not synced to the main thread, so NPE's/CME are allowed here and way less
 										// overhead probably than trying to sync stuff up for no really good reason
 							}
+							if(!(entity instanceof Cullable)) {
+							    continue; // Not sure how this could happen outside from mixin screwing up the inject into Entity
+							}
 							Cullable cullable = (Cullable) entity;
 							if (!cullable.isForcedVisible()) {
 								if (spectator || entity.isGlowing() || isSkippableArmorstand(entity)) {
