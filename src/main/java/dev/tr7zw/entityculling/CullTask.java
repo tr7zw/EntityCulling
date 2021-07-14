@@ -14,6 +14,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.chunk.WorldChunk;
@@ -113,7 +114,11 @@ public class CullTask implements Runnable {
     									    aabbMin.set(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
     									    aabbMax.set(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ);
         									boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
-        									cullable.setCulled(!visible);
+        									if (EntityCullingMod.instance.config.skipMarkerArmorStands && cullable instanceof ArmorStandEntity && ((ArmorStandEntity) cullable).isMarker()) {
+        										cullable.setCulled(false);
+        									} else {
+        										cullable.setCulled(!visible);
+        									}
     									}
 								    } else {
 								        cullable.setCulled(false); // If your entity view distance is larger than 128 blocks just render it
