@@ -18,7 +18,8 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.entity.EntityType;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -30,6 +31,7 @@ public class EntityCullingMod implements ModInitializer {
 	public static EntityCullingMod instance;
 	public OcclusionCullingInstance culling;
 	public Set<BlockEntityType<?>> unCullable = new HashSet<>();
+	public Set<EntityType<?>> tickCullWhistelist = new HashSet<>();
 	public boolean debugHitboxes = false;
 	public static boolean enabled = true;
 	public CullTask cullTask;
@@ -46,6 +48,8 @@ public class EntityCullingMod implements ModInitializer {
 	public int skippedBlockEntities = 0;
 	public int renderedEntities = 0;
 	public int skippedEntities = 0;
+	public int tickedEntities = 0;
+	public int skippedEntityTicks = 0;
 
 	@Override
 	public void onInitialize() {
@@ -100,6 +104,12 @@ public class EntityCullingMod implements ModInitializer {
 		        unCullable.add(b);
 		    });
 		}
+	    for(String entityType : config.tickCullingWhitelist) {
+	            Optional<EntityType<?>> entity = Registry.ENTITY_TYPE.getOrEmpty(new Identifier(entityType));
+	            entity.ifPresent(e -> {
+	                tickCullWhistelist.add(e);
+	            });
+	        }
 		cullThread = new Thread(cullTask, "CullThread");
 		cullThread.setUncaughtExceptionHandler((thread, ex) -> {
 			System.out.println("The CullingThread has crashed! Please report the following stacktrace!");
