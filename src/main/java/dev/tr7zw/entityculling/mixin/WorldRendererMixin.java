@@ -6,38 +6,28 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import dev.tr7zw.entityculling.EntityCullingMod;
 import dev.tr7zw.entityculling.access.Cullable;
 import dev.tr7zw.entityculling.access.EntityRendererInter;
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 
-@Mixin(WorldRenderer.class)
+@Mixin(LevelRenderer.class)
 public class WorldRendererMixin {
-
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldRenderer;checkEmpty(Lnet/minecraft/client/util/math/MatrixStack;)V", ordinal = 0))
-    public void render(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera,
-            GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f matrix4f,
-            CallbackInfo info) {
-
-    }
 
     @Shadow
     private EntityRenderDispatcher entityRenderDispatcher;
 
     @Inject(at = @At("HEAD"), method = "renderEntity", cancellable = true)
     private void renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta,
-            MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo info) {
+            PoseStack matrices, MultiBufferSource vertexConsumers, CallbackInfo info) {
         Cullable cullable = (Cullable) entity;
         if (!cullable.isForcedVisible() && cullable.isCulled()) {
             @SuppressWarnings("unchecked")
@@ -45,22 +35,22 @@ public class WorldRendererMixin {
             @SuppressWarnings("unchecked")
             EntityRendererInter<Entity> entityRendererInter = (EntityRendererInter<Entity>) entityRenderer;
             if (EntityCullingMod.instance.config.renderNametagsThroughWalls && matrices != null
-                    && vertexConsumers != null && entityRendererInter.shadowHasLabel(entity)) {
-                double x = MathHelper.lerp((double) tickDelta, (double) entity.lastRenderX, (double) entity.getX())
+                    && vertexConsumers != null && entityRendererInter.shadowShouldShowName(entity)) {
+                double x = Mth.lerp((double) tickDelta, (double) entity.xOld, (double) entity.getX())
                         - cameraX;
-                double y = MathHelper.lerp((double) tickDelta, (double) entity.lastRenderY, (double) entity.getY())
+                double y = Mth.lerp((double) tickDelta, (double) entity.yOld, (double) entity.getY())
                         - cameraY;
-                double z = MathHelper.lerp((double) tickDelta, (double) entity.lastRenderZ, (double) entity.getZ())
+                double z = Mth.lerp((double) tickDelta, (double) entity.zOld, (double) entity.getZ())
                         - cameraZ;
-                Vec3d vec3d = entityRenderer.getPositionOffset(entity, tickDelta);
-                double d = x + vec3d.getX();
-                double e = y + vec3d.getY();
-                double f = z + vec3d.getZ();
-                matrices.push();
+                Vec3 vec3d = entityRenderer.getRenderOffset(entity, tickDelta);
+                double d = x + vec3d.x;
+                double e = y + vec3d.y;
+                double f = z + vec3d.z;
+                matrices.pushPose();
                 matrices.translate(d, e, f);
-                entityRendererInter.shadowRenderLabelIfPresent(entity, entity.getDisplayName(), matrices,
-                        vertexConsumers, this.entityRenderDispatcher.getLight(entity, tickDelta));
-                matrices.pop();
+                entityRendererInter.shadowRenderNameTag(entity, entity.getDisplayName(), matrices,
+                        vertexConsumers, this.entityRenderDispatcher.getPackedLightCoords(entity, tickDelta));
+                matrices.popPose();
             }
             EntityCullingMod.instance.skippedEntities++;
             info.cancel();

@@ -1,15 +1,16 @@
 package dev.tr7zw.entityculling.access;
 
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.text.Text;
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
 
 public interface EntityRendererInter<T extends Entity> {
 
-	boolean shadowHasLabel(T entity);
+	boolean shadowShouldShowName(T entity);
 
-	void shadowRenderLabelIfPresent(T entity, Text text, MatrixStack matrices, VertexConsumerProvider vertexConsumers,
-			int light);
+	void shadowRenderNameTag(T entity, Component component, PoseStack poseStack,
+            MultiBufferSource multiBufferSource, int light);
 
 }

@@ -7,28 +7,25 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import dev.tr7zw.entityculling.EntityCullingMod;
 import dev.tr7zw.entityculling.access.Cullable;
-import net.minecraft.block.AbstractRailBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.vehicle.AbstractMinecartEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
 
-@Mixin(ClientWorld.class)
+@Mixin(ClientLevel.class)
 public class ClientWorldMixin {
 
-    private MinecraftClient mc = MinecraftClient.getInstance();
+    private Minecraft mc = Minecraft.getInstance();
     
-    @Inject(method = "tickEntity", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "tickNonPassenger", at = @At("HEAD"), cancellable = true)
     public void tickEntity(Entity entity, CallbackInfo info) {
         if(!EntityCullingMod.instance.config.tickCulling) {
             EntityCullingMod.instance.tickedEntities++;
             return; // disabled
         }
         // Use abstract minecart instead of whitelist to also catch modded Minecarts
-        if(entity == mc.player || entity == mc.cameraEntity || entity.hasVehicle() || entity.hasPassengers() || (entity instanceof AbstractMinecartEntity)) { 
+        if(entity == mc.player || entity == mc.cameraEntity || entity.isPassenger() || entity.isVehicle() || (entity instanceof AbstractMinecart)) { 
             EntityCullingMod.instance.tickedEntities++;
             return; // never skip the client tick for the player or entities in vehicles/with passengers
         }
@@ -51,10 +48,10 @@ public class ClientWorldMixin {
     }
     
     private void basicTick(Entity entity) {
-        entity.resetPosition();
-        ++entity.age;
+        entity.setOldPosAndRot();
+        ++entity.tickCount;
         if(entity instanceof LivingEntity living) {
-            living.tickMovement();
+            living.aiStep();
         }
         
     }

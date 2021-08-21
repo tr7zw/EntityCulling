@@ -11,33 +11,34 @@ import java.util.Set;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
+import com.mojang.authlib.minecraft.client.MinecraftClient;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.entity.EntityType;
-import net.minecraft.text.LiteralText;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public class EntityCullingMod implements ModInitializer {
 
-	public static EntityCullingMod instance;
-	public OcclusionCullingInstance culling;
-	public Set<BlockEntityType<?>> unCullable = new HashSet<>();
-	public Set<EntityType<?>> tickCullWhistelist = new HashSet<>();
-	public boolean debugHitboxes = false;
-	public static boolean enabled = true;
-	public CullTask cullTask;
-	private Thread cullThread;
-	private KeyBinding keybind = new KeyBinding("key.entityculling.toggle", -1, "EntityCulling");
-	private boolean pressed = false;
+    public static EntityCullingMod instance;
+    public OcclusionCullingInstance culling;
+    public Set<BlockEntityType<?>> unCullable = new HashSet<>();
+    public Set<EntityType<?>> tickCullWhistelist = new HashSet<>();
+    public boolean debugHitboxes = false;
+    public static boolean enabled = true; // public static to make it faster for the jvm
+    public CullTask cullTask;
+    private Thread cullThread;
+    private KeyMapping keybind = new KeyMapping("key.entityculling.toggle", -1, "EntityCulling");
+    private boolean pressed = false;
 	
     public Config config;
     private final File settingsFile = new File("config", "entityculling.json");
@@ -78,34 +79,36 @@ public class EntityCullingMod implements ModInitializer {
 		});
 	    ClientTickEvents.START_CLIENT_TICK.register(e ->
 	    {
-	        if(keybind.isPressed()) {
-	        	if(pressed)return;
-	        	pressed = true;
-	        	enabled = !enabled;
-	        	 ClientPlayerEntity player = MinecraftClient.getInstance().player;
-	        	if(enabled) {
-	        	    if (player != null) {
-	                    player.sendSystemMessage(new LiteralText("Culling on").formatted(Formatting.GREEN),
+	        if (keybind.isDown()) {
+	            if (pressed)
+	                return;
+	            pressed = true;
+	            enabled = !enabled;
+	            LocalPlayer player = Minecraft.getInstance().player;
+	            if(enabled) {
+	                if (player != null) {
+	                    player.sendMessage(new TextComponent("Culling on").withStyle(ChatFormatting.GREEN),
 	                            Util.NIL_UUID);
 	                }
-	        	} else {
-                    if (player != null) {
-                        player.sendSystemMessage(new LiteralText("Culling off").formatted(Formatting.RED),
-                                Util.NIL_UUID);
-                    }
-	        	}
-	        }else {
-	        	pressed = false;
+	            } else {
+	                if (player != null) {
+	                    player.sendMessage(new TextComponent("Culling off").withStyle(ChatFormatting.RED),
+	                            Util.NIL_UUID);
+	                }
+	            }
+	        } else {
+	            pressed = false;
 	        }
+	        cullTask.requestCull = true;
 	    });
-		for(String blockId : config.blockEntityWhitelist) {
-		    Optional<BlockEntityType<?>> block = Registry.BLOCK_ENTITY_TYPE.getOrEmpty(new Identifier(blockId));
-		    block.ifPresent(b -> {
-		        unCullable.add(b);
-		    });
-		}
+        for(String blockId : config.blockEntityWhitelist) {
+            Optional<BlockEntityType<?>> block = Registry.BLOCK_ENTITY_TYPE.getOptional(new ResourceLocation(blockId));
+            block.ifPresent(b -> {
+                unCullable.add(b);
+            });
+        }
 	    for(String entityType : config.tickCullingWhitelist) {
-	            Optional<EntityType<?>> entity = Registry.ENTITY_TYPE.getOrEmpty(new Identifier(entityType));
+	            Optional<EntityType<?>> entity = Registry.ENTITY_TYPE.getOptional(new ResourceLocation(entityType));
 	            entity.ifPresent(e -> {
 	                tickCullWhistelist.add(e);
 	            });

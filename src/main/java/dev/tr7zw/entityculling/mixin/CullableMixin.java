@@ -4,8 +4,8 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import dev.tr7zw.entityculling.EntityCullingMod;
 import dev.tr7zw.entityculling.access.Cullable;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 @Mixin(value = { Entity.class, BlockEntity.class })
 public class CullableMixin implements Cullable {

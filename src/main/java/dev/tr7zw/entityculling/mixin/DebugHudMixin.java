@@ -8,15 +8,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import dev.tr7zw.entityculling.EntityCullingMod;
-import net.minecraft.client.gui.hud.DebugHud;
+import net.minecraft.client.gui.components.DebugScreenOverlay;
 
-@Mixin(DebugHud.class)
+@Mixin(DebugScreenOverlay.class)
 public class DebugHudMixin {
 
     private int lastTickedEntities = 0;
     private int lastSkippedEntityTicks = 0;
     
-    @Inject(method = "getLeftText", at = @At("RETURN"))
+    @Inject(method = "getGameInformation", at = @At("RETURN"))
     public List<String> getLeftText(CallbackInfoReturnable<List<String>> callback) {
         if(EntityCullingMod.instance.tickedEntities != 0 || EntityCullingMod.instance.skippedEntityTicks != 0) {
             lastTickedEntities = EntityCullingMod.instance.tickedEntities;
