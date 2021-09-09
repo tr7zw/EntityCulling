@@ -36,4 +36,6 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Artifacts
-          path: build/libs/
+          path: |
+            EntityCulling-Fabric/build/libs/
+            EntityCulling-Forge/build/libs/
