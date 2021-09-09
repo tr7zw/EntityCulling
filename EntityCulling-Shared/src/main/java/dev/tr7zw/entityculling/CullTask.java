@@ -25,8 +25,8 @@ public class CullTask implements Runnable {
 
 	private final OcclusionCullingInstance culling;
     private final Minecraft client = Minecraft.getInstance();
-	private final int sleepDelay = EntityCullingMod.instance.config.sleepDelay;
-	private final int hitboxLimit = EntityCullingMod.instance.config.hitboxLimit;
+	private final int sleepDelay = EntityCullingModBase.instance.config.sleepDelay;
+	private final int hitboxLimit = EntityCullingModBase.instance.config.hitboxLimit;
 	private final Set<BlockEntityType<?>> unCullable;
 	public long lastTime = 0;
 	
@@ -46,8 +46,8 @@ public class CullTask implements Runnable {
 			try {
 				Thread.sleep(sleepDelay);
 
-				if (EntityCullingMod.enabled && client.level != null && client.player != null && client.player.tickCount > 10) {
-				    Vec3 cameraMC = EntityCullingMod.instance.config.debugMode
+				if (EntityCullingModBase.enabled && client.level != null && client.player != null && client.player.tickCount > 10) {
+				    Vec3 cameraMC = EntityCullingModBase.instance.config.debugMode
                             ? client.player.getEyePosition(client.getDeltaFrameTime())
                             : client.gameRenderer.getMainCamera().getPosition();
 					
@@ -110,7 +110,7 @@ public class CullTask implements Runnable {
 									cullable.setCulled(false);
 									continue;
 								}
-							    if(!entity.position().closerThan(cameraMC, EntityCullingMod.instance.config.tracingDistance)) {
+							    if(!entity.position().closerThan(cameraMC, EntityCullingModBase.instance.config.tracingDistance)) {
 							        cullable.setCulled(false); // If your entity view distance is larger than tracingDistance just render it
 							        continue;
 							    }
@@ -136,7 +136,7 @@ public class CullTask implements Runnable {
 	}
 	
 	private boolean isSkippableArmorstand(Entity entity) {
-	    if(!EntityCullingMod.instance.config.skipMarkerArmorStands)return false;
+	    if(!EntityCullingModBase.instance.config.skipMarkerArmorStands)return false;
 	    return entity instanceof ArmorStand && ((ArmorStand) entity).isMarker();
 	}
 }

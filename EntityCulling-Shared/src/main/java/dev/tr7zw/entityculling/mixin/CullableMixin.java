@@ -2,7 +2,7 @@ package dev.tr7zw.entityculling.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 
-import dev.tr7zw.entityculling.EntityCullingMod;
+import dev.tr7zw.entityculling.EntityCullingModBase;
 import dev.tr7zw.entityculling.access.Cullable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -34,7 +34,7 @@ public class CullableMixin implements Cullable {
 
 	@Override
 	public boolean isCulled() {
-		if(!EntityCullingMod.enabled)return false;
+		if(!EntityCullingModBase.enabled)return false;
 		return culled;
 	}
 
@@ -45,7 +45,7 @@ public class CullableMixin implements Cullable {
 
     @Override
     public boolean isOutOfCamera() {
-        if(!EntityCullingMod.enabled)return false;
+        if(!EntityCullingModBase.enabled)return false;
         return outOfCamera;
     }
 

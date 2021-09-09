@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import dev.tr7zw.entityculling.EntityCullingMod;
+import dev.tr7zw.entityculling.EntityCullingModBase;
 import dev.tr7zw.entityculling.access.Cullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -20,31 +20,31 @@ public class ClientWorldMixin {
     
     @Inject(method = "tickNonPassenger", at = @At("HEAD"), cancellable = true)
     public void tickEntity(Entity entity, CallbackInfo info) {
-        if(!EntityCullingMod.instance.config.tickCulling) {
-            EntityCullingMod.instance.tickedEntities++;
+        if(!EntityCullingModBase.instance.config.tickCulling) {
+            EntityCullingModBase.instance.tickedEntities++;
             return; // disabled
         }
         // Use abstract minecart instead of whitelist to also catch modded Minecarts
         if(entity == mc.player || entity == mc.cameraEntity || entity.isPassenger() || entity.isVehicle() || (entity instanceof AbstractMinecart)) { 
-            EntityCullingMod.instance.tickedEntities++;
+            EntityCullingModBase.instance.tickedEntities++;
             return; // never skip the client tick for the player or entities in vehicles/with passengers
         }
-        if(EntityCullingMod.instance.tickCullWhistelist.contains(entity.getType())) {
-            EntityCullingMod.instance.tickedEntities++;
+        if(EntityCullingModBase.instance.tickCullWhistelist.contains(entity.getType())) {
+            EntityCullingModBase.instance.tickedEntities++;
             return; // whitelisted, don't skip that tick
         }
         if(entity instanceof Cullable) {
             Cullable cull = (Cullable) entity;
             if(cull.isCulled() || cull.isOutOfCamera()) {
                 basicTick(entity);
-                EntityCullingMod.instance.skippedEntityTicks++;
+                EntityCullingModBase.instance.skippedEntityTicks++;
                 info.cancel();
                 return;
             } else {
                 cull.setOutOfCamera(true);
             }
         }
-        EntityCullingMod.instance.tickedEntities++;
+        EntityCullingModBase.instance.tickedEntities++;
     }
     
     private void basicTick(Entity entity) {

@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import dev.tr7zw.entityculling.EntityCullingMod;
+import dev.tr7zw.entityculling.EntityCullingModBase;
 import dev.tr7zw.entityculling.access.Cullable;
 import dev.tr7zw.entityculling.access.EntityRendererInter;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -34,7 +34,7 @@ public class WorldRendererMixin {
             EntityRenderer<Entity> entityRenderer = (EntityRenderer<Entity>) entityRenderDispatcher.getRenderer(entity);
             @SuppressWarnings("unchecked")
             EntityRendererInter<Entity> entityRendererInter = (EntityRendererInter<Entity>) entityRenderer;
-            if (EntityCullingMod.instance.config.renderNametagsThroughWalls && matrices != null
+            if (EntityCullingModBase.instance.config.renderNametagsThroughWalls && matrices != null
                     && vertexConsumers != null && entityRendererInter.shadowShouldShowName(entity)) {
                 double x = Mth.lerp((double) tickDelta, (double) entity.xOld, (double) entity.getX())
                         - cameraX;
@@ -52,11 +52,11 @@ public class WorldRendererMixin {
                         vertexConsumers, this.entityRenderDispatcher.getPackedLightCoords(entity, tickDelta));
                 matrices.popPose();
             }
-            EntityCullingMod.instance.skippedEntities++;
+            EntityCullingModBase.instance.skippedEntities++;
             info.cancel();
             return;
         }
-        EntityCullingMod.instance.renderedEntities++;
+        EntityCullingModBase.instance.renderedEntities++;
         cullable.setOutOfCamera(false);
     }
 

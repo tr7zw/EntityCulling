@@ -1,0 +1,65 @@
+plugins {
+	id 'fabric-loom' version '0.9-SNAPSHOT'
+}
+
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
+
+archivesBaseName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
+
+repositories {
+    maven {
+        url "https://www.cursemaven.com"
+    }
+    maven { url 'https://jitpack.io' } //fabric asm
+    maven {
+        url "https://repo.codemc.io/repository/maven-public/"
+    }
+    //mavenLocal() // comment out for local testing
+}
+
+configurations {
+    // configuration that holds jars to include in the jar
+    extraLibs
+}
+
+dependencies {
+	// To change the versions see the gradle.properties file
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	implementation "com.logisticscraft:occlusionculling:0.0.5-SNAPSHOT"
+    extraLibs "com.logisticscraft:occlusionculling:0.0.5-SNAPSHOT"
+}
+
+minecraft {
+	remapMod = false
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.encoding = "UTF-8"
+	it.options.release = 16;
+	options.forkOptions.jvmArgs.addAll("--enable-preview")
+}
+
+java {
+	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+	// if it is present.
+	// If you remove this line, sources will not be generated.
+	withSourcesJar()
+	toolchain {
+        languageVersion = JavaLanguageVersion.of(16)
+    }
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.archivesBaseName}"}
+	}
+	from {
+        configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

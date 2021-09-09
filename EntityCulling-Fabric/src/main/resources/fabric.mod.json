@@ -19,7 +19,7 @@
 
   "environment": "client",
   "entrypoints": {
-    "main": [
+    "client": [
       "dev.tr7zw.entityculling.EntityCullingMod"
     ]
   },

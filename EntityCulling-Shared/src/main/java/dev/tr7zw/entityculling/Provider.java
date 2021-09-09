@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 
-public class FabricProvider implements DataProvider {
+public class Provider implements DataProvider {
 
     private final Minecraft client = Minecraft.getInstance();
     private ClientLevel world = null;

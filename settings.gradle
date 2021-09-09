@@ -1,5 +1,6 @@
 pluginManagement {
     repositories {
+        jcenter()
         maven {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
@@ -7,3 +8,8 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
+rootProject.name = 'EntityCulling'
+
+include 'EntityCulling-Shared'
+include 'EntityCulling-Fabric'
