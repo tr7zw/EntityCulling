@@ -13,3 +13,4 @@ rootProject.name = 'EntityCulling'
 
 include 'EntityCulling-Shared'
 include 'EntityCulling-Fabric'
+include 'EntityCulling-Forge'
