@@ -26,6 +26,10 @@ configurations {
     extraLibs
 }
 
+minecraft {
+    refmapName = "entityculling.refmap.json"
+}
+
 project.evaluationDependsOn(':EntityCulling-Shared')
 
 dependencies {
