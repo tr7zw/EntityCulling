@@ -22,7 +22,7 @@ group = project.maven_group
 archivesBaseName = 'entityculling-forge'
 
 // Mojang ships Java 16 to end users in 1.17+ instead of Java 8 in 1.16 or lower, so your mod should target Java 16.
-java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
@@ -104,7 +104,7 @@ configurations {
 project.evaluationDependsOn(':EntityCulling-Shared')
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${project.minecraft_version}-37.0.13"
+    minecraft "net.minecraftforge:forge:${project.minecraft_version}-38.0.16"
 
     implementation 'org.spongepowered:mixin:0.8.3'
     annotationProcessor 'org.spongepowered:mixin:0.8.3:processor'
