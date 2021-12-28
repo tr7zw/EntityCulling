@@ -5,35 +5,27 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.Registry;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.settings.KeyBinding;
 
 public abstract class EntityCullingModBase {
 
-    public static EntityCullingModBase instance;
+    public static EntityCullingModBase instance = new EntityCullingMod();
     public OcclusionCullingInstance culling;
-    public Set<BlockEntityType<?>> unCullable = new HashSet<>();
-    public Set<EntityType<?>> tickCullWhistelist = new HashSet<>();
+    public Set<String> unCullable = new HashSet<>();
+    public Set<String> tickCullWhistelist = new HashSet<>();
     public boolean debugHitboxes = false;
     public static boolean enabled = true; // public static to make it faster for the jvm
     public CullTask cullTask;
     private Thread cullThread;
-    protected KeyMapping keybind = new KeyMapping("key.entityculling.toggle", -1, "EntityCulling");
+    protected KeyBinding keybind = new KeyBinding("key.entityculling.toggle", -1, "EntityCulling");
     protected boolean pressed = false;
     private boolean configKeysLoaded = false;
 	
@@ -95,7 +87,7 @@ public abstract class EntityCullingModBase {
     }
     
     public void clientTick() {
-        if(!configKeysLoaded) {
+        /*if(!configKeysLoaded) {
             for(String blockId : config.blockEntityWhitelist) {
                 Optional<BlockEntityType<?>> block = Registry.BLOCK_ENTITY_TYPE.getOptional(new ResourceLocation(blockId));
                 block.ifPresent(b -> {
@@ -108,22 +100,20 @@ public abstract class EntityCullingModBase {
                         tickCullWhistelist.add(e);
                     });
             }
-        }
-        if (keybind.isDown()) {
+        }*/
+        if (keybind.isKeyDown()) {
             if (pressed)
                 return;
             pressed = true;
             enabled = !enabled;
-            LocalPlayer player = Minecraft.getInstance().player;
+            EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
             if(enabled) {
                 if (player != null) {
-                    player.sendMessage(new TextComponent("Culling on").withStyle(ChatFormatting.GREEN),
-                            Util.NIL_UUID);
+                    player.sendChatMessage("Culling on");
                 }
             } else {
                 if (player != null) {
-                    player.sendMessage(new TextComponent("Culling off").withStyle(ChatFormatting.RED),
-                            Util.NIL_UUID);
+                    player.sendChatMessage("Culling off");
                 }
             }
         } else {

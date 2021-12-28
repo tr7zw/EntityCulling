@@ -5,20 +5,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import dev.tr7zw.entityculling.EntityCullingModBase;
 import dev.tr7zw.entityculling.access.Cullable;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.tileentity.TileEntity;
 
-@Mixin(BlockEntityRenderDispatcher.class)
+@Mixin(TileEntityRendererDispatcher.class)
 public class BlockEntityRenderDispatcherMixin {
-
-    @Inject(method = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher;render(Lnet/minecraft/world/level/block/entity/BlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;)V", at = @At("HEAD"), cancellable = true)
-    public <E extends BlockEntity> void render(E blockEntity, float f, PoseStack poseStack,
-            MultiBufferSource multiBufferSource, CallbackInfo info) {
+    
+    @Inject(method = "renderTileEntityAt", at = @At("HEAD"), cancellable = true)
+    public void renderTileEntityAt(TileEntity blockEntity, double p_renderTileEntityAt_2_, double d1,
+            double d2, float f1, CallbackInfo info) {
         if (!((Cullable) blockEntity).isForcedVisible() && ((Cullable) blockEntity).isCulled()) {
             EntityCullingModBase.instance.skippedBlockEntities++;
             info.cancel();

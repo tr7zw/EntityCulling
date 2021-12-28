@@ -4,10 +4,10 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import dev.tr7zw.entityculling.EntityCullingModBase;
 import dev.tr7zw.entityculling.access.Cullable;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.tileentity.TileEntity;
 
-@Mixin(value = { Entity.class, BlockEntity.class })
+@Mixin(value = { Entity.class, TileEntity.class })
 public class CullableMixin implements Cullable {
 
 	private long lasttime = 0;

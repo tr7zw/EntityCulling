@@ -1,16 +1,29 @@
 pluginManagement {
     repositories {
-        jcenter()
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
-        }
         gradlePluginPortal()
+        mavenCentral()
+        mavenLocal()
+        maven {
+            name = "Forge"
+            url = "https://maven.minecraftforge.net/"
+        }
+        maven {
+            name = "Jitpack"
+            url = "https://jitpack.io/"
+        }
+    }
+    resolutionStrategy {
+        eachPlugin {
+            switch (requested.id.id) {
+                case 'net.minecraftforge.gradle.forge':
+                    useModule "com.github.asbyth:ForgeGradle:${requested.version}"
+                    break
+                case 'org.spongepowered.mixin':
+                    useModule "com.github.Skytils:MixinGradle:${requested.version}"
+                    break
+            }
+        }
     }
 }
 
-rootProject.name = 'EntityCulling'
-
-include 'EntityCulling-Shared'
-include 'EntityCulling-Fabric'
 include 'EntityCulling-Forge'
