@@ -8,7 +8,7 @@ jobs:
       matrix:
         # Use these Java versions
         java: [
-          16
+          8
         ]
         # and run on both Linux and Windows
         os: [ubuntu-20.04]
@@ -32,5 +32,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            EntityCulling-Fabric/build/libs/*
             EntityCulling-Forge/build/libs/*
