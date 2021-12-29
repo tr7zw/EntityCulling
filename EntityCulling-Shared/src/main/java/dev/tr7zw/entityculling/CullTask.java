@@ -15,6 +15,8 @@ import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.chunk.Chunk;
 
@@ -45,22 +47,24 @@ public class CullTask implements Runnable {
 			try {
 				Thread.sleep(sleepDelay);
 
-				if (EntityCullingModBase.enabled && client.theWorld != null && client.thePlayer != null && client.thePlayer.ticksExisted > 10) {
-				    Vec3 cameraMC = EntityCullingModBase.instance.config.debugMode
-                            ? client.thePlayer.getPositionEyes(0)//FIXME?
-                            : client.getRenderViewEntity().getPositionVector();
-					
+				if (EntityCullingModBase.enabled && client.theWorld != null && client.thePlayer != null && client.thePlayer.ticksExisted > 10 && client.getRenderViewEntity() != null) {
+				    Vec3 cameraMC = null;
+				    if(EntityCullingModBase.instance.config.debugMode) {
+				        cameraMC = client.thePlayer.getPositionEyes(0);
+				    } else {
+			            cameraMC = getCameraPos();
+				    }
 					if (requestCull || !(cameraMC.xCoord == lastPos.x && cameraMC.yCoord == lastPos.y && cameraMC.zCoord == lastPos.z)) {
 						long start = System.currentTimeMillis();
 						requestCull = false;
 						lastPos.set(cameraMC.xCoord, cameraMC.yCoord, cameraMC.zCoord);
 						Vec3d camera = lastPos;
 						culling.resetCache();
-						boolean spectator = client.thePlayer.isSpectator();
+						boolean noCulling = client.thePlayer.isSpectator() || client.gameSettings.thirdPersonView != 0;
 						for (int x = -8; x <= 8; x++) {
 							for (int z = -8; z <= 8; z++) {
-							    Chunk chunk = client.theWorld.getChunkFromChunkCoords((int)client.thePlayer.posX/16 + x, //FIXME
-							            (int)client.thePlayer.posZ/16 + z);
+							    Chunk chunk = client.theWorld.getChunkFromChunkCoords((int)client.thePlayer.posX >> 4 + x,
+							            (int)client.thePlayer.posZ >> 4 + z);
 								Iterator<Entry<BlockPos, TileEntity>> iterator = chunk.getTileEntityMap().entrySet().iterator();
 								Entry<BlockPos, TileEntity> entry;
 								while(iterator.hasNext()) {
@@ -75,7 +79,7 @@ public class CullTask implements Runnable {
 									}
 									Cullable cullable = (Cullable) entry.getValue();
 									if (!cullable.isForcedVisible()) {
-										if (spectator) {
+										if (noCulling) {
 											cullable.setCulled(false);
 											continue;
 										}
@@ -105,7 +109,7 @@ public class CullTask implements Runnable {
 							}
 							Cullable cullable = (Cullable) entity;
 							if (!cullable.isForcedVisible()) {
-								if (spectator || isSkippableArmorstand(entity)) {
+								if (noCulling || isSkippableArmorstand(entity)) {
 									cullable.setCulled(false);
 									continue;
 								}
@@ -132,6 +136,52 @@ public class CullTask implements Runnable {
 			}
 		}
 		System.out.println("Shutting down culling task!");
+	}
+	
+	// 1.8 doesnt know where the heck the camera is... what?!?
+	private Vec3 getCameraPos() {
+	    if (client.gameSettings.thirdPersonView == 0) {
+	        return client.getRenderViewEntity().getPositionEyes(0);
+	    }
+	    return client.getRenderViewEntity().getPositionEyes(0);
+	    // doesnt work correctly
+//        Entity entity = client.getRenderViewEntity();
+//        float f = entity.getEyeHeight();
+//        double d0 = entity.posX;
+//        double d1 = entity.posY + f;
+//        double d2 = entity.posZ;
+//        double d3 = 4.0F;
+//        float f1 = entity.rotationYaw;
+//        float f2 = entity.rotationPitch;
+//        if (client.gameSettings.thirdPersonView == 2)
+//            f2 += 180.0F;
+//        double d4 = (-MathHelper.sin(f1 / 180.0F * 3.1415927F) * MathHelper.cos(f2 / 180.0F * 3.1415927F)) * d3;
+//        double d5 = (MathHelper.cos(f1 / 180.0F * 3.1415927F) * MathHelper.cos(f2 / 180.0F * 3.1415927F)) * d3;
+//        double d6 = -MathHelper.sin(f2 / 180.0F * 3.1415927F) * d3;
+//        for (int i = 0; i < 8; i++) {
+//            float f3 = ((i & 0x1) * 2 - 1);
+//            float f4 = ((i >> 1 & 0x1) * 2 - 1);
+//            float f5 = ((i >> 2 & 0x1) * 2 - 1);
+//            f3 *= 0.1F;
+//            f4 *= 0.1F;
+//            f5 *= 0.1F;
+//            MovingObjectPosition movingobjectposition = client.theWorld.rayTraceBlocks(
+//                    new Vec3(d0 + f3, d1 + f4, d2 + f5),
+//                    new Vec3(d0 - d4 + f3 + f5, d1 - d6 + f4, d2 - d5 + f5));
+//            if (movingobjectposition != null) {
+//                double d7 = movingobjectposition.hitVec.distanceTo(new Vec3(d0, d1, d2));
+//                if (d7 < d3)
+//                    d3 = d7;
+//            }
+//        }
+//        float pitchRadian = f2 * (3.1415927F / 180); // X rotation
+//        float yawRadian   = f1   * (3.1415927F / 180); // Y rotation
+//        double newPosX = d0 - d3 *  MathHelper.sin( yawRadian ) * MathHelper.cos( pitchRadian );
+//        double newPosY = d1 - d3 * -MathHelper.sin( pitchRadian );
+//        double newPosZ = d2 - d3 *  MathHelper.cos( yawRadian ) * MathHelper.cos( pitchRadian );
+//        Vec3 vec = new Vec3(newPosX, newPosY, newPosZ);
+//        System.out.println(newPosX + " " + newPosY + " " + newPosZ);
+//        return vec;
 	}
 	
 	private boolean isSkippableArmorstand(Entity entity) {
