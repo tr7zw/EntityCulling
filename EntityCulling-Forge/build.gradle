@@ -26,15 +26,18 @@ minecraft {
     replace('@NAME@', "EntityCulling")
     replace('@VER@': project.mod_version)
     replace('@ID@', "entityculling")
-
     makeObfSourceJar = false
-    clientRunArgs += "--mixin entityculling.mixins.json"
+    clientRunArgs += "--tweakClass" 
+    clientRunArgs += "org.spongepowered.asm.launch.MixinTweaker"
+    clientRunArgs += "--mixin" 
+    clientRunArgs += "entityculling.mixins.json"
 }
 
 configurations {
     // Creates an extra configuration that implements `implementation` to be used later as the configuration that shades libraries
     include
     implementation.extendsFrom(include)
+    configurations.runtimeOnly.canBeResolved = true
 }
 
 
