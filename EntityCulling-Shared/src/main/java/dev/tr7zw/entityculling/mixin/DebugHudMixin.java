@@ -13,26 +13,17 @@ import net.minecraft.client.gui.GuiOverlayDebug;
 @Mixin(GuiOverlayDebug.class)
 public class DebugHudMixin {
 
-    private int lastTickedEntities = 0;
-    private int lastSkippedEntityTicks = 0;
-    
     public DebugHudMixin() {
         EntityCullingModBase.instance.clientTick();
     }
     
     @Inject(method = "call", at = @At("RETURN"))
     public List<String> getLeftText(CallbackInfoReturnable<List<String>> callback) {
-        if(EntityCullingModBase.instance.tickedEntities != 0 || EntityCullingModBase.instance.skippedEntityTicks != 0) {
-            lastTickedEntities = EntityCullingModBase.instance.tickedEntities;
-            lastSkippedEntityTicks = EntityCullingModBase.instance.skippedEntityTicks;
-            EntityCullingModBase.instance.tickedEntities = 0;
-            EntityCullingModBase.instance.skippedEntityTicks = 0;
-        }
         List<String> list = callback.getReturnValue();
         list.add("[Culling] Last pass: " + EntityCullingModBase.instance.cullTask.lastTime + "ms");
         list.add("[Culling] Rendered Block Entities: " + EntityCullingModBase.instance.renderedBlockEntities + " Skipped: " + EntityCullingModBase.instance.skippedBlockEntities);
         list.add("[Culling] Rendered Entities: " + EntityCullingModBase.instance.renderedEntities + " Skipped: " + EntityCullingModBase.instance.skippedEntities);
-        list.add("[Culling] Ticked Entities: " + lastTickedEntities + " Skipped: " + lastSkippedEntityTicks);
+        //list.add("[Culling] Ticked Entities: " + lastTickedEntities + " Skipped: " + lastSkippedEntityTicks);
         
         EntityCullingModBase.instance.renderedBlockEntities = 0;
         EntityCullingModBase.instance.skippedBlockEntities = 0;

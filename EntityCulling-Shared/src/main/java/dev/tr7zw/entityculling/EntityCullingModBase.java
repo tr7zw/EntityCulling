@@ -38,8 +38,8 @@ public abstract class EntityCullingModBase {
 	public int skippedBlockEntities = 0;
 	public int renderedEntities = 0;
 	public int skippedEntities = 0;
-	public int tickedEntities = 0;
-	public int skippedEntityTicks = 0;
+	//public int tickedEntities = 0;
+	//public int skippedEntityTicks = 0;
 
 	public void onInitialize() {
 		instance = this;
