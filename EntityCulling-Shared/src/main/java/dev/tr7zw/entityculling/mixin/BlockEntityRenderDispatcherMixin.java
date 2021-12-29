@@ -13,9 +13,9 @@ import net.minecraft.tileentity.TileEntity;
 @Mixin(TileEntityRendererDispatcher.class)
 public class BlockEntityRenderDispatcherMixin {
     
-    @Inject(method = "renderTileEntityAt", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "Lnet/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher;renderTileEntityAt(Lnet/minecraft/tileentity/TileEntity;DDDFI)V", at = @At("HEAD"), cancellable = true)
     public void renderTileEntityAt(TileEntity blockEntity, double p_renderTileEntityAt_2_, double d1,
-            double d2, float f1, CallbackInfo info) {
+            double d2, float f1, int p_renderTileEntityAt_9_, CallbackInfo info) {
         if (!((Cullable) blockEntity).isForcedVisible() && ((Cullable) blockEntity).isCulled()) {
             EntityCullingModBase.instance.skippedBlockEntities++;
             info.cancel();

@@ -15,8 +15,6 @@ import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.chunk.Chunk;
 
@@ -43,7 +41,7 @@ public class CullTask implements Runnable {
 	
 	@Override
 	public void run() {
-		while (client != null) { //FIXME
+		while (client != null) { // not correct, but the running field is hidden
 			try {
 				Thread.sleep(sleepDelay);
 
@@ -61,36 +59,30 @@ public class CullTask implements Runnable {
 						Vec3d camera = lastPos;
 						culling.resetCache();
 						boolean noCulling = client.thePlayer.isSpectator() || client.gameSettings.thirdPersonView != 0;
-						for (int x = -8; x <= 8; x++) {
-							for (int z = -8; z <= 8; z++) {
-							    Chunk chunk = client.theWorld.getChunkFromChunkCoords((int)client.thePlayer.posX >> 4 + x,
-							            (int)client.thePlayer.posZ >> 4 + z);
-								Iterator<Entry<BlockPos, TileEntity>> iterator = chunk.getTileEntityMap().entrySet().iterator();
-								Entry<BlockPos, TileEntity> entry;
-								while(iterator.hasNext()) {
-									try {
-										entry = iterator.next();
-									}catch(NullPointerException | ConcurrentModificationException ex) {
-										break; // We are not synced to the main thread, so NPE's/CME are allowed here and way less
-										// overhead probably than trying to sync stuff up for no really good reason
-									}
-									if(unCullable.contains(entry.getValue().getBlockType().getUnlocalizedName())) { //FIXME?
-										continue;
-									}
-									Cullable cullable = (Cullable) entry.getValue();
-									if (!cullable.isForcedVisible()) {
-										if (noCulling) {
-											cullable.setCulled(false);
-											continue;
-										}
-										BlockPos pos = entry.getKey();
-										if(pos.distanceSq(cameraMC.xCoord, cameraMC.yCoord, cameraMC.zCoord) < 64*64) { // 64 is the fixed max tile view distance
-										    aabbMin.set(pos.getX(), pos.getY(), pos.getZ());
-										    aabbMax.set(pos.getX()+1d, pos.getY()+1d, pos.getZ()+1d);
-    										boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
-    										cullable.setCulled(!visible);
-										}
-									}
+						Iterator<TileEntity> iterator = client.theWorld.loadedTileEntityList.iterator();
+						TileEntity entry;
+						while(iterator.hasNext()) {
+							try {
+								entry = iterator.next();
+							}catch(NullPointerException | ConcurrentModificationException ex) {
+								break; // We are not synced to the main thread, so NPE's/CME are allowed here and way less
+								// overhead probably than trying to sync stuff up for no really good reason
+							}
+							if(unCullable.contains(entry.getBlockType().getUnlocalizedName())) {
+								continue;
+							}
+							Cullable cullable = (Cullable) entry;
+							if (!cullable.isForcedVisible()) {
+								if (noCulling) {
+									cullable.setCulled(false);
+									continue;
+								}
+								BlockPos pos = entry.getPos();
+								if(pos.distanceSq(cameraMC.xCoord, cameraMC.yCoord, cameraMC.zCoord) < 64*64) { // 64 is the fixed max tile view distance
+								    aabbMin.set(pos.getX(), pos.getY(), pos.getZ());
+								    aabbMax.set(pos.getX()+1d, pos.getY()+1d, pos.getZ()+1d);
+									boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
+									cullable.setCulled(!visible);
 								}
 
 							}
@@ -118,10 +110,10 @@ public class CullTask implements Runnable {
 							        continue;
 							    }
 							    AxisAlignedBB boundingBox = entity.getEntityBoundingBox();
-							    /*if(boundingBox.x() > hitboxLimit || boundingBox.getYsize() > hitboxLimit || boundingBox.getZsize() > hitboxLimit) {
+							    if(boundingBox.maxX - boundingBox.minX > hitboxLimit || boundingBox.maxY - boundingBox.minY > hitboxLimit || boundingBox.maxZ - boundingBox.minZ > hitboxLimit) {
 								    cullable.setCulled(false); // To big to bother to cull
 								    continue;
-								}*/
+								}
 							    aabbMin.set(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
 							    aabbMax.set(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ);
 								boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
