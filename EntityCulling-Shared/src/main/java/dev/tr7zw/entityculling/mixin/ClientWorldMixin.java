@@ -48,10 +48,10 @@ public class ClientWorldMixin {
     }
     
     private void basicTick(Entity entity) {
-        entity.setOldPosAndRot();
+        entity.baseTick();
         ++entity.tickCount;
-        if(entity instanceof LivingEntity living) {
-            living.aiStep();
+        if(entity instanceof LivingEntity) {
+            ((LivingEntity)entity).aiStep();
         }
         
     }

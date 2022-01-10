@@ -5,85 +5,37 @@ buildscript {
         mavenCentral()
         maven {url='https://dist.creeper.host/Sponge/maven'}
         maven {url='https://repo.spongepowered.org/maven/'}
+        maven { url "https://maven.architectury.dev/" }
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
-apply plugin: 'net.minecraftforge.gradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
-apply plugin: 'org.spongepowered.mixin'
+plugins {
+	id "dev.architectury.loom" version "0.10.0-SNAPSHOT" apply false
+	id "com.github.johnrengelman.shadow" version "7.1.0"
+}
+
+apply plugin: "dev.architectury.loom"
+apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: "java"
+apply plugin: "maven-publish"
 
 version = project.mod_version
 group = project.maven_group
 archivesBaseName = 'entityculling-forge-mc' + project.minecraft_version
 
 // Mojang ships Java 16 to end users in 1.17+ instead of Java 8 in 1.16 or lower, so your mod should target Java 16.
-java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
-minecraft {
 
-    mappings channel: 'official', version: project.minecraft_version
-
-    runs {
-        client {
-       		property 'mixin.env.disableRefMap', 'true'
-            workingDirectory project.file('run')
-			arg "-Dmixin.config=entityculling.mixins.json"
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            mods {
-                examplemod {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            mods {
-                examplemod {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-
-            mods {
-                entityculling {
-                    source sourceSets.main
-                }
-            }
-        }
-    }
-}
+	loom {
+		refmapName = "entityculling.refmap.json"
+        forge.mixinConfigs "entityculling.mixins.json"
+	}
 
 
 repositories {
@@ -104,10 +56,10 @@ configurations {
 project.evaluationDependsOn(':EntityCulling-Shared')
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${project.minecraft_version}-37.0.13"
+    minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    forge "net.minecraftforge:forge:${rootProject.minecraft_version}-36.2.23"
 
-    implementation 'org.spongepowered:mixin:0.8.3'
-    annotationProcessor 'org.spongepowered:mixin:0.8.3:processor'
 
     implementation "com.logisticscraft:occlusionculling:${project.occlusionculling_version}"
     extraLibs "com.logisticscraft:occlusionculling:${project.occlusionculling_version}"
@@ -141,7 +93,3 @@ jar {
 jar.finalizedBy('reobfJar') 
 // However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
 //publish.dependsOn('reobfJar')
-
-mixin {
-    add sourceSets.main, "entityculling.refmap.json"
-}

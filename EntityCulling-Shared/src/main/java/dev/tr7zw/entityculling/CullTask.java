@@ -60,8 +60,8 @@ public class CullTask implements Runnable {
 						boolean spectator = client.player.isSpectator();
 						for (int x = -8; x <= 8; x++) {
 							for (int z = -8; z <= 8; z++) {
-							    LevelChunk chunk = client.level.getChunk(client.player.chunkPosition().x + x,
-                                        client.player.chunkPosition().z + z);
+							    LevelChunk chunk = client.level.getChunk(client.player.xChunk + x,
+                                        client.player.yChunk + z);
 								Iterator<Entry<BlockPos, BlockEntity>> iterator = chunk.getBlockEntities().entrySet().iterator();
 								Entry<BlockPos, BlockEntity> entry;
 								while(iterator.hasNext()) {
@@ -106,7 +106,7 @@ public class CullTask implements Runnable {
 							}
 							Cullable cullable = (Cullable) entity;
 							if (!cullable.isForcedVisible()) {
-								if (spectator || entity.isCurrentlyGlowing() || isSkippableArmorstand(entity)) {
+								if (spectator || entity.isGlowing() || isSkippableArmorstand(entity)) {
 									cullable.setCulled(false);
 									continue;
 								}
