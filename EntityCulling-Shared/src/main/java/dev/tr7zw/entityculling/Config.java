@@ -8,7 +8,18 @@ public class Config {
 
     public int configVersion = 4;
     public boolean renderNametagsThroughWalls = true;
-    public Set<String> blockEntityWhitelist = new HashSet<>(Arrays.asList("minecraft:beacon", "create:rope_pulley", "create:hose_pulley", "betterend:eternal_pedestal", "draconicevolution:storage_core"));
+    public Set<String> blockEntityWhitelist = new HashSet<>(Arrays.asList(
+            "minecraft:beacon",
+            "create:rope_pulley",
+            "create:hose_pulley",
+            "betterend:eternal_pedestal",
+            "draconicevolution:storage_core",
+            "draconicevolution:core_stabilizer",
+            "draconicevolution:reactor_core",
+            "draconicevolution:reactor_stabilizer",
+            "draconicevolution:reactor_injector",
+            "draconicevolution:grinder"
+    ));
     public int tracingDistance = 128;
     public boolean debugMode = false;
     public int sleepDelay = 10;
