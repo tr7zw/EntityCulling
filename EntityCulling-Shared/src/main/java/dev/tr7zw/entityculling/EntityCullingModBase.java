@@ -17,11 +17,14 @@ import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.phys.AABB;
 
 public abstract class EntityCullingModBase {
 
@@ -134,5 +137,7 @@ public abstract class EntityCullingModBase {
     }
 
     public abstract void initModloader();
+    
+    public abstract AABB setupAABB(BlockEntity entity, BlockPos pos);
 	
 }
