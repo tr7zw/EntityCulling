@@ -19,6 +19,10 @@ public class ConfigUpgrader {
             config.tickCullingWhitelist.add("minecraft:boat");
             changed = true;
         }
+        if(config.configVersion < 5){
+            config.configVersion = 5;
+            changed = true;
+        }
         // check for more changes here
         
         return changed;

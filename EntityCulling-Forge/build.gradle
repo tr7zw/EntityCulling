@@ -134,6 +134,7 @@ jar {
     from {
         configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
     }
+    from "${project.rootDir}/LICENSE-EntityCulling"
 }
 
 // Example configuration to allow publishing using the maven-publish task
