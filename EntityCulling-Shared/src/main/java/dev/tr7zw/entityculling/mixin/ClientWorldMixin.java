@@ -29,7 +29,7 @@ public class ClientWorldMixin {
             EntityCullingModBase.instance.tickedEntities++;
             return; // never skip the client tick for the player or entities in vehicles/with passengers
         }
-        if(EntityCullingModBase.instance.tickCullWhistelist.contains(entity.getType())) {
+        if(EntityCullingModBase.instance.entityWhistelist.contains(entity.getType())) {
             EntityCullingModBase.instance.tickedEntities++;
             return; // whitelisted, don't skip that tick
         }
