@@ -52,6 +52,8 @@ public class ClientWorldMixin {
         ++entity.tickCount;
         if(entity instanceof LivingEntity) {
             ((LivingEntity)entity).aiStep();
+            if (((LivingEntity)entity).hurtTime > 0)
+                ((LivingEntity)entity).hurtTime--;
         }
         
     }
