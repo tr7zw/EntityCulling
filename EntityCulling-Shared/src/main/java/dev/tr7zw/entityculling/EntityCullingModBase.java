@@ -30,7 +30,8 @@ public abstract class EntityCullingModBase {
 
     public static EntityCullingModBase instance;
     public OcclusionCullingInstance culling;
-    public Set<BlockEntityType<?>> unCullable = new HashSet<>();
+    public Set<BlockEntityType<?>> blockEntityWhitelist = new HashSet<>();
+    public Set<EntityType<?>> entityWhistelist = new HashSet<>();
     public Set<EntityType<?>> tickCullWhistelist = new HashSet<>();
     public boolean debugHitboxes = false;
     public static boolean enabled = true; // public static to make it faster for the jvm
@@ -72,7 +73,7 @@ public abstract class EntityCullingModBase {
             }
         }
         culling = new OcclusionCullingInstance(config.tracingDistance, new Provider());
-        cullTask = new CullTask(culling, unCullable);
+        cullTask = new CullTask(culling, blockEntityWhitelist, entityWhistelist);
 
 		cullThread = new Thread(cullTask, "CullThread");
 		cullThread.setUncaughtExceptionHandler((thread, ex) -> {
@@ -103,14 +104,20 @@ public abstract class EntityCullingModBase {
             for(String blockId : config.blockEntityWhitelist) {
                 Optional<BlockEntityType<?>> block = Registry.BLOCK_ENTITY_TYPE.getOptional(new ResourceLocation(blockId));
                 block.ifPresent(b -> {
-                    unCullable.add(b);
+                    blockEntityWhitelist.add(b);
                 });
             }
             for(String entityType : config.tickCullingWhitelist) {
-                    Optional<EntityType<?>> entity = Registry.ENTITY_TYPE.getOptional(new ResourceLocation(entityType));
-                    entity.ifPresent(e -> {
-                        tickCullWhistelist.add(e);
-                    });
+                Optional<EntityType<?>> entity = Registry.ENTITY_TYPE.getOptional(new ResourceLocation(entityType));
+                entity.ifPresent(e -> {
+                    entityWhistelist.add(e);
+                });
+            }
+            for(String entityType : config.entityWhitelist) {
+                Optional<EntityType<?>> entity = Registry.ENTITY_TYPE.getOptional(new ResourceLocation(entityType));
+                entity.ifPresent(e -> {
+                    entityWhistelist.add(e);
+                });
             }
         }
         if (keybind.isDown()) {
