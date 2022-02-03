@@ -77,6 +77,9 @@ public class CullTask implements Runnable {
 									if(blockEntityWhitelist.contains(entry.getValue().getType())) {
 										continue;
 									}
+									if(EntityCullingModBase.instance.isDynamicWhitelisted(entry.getValue())) {
+									    continue;
+									}
 									Cullable cullable = (Cullable) entry.getValue();
 									if (!cullable.isForcedVisible()) {
 										if (spectator) {
@@ -113,6 +116,9 @@ public class CullTask implements Runnable {
 							    continue; // Not sure how this could happen outside from mixin screwing up the inject into Entity
 							}
                             if(entityWhistelist.contains(entity.getType())) {
+                                continue;
+                            }
+                            if(EntityCullingModBase.instance.isDynamicWhitelisted(entity)) {
                                 continue;
                             }
 							Cullable cullable = (Cullable) entity;
