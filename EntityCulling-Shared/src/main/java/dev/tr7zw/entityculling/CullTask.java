@@ -12,6 +12,7 @@ import dev.tr7zw.entityculling.access.Cullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -27,7 +28,8 @@ public class CullTask implements Runnable {
     private final Minecraft client = Minecraft.getInstance();
 	private final int sleepDelay = EntityCullingModBase.instance.config.sleepDelay;
 	private final int hitboxLimit = EntityCullingModBase.instance.config.hitboxLimit;
-	private final Set<BlockEntityType<?>> unCullable;
+	private final Set<BlockEntityType<?>> blockEntityWhitelist;
+	private final Set<EntityType<?>> entityWhistelist;
 	public long lastTime = 0;
 	
 	// reused preallocated vars
@@ -35,9 +37,10 @@ public class CullTask implements Runnable {
 	private Vec3d aabbMin = new Vec3d(0, 0, 0);
 	private Vec3d aabbMax = new Vec3d(0, 0, 0);
 
-	public CullTask(OcclusionCullingInstance culling, Set<BlockEntityType<?>> unCullable) {
+	public CullTask(OcclusionCullingInstance culling, Set<BlockEntityType<?>> blockEntityWhitelist, Set<EntityType<?>> entityWhistelist) {
 		this.culling = culling;
-		this.unCullable = unCullable;
+		this.blockEntityWhitelist = blockEntityWhitelist;
+		this.entityWhistelist = entityWhistelist;
 	}
 	
 	@Override
@@ -71,7 +74,7 @@ public class CullTask implements Runnable {
 										break; // We are not synced to the main thread, so NPE's/CME are allowed here and way less
 										// overhead probably than trying to sync stuff up for no really good reason
 									}
-									if(unCullable.contains(entry.getValue().getType())) {
+									if(blockEntityWhitelist.contains(entry.getValue().getType())) {
 										continue;
 									}
 									Cullable cullable = (Cullable) entry.getValue();
@@ -109,6 +112,9 @@ public class CullTask implements Runnable {
 							if(entity == null || !(entity instanceof Cullable)) {
 							    continue; // Not sure how this could happen outside from mixin screwing up the inject into Entity
 							}
+                            if(entityWhistelist.contains(entity.getType())) {
+                                continue;
+                            }
 							Cullable cullable = (Cullable) entity;
 							if (!cullable.isForcedVisible()) {
 								if (spectator || entity.isCurrentlyGlowing() || isSkippableArmorstand(entity)) {
