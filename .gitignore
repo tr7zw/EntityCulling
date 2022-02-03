@@ -7,3 +7,4 @@ bin
 .project
 .classpath
 .idea
+.vscode/launch.json
