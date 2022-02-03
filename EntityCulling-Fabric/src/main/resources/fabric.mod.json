@@ -14,7 +14,7 @@
     "issues": "https://github.com/tr7zw/EntityCulling-Fabric/issues"
   },
 
-  "license": "MIT",
+  "license": "tr7zw Protective License",
   "icon": "assets/entityculling/icon.png",
 
   "environment": "client",
