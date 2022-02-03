@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -21,6 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -40,6 +42,8 @@ public abstract class EntityCullingModBase {
     protected KeyMapping keybind = new KeyMapping("key.entityculling.toggle", -1, "EntityCulling");
     protected boolean pressed = false;
     private boolean configKeysLoaded = false;
+    private Set<Function<BlockEntity, Boolean>> dynamicBlockEntityWhitelist = new HashSet<>();
+    private Set<Function<Entity, Boolean>> dynamicEntityWhitelist = new HashSet<>();
 	
     public Config config;
     private final File settingsFile = new File("config", "entityculling.json");
@@ -146,5 +150,41 @@ public abstract class EntityCullingModBase {
     public abstract void initModloader();
     
     public abstract AABB setupAABB(BlockEntity entity, BlockPos pos);
+    
+    public boolean isDynamicWhitelisted(BlockEntity entity) {
+        for(Function<BlockEntity, Boolean> fun : dynamicBlockEntityWhitelist) {
+            if(fun.apply(entity)) {
+                return true;
+            }
+        }
+        return false;
+    }
 	
+    public boolean isDynamicWhitelisted(Entity entity) {
+        for(Function<Entity, Boolean> fun : dynamicEntityWhitelist) {
+            if(fun.apply(entity)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Add a dynamic function that can return true to disable culling for a BlockEntity temporarly. 
+     * 
+     * @param function
+     */
+    public void addDynamicBlockEntityWhitelist(Function<BlockEntity, Boolean> function) {
+        this.dynamicBlockEntityWhitelist.add(function);
+    }
+    
+    /**
+     * Add a dynamic function that can return true to disable culling for an entity temporarly. 
+     * 
+     * @param function
+     */
+    public void addDynamicEntityWhitelist(Function<Entity, Boolean> function) {
+        this.dynamicEntityWhitelist.add(function);
+    }
+    
 }
