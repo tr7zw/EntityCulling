@@ -1,5 +1,10 @@
 package dev.tr7zw.entityculling;
 
+import org.apache.commons.lang3.tuple.Pair;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.WorldTickEvent;
@@ -47,6 +52,11 @@ public class EntityCullingMod extends EntityCullingModBase {
     
     private void doWorldTick(WorldTickEvent event) {
         this.worldTick();
+    }
+
+    @Override
+    public AABB setupAABB(BlockEntity entity, BlockPos pos) {
+        return entity.getRenderBoundingBox();
     }
     
 }

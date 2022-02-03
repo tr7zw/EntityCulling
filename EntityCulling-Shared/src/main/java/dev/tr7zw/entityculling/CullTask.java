@@ -82,8 +82,13 @@ public class CullTask implements Runnable {
 										}
 										BlockPos pos = entry.getKey();
 										if(pos.closerThan(cameraMC, 64)) { // 64 is the fixed max tile view distance
-										    aabbMin.set(pos.getX(), pos.getY(), pos.getZ());
-										    aabbMax.set(pos.getX()+1d, pos.getY()+1d, pos.getZ()+1d);
+			                                AABB boundingBox = EntityCullingModBase.instance.setupAABB(entry.getValue(), pos);
+			                                if(boundingBox.getXsize() > hitboxLimit || boundingBox.getYsize() > hitboxLimit || boundingBox.getZsize() > hitboxLimit) {
+			                                    cullable.setCulled(false); // To big to bother to cull
+			                                    continue;
+			                                }
+			                                aabbMin.set(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
+			                                aabbMax.set(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ);
     										boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
     										cullable.setCulled(!visible);
 										}
