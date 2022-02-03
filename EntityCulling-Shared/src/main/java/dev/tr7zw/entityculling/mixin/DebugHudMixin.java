@@ -24,6 +24,9 @@ public class DebugHudMixin {
             EntityCullingModBase.instance.tickedEntities = 0;
             EntityCullingModBase.instance.skippedEntityTicks = 0;
         }
+        if(EntityCullingModBase.instance.config.disableF3) {
+            return callback.getReturnValue();
+        }
         List<String> list = callback.getReturnValue();
         list.add("[Culling] Last pass: " + EntityCullingModBase.instance.cullTask.lastTime + "ms");
         list.add("[Culling] Rendered Block Entities: " + EntityCullingModBase.instance.renderedBlockEntities + " Skipped: " + EntityCullingModBase.instance.skippedBlockEntities);

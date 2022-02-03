@@ -94,6 +94,7 @@ public abstract class EntityCullingModBase {
         cullTask.requestCull = true;
     }
     
+    @SuppressWarnings("resource")
     public void clientTick() {
         if(!configKeysLoaded) {
             for(String blockId : config.blockEntityWhitelist) {
