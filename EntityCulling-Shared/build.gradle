@@ -17,6 +17,9 @@ repositories {
     maven {
         url "https://repo.codemc.io/repository/maven-public/"
     }
+    maven {
+        url "https://repo.codemc.io/repository/maven-snapshots/"
+    }
     //mavenLocal() // comment out for local testing
 }
 
