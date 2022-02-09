@@ -34,7 +34,7 @@ dependencies {
 	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	implementation "com.logisticscraft:${project.occlusionculling_version}"
+	implementation "com.logisticscraft:occlusionculling:0.0.5-SNAPSHOT"
 }
 
 minecraft {
