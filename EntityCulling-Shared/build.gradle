@@ -35,7 +35,6 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	implementation "com.logisticscraft:${project.occlusionculling_version}"
-    extraLibs "com.logisticscraft:${project.occlusionculling_version}"
 }
 
 minecraft {
