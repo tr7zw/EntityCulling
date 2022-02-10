@@ -2,8 +2,8 @@ plugins {
 	id 'fabric-loom' version '0.9-SNAPSHOT'
 }
 
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = JavaVersion.VERSION_8
+targetCompatibility = JavaVersion.VERSION_8
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -43,7 +43,7 @@ minecraft {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
-	it.options.release = 16;
+	it.options.release = 8;
 	options.forkOptions.jvmArgs.addAll("--enable-preview")
 }
 
@@ -53,7 +53,7 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 	toolchain {
-        languageVersion = JavaLanguageVersion.of(16)
+        languageVersion = JavaLanguageVersion.of(8)
     }
 }
 

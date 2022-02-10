@@ -3,8 +3,8 @@ plugins {
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = JavaVersion.VERSION_8
+targetCompatibility = JavaVersion.VERSION_8
 
 archivesBaseName = 'entityculling-fabric-mc' + project.minecraft_version
 version = project.mod_version
@@ -61,7 +61,7 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
-	it.options.release = 16;
+	it.options.release = 8;
 	options.forkOptions.jvmArgs.addAll("--enable-preview")
 }
 
@@ -71,7 +71,7 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 	toolchain {
-        languageVersion = JavaLanguageVersion.of(16)
+        languageVersion = JavaLanguageVersion.of(8)
     }
 }
 
