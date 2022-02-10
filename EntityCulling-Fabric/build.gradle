@@ -3,8 +3,8 @@ plugins {
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_8
-targetCompatibility = JavaVersion.VERSION_8
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 archivesBaseName = 'entityculling-fabric-mc' + project.minecraft_version
 version = project.mod_version
