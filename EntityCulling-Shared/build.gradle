@@ -44,7 +44,6 @@ minecraft {
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
 	it.options.release = 8;
-	options.forkOptions.jvmArgs.addAll("--enable-preview")
 }
 
 java {
@@ -52,9 +51,6 @@ java {
 	// if it is present.
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
-	toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
-    }
 }
 
 jar {
