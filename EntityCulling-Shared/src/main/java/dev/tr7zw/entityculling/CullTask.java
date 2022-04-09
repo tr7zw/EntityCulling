@@ -87,7 +87,7 @@ public class CullTask implements Runnable {
 											continue;
 										}
 										BlockPos pos = entry.getKey();
-										if(pos.closerThan(cameraMC, 64)) { // 64 is the fixed max tile view distance
+										if(closerThan(pos, cameraMC, 64)) { // 64 is the fixed max tile view distance
 			                                AABB boundingBox = EntityCullingModBase.instance.setupAABB(entry.getValue(), pos);
 			                                if(boundingBox.getXsize() > hitboxLimit || boundingBox.getYsize() > hitboxLimit || boundingBox.getZsize() > hitboxLimit) {
 			                                    cullable.setCulled(false); // To big to bother to cull
@@ -155,5 +155,18 @@ public class CullTask implements Runnable {
 	private boolean isSkippableArmorstand(Entity entity) {
 	    if(!EntityCullingModBase.instance.config.skipMarkerArmorStands)return false;
 	    return entity instanceof ArmorStand && ((ArmorStand) entity).isMarker();
+	}
+	
+	// Vec3i forward compatibility functions
+	private static boolean closerThan(BlockPos blockPos, Position position, double d) {
+		return distSqr(blockPos, position.x(), position.y(), position.z(), true) < d * d;
+	}
+
+	private static double distSqr(BlockPos blockPos, double d, double e, double f, boolean bl) {
+		double g = bl ? 0.5D : 0.0D;
+		double h = (double)blockPos.getX() + g - d;
+		double i = (double)blockPos.getY() + g - e;
+		double j = (double)blockPos.getZ() + g - f;
+		return h * h + i * i + j * j;
 	}
 }
