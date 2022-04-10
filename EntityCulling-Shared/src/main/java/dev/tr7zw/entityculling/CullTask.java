@@ -11,6 +11,7 @@ import com.logisticscraft.occlusionculling.util.Vec3d;
 import dev.tr7zw.entityculling.access.Cullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Position;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
