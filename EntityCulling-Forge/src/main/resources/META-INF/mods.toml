@@ -3,7 +3,7 @@ loaderVersion="[35,)"
 license="tr7zw Protective License"
 [[mods]]
 modId="entityculling"
-version="1.5.1"
+version="1.5.2"
 displayName="EntityCulling"
 authors="tr7zw"
 description='''
