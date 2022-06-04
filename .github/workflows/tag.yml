@@ -31,4 +31,3 @@ jobs:
         with:
           files: |
             EntityCulling-Fabric/build/libs/*
-            EntityCulling-Forge/build/libs/*

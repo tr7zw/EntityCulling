@@ -46,10 +46,9 @@ public class CullTask implements Runnable {
 	
 	@Override
 	public void run() {
-		while (client.isRunning()) {
+		while (client.getGame() != null) { // client.isRunning() returns false at the start?!?
 			try {
 				Thread.sleep(sleepDelay);
-
 				if (EntityCullingModBase.enabled && client.level != null && client.player != null && client.player.tickCount > 10) {
 				    Vec3 cameraMC = EntityCullingModBase.instance.config.debugMode
                             ? client.player.getEyePosition(client.getDeltaFrameTime())

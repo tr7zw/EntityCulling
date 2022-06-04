@@ -1,5 +1,6 @@
 package dev.tr7zw.entityculling;
 
+import java.awt.TextComponent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -20,13 +21,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.network.chat.Component;
 
 public abstract class EntityCullingModBase {
 
@@ -132,13 +133,11 @@ public abstract class EntityCullingModBase {
             LocalPlayer player = Minecraft.getInstance().player;
             if(enabled) {
                 if (player != null) {
-                    player.sendMessage(new TextComponent("Culling on").withStyle(ChatFormatting.GREEN),
-                            Util.NIL_UUID);
+                    player.sendSystemMessage(Component.literal("Culling on").withStyle(ChatFormatting.GREEN));
                 }
             } else {
                 if (player != null) {
-                    player.sendMessage(new TextComponent("Culling off").withStyle(ChatFormatting.RED),
-                            Util.NIL_UUID);
+                    player.sendSystemMessage(Component.literal("Culling off").withStyle(ChatFormatting.RED));
                 }
             }
         } else {

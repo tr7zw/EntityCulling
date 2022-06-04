@@ -36,4 +36,3 @@ jobs:
           name: Artifacts
           path: |
             EntityCulling-Fabric/build/libs/*
-            EntityCulling-Forge/build/libs/*
