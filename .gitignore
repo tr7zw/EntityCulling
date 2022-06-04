@@ -1,10 +1,40 @@
-run
-.gradle
-build
-bin
-.settings
+# gradle
+
+.gradle/
+build/
+out/
+classes/
+
+# eclipse
+
 *.launch
-.project
+
+# idea
+
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# vscode
+
+.settings/
+.vscode/
+bin/
 .classpath
-.idea
-.vscode/launch.json
+.project
+
+# macos
+
+*.DS_Store
+
+# fabric
+
+run/
+
+# compose
+
+*.gradle
+*.properties
+gradle/wrapper
+VersionShared
