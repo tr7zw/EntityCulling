@@ -19,6 +19,6 @@ Using async raytracing to hide Tile-/Entities that are hidden behind solid block
 [[dependencies.entityculling]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.18,)"
+    versionRange="[1.19,)"
     ordering="NONE"
     side="CLIENT"

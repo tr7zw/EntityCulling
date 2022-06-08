@@ -16,5 +16,5 @@ rootProject:
 subProjects:
   EntityCulling-Fabric:
     template: "Fabric"
-#  EntityCulling-Forge:
-#    template: "Forge"
+  EntityCulling-Forge:
+    template: "Forge"
