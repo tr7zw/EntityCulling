@@ -19,7 +19,7 @@ public class DonorAbstractClientPlayerMixin implements DonorProvider {
     
     @Inject(method = "getSkinTextureLocation", at = @At("HEAD"), cancellable = true)
     public void getSkinTextureLocationDonor(CallbackInfoReturnable<ResourceLocation> ci) {
-        ResourceLocation loc = getDonorSkinProvider().getSkin();
+        ResourceLocation loc = getAnimatedSkin();
         if(loc != null) {
             ci.setReturnValue(loc);
             ci.cancel(); 
@@ -27,11 +27,11 @@ public class DonorAbstractClientPlayerMixin implements DonorProvider {
     }
 
     @Override
-    public DonorSkinProvider getDonorSkinProvider() {
+    public ResourceLocation getAnimatedSkin() {
         if(trDonorProvider == null) {
             trDonorProvider = new DonorSkinProvider(((AbstractClientPlayer)(Object)this).getUUID());
         }
-        return trDonorProvider;
+        return trDonorProvider.getSkin();
     }
     
 
