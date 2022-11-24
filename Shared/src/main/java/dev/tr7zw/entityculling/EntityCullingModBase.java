@@ -1,6 +1,5 @@
 package dev.tr7zw.entityculling;
 
-import java.awt.TextComponent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -15,19 +14,18 @@ import com.google.gson.GsonBuilder;
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.network.chat.Component;
 
 public abstract class EntityCullingModBase {
 
@@ -107,19 +105,19 @@ public abstract class EntityCullingModBase {
     public void clientTick() {
         if(!configKeysLoaded) {
             for(String blockId : config.blockEntityWhitelist) {
-                Optional<BlockEntityType<?>> block = Registry.BLOCK_ENTITY_TYPE.getOptional(new ResourceLocation(blockId));
+                Optional<BlockEntityType<?>> block = BuiltInRegistries.BLOCK_ENTITY_TYPE.getOptional(new ResourceLocation(blockId));
                 block.ifPresent(b -> {
                     blockEntityWhitelist.add(b);
                 });
             }
             for(String entityType : config.tickCullingWhitelist) {
-                Optional<EntityType<?>> entity = Registry.ENTITY_TYPE.getOptional(new ResourceLocation(entityType));
+                Optional<EntityType<?>> entity = BuiltInRegistries.ENTITY_TYPE.getOptional(new ResourceLocation(entityType));
                 entity.ifPresent(e -> {
                     entityWhistelist.add(e);
                 });
             }
             for(String entityType : config.entityWhitelist) {
-                Optional<EntityType<?>> entity = Registry.ENTITY_TYPE.getOptional(new ResourceLocation(entityType));
+                Optional<EntityType<?>> entity = BuiltInRegistries.ENTITY_TYPE.getOptional(new ResourceLocation(entityType));
                 entity.ifPresent(e -> {
                     entityWhistelist.add(e);
                 });
