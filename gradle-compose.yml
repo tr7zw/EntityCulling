@@ -1,5 +1,5 @@
 version: '0.0.1'
-source: "https://github.com/tr7zw/ForgeFabricComposeTemplate/tree/1.19.3-fabriconly-mcpublish/"
+source: "https://github.com/tr7zw/ForgeFabricComposeTemplate/tree/1.19.3-mcpublish/"
 replacements:
   group: "dev.tr7zw"
   name: "EntityCulling"
@@ -8,7 +8,7 @@ replacements:
   author: "tr7zw"
   relocationpackage: "dev.tr7zw.entityculling"
   dependencies: '
-  	include "com.logisticscraft:occlusionculling:0.0.6-SNAPSHOT"
+  	inc "com.logisticscraft:occlusionculling:0.0.6-SNAPSHOT"
   '
   licensename: "LICENSE-EntityCulling"
   modrinthid: NNAgCjsB
@@ -18,5 +18,5 @@ rootProject:
 subProjects:
   EntityCulling-Fabric:
     template: "Fabric"
-#  EntityCulling-Forge:
-#    template: "Forge"
+  EntityCulling-Forge:
+    template: "Forge"
