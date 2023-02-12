@@ -4,7 +4,7 @@ replacements:
   group: "dev.tr7zw"
   name: "EntityCulling"
   id: "entityculling"
-  version: "1.5.2"
+  version: "1.6.0"
   author: "tr7zw"
   relocationpackage: "dev.tr7zw.entityculling"
   dependencies: '
