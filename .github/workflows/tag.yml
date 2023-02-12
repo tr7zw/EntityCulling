@@ -1,9 +1,7 @@
 name: Create Release
-
 on:
   release:
     types: [published]
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,7 +22,6 @@ jobs:
           files: |
             EntityCulling-Fabric/build/libs/*
             EntityCulling-Forge/build/libs/*
-
       - name: Publish-Forge-Curseforge
         uses: Kir-Antipov/mc-publish@v3.2
         with:

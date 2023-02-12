@@ -1,5 +1,5 @@
-version: '0.0.1'
-source: "https://github.com/tr7zw/ForgeFabricComposeTemplate/tree/1.19.3-mcpublish/"
+version: '0.0.2'
+source: "https://github.com/tr7zw/ModComposeTemplate/tree/1.19.3"
 replacements:
   group: "dev.tr7zw"
   name: "EntityCulling"
@@ -13,6 +13,12 @@ replacements:
   licensename: "LICENSE-EntityCulling"
   modrinthid: NNAgCjsB
   curseforgeid: 448233
+enabledFlags:
+  - autopublish
+  - publishFabric
+  - publishForge
+  - modrinth
+  - curseforge
 rootProject:
   template: "."
 subProjects:
