@@ -12,8 +12,7 @@
     "EntityRendererMixin",
     "CullableMixin",
     "DebugHudMixin",
-    "ClientWorldMixin",
-    "DonorAbstractClientPlayerMixin"
+    "ClientWorldMixin"
   ],
   "injectors": {
     "defaultRequire": 1
