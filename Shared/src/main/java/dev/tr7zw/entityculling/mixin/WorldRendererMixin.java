@@ -28,8 +28,11 @@ public class WorldRendererMixin {
     @Inject(at = @At("HEAD"), method = "renderEntity", cancellable = true)
     private void renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta,
             PoseStack matrices, MultiBufferSource vertexConsumers, CallbackInfo info) {
+        if(EntityCullingModBase.instance.config.skipEntityCulling) {
+            return;
+        }
         Cullable cullable = (Cullable) entity;
-        if (!cullable.isForcedVisible() && cullable.isCulled()) {
+        if (!cullable.isForcedVisible() && cullable.isCulled() && !entity.noCulling) {
             @SuppressWarnings("unchecked")
             EntityRenderer<Entity> entityRenderer = (EntityRenderer<Entity>) entityRenderDispatcher.getRenderer(entity);
             @SuppressWarnings("unchecked")

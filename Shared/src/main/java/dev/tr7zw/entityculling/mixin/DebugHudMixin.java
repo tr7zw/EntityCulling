@@ -29,9 +29,13 @@ public class DebugHudMixin {
         }
         List<String> list = callback.getReturnValue();
         list.add("[Culling] Last pass: " + EntityCullingModBase.instance.cullTask.lastTime + "ms");
-        list.add("[Culling] Rendered Block Entities: " + EntityCullingModBase.instance.renderedBlockEntities + " Skipped: " + EntityCullingModBase.instance.skippedBlockEntities);
-        list.add("[Culling] Rendered Entities: " + EntityCullingModBase.instance.renderedEntities + " Skipped: " + EntityCullingModBase.instance.skippedEntities);
-        list.add("[Culling] Ticked Entities: " + lastTickedEntities + " Skipped: " + lastSkippedEntityTicks);
+        if(!EntityCullingModBase.instance.config.skipBlockEntityCulling) {
+            list.add("[Culling] Rendered Block Entities: " + EntityCullingModBase.instance.renderedBlockEntities + " Skipped: " + EntityCullingModBase.instance.skippedBlockEntities);
+        }
+        if(!EntityCullingModBase.instance.config.skipEntityCulling) {
+            list.add("[Culling] Rendered Entities: " + EntityCullingModBase.instance.renderedEntities + " Skipped: " + EntityCullingModBase.instance.skippedEntities);
+            list.add("[Culling] Ticked Entities: " + lastTickedEntities + " Skipped: " + lastSkippedEntityTicks);
+        }
         
         EntityCullingModBase.instance.renderedBlockEntities = 0;
         EntityCullingModBase.instance.skippedBlockEntities = 0;
