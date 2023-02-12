@@ -24,6 +24,8 @@ import net.minecraft.world.phys.Vec3;
 public class CullTask implements Runnable {
 
     public boolean requestCull = false;
+    public boolean disableEntityCulling = false;
+    public boolean disableBlockEntityCulling = false;
 
     private final OcclusionCullingInstance culling;
     private final Minecraft client = Minecraft.getInstance();
@@ -77,6 +79,9 @@ public class CullTask implements Runnable {
     }
 
     private void cullEntities(Vec3 cameraMC, Vec3d camera, boolean spectator) {
+        if(disableEntityCulling) {
+            return;
+        }
         Entity entity = null;
         Iterator<Entity> iterable = client.level.entitiesForRendering().iterator();
         while (iterable.hasNext()) {
@@ -123,6 +128,9 @@ public class CullTask implements Runnable {
     }
 
     private void cullBlockEntities(Vec3 cameraMC, Vec3d camera, boolean spectator) {
+        if(disableBlockEntityCulling) {
+            return;
+        }
         for (int x = -8; x <= 8; x++) {
             for (int z = -8; z <= 8; z++) {
                 LevelChunk chunk = client.level.getChunk(client.player.chunkPosition().x + x,

@@ -24,7 +24,7 @@ public class ClientWorldMixin {
 
     @Inject(method = "tickNonPassenger", at = @At("HEAD"), cancellable = true)
     public void tickEntity(Entity entity, CallbackInfo info) {
-        if (!EntityCullingModBase.instance.config.tickCulling) {
+        if (!EntityCullingModBase.instance.config.tickCulling || EntityCullingModBase.instance.config.skipEntityCulling) {
             EntityCullingModBase.instance.tickedEntities++;
             return; // disabled
         }

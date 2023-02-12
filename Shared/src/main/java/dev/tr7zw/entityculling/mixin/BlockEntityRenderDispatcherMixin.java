@@ -21,6 +21,9 @@ public abstract class BlockEntityRenderDispatcherMixin {
     @Inject(method = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher;render(Lnet/minecraft/world/level/block/entity/BlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;)V", at = @At("HEAD"), cancellable = true)
     public <E extends BlockEntity> void render(E blockEntity, float f, PoseStack poseStack,
             MultiBufferSource multiBufferSource, CallbackInfo info) {
+        if(EntityCullingModBase.instance.config.skipBlockEntityCulling) {
+            return;
+        }
         BlockEntityRenderer<E> blockEntityRenderer = getRenderer(blockEntity);
         // respect the "shouldRenderOffScreen" method 
         if (blockEntityRenderer != null && blockEntityRenderer.shouldRenderOffScreen(blockEntity)) {

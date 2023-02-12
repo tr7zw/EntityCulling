@@ -21,5 +21,7 @@ public class Config {
     public Set<String> tickCullingWhitelist = new HashSet<>(
             Arrays.asList("minecraft:firework_rocket", "minecraft:boat"));
     public boolean disableF3 = false;
+    public boolean skipEntityCulling = false;
+    public boolean skipBlockEntityCulling = false;
 
 }
