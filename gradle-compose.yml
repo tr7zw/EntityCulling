@@ -8,7 +8,7 @@ replacements:
   author: "tr7zw"
   relocationpackage: "dev.tr7zw.entityculling"
   dependencies: '
-  	inc "com.logisticscraft:occlusionculling:0.0.6-SNAPSHOT"
+  	inc "com.logisticscraft:occlusionculling:0.0.7-SNAPSHOT"
   '
   licensename: "LICENSE-EntityCulling"
   modrinthid: NNAgCjsB
