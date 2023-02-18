@@ -38,3 +38,4 @@ run/
 *.properties
 gradle/wrapper
 VersionShared
+UtilityCode
