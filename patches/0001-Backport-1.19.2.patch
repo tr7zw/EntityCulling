@@ -1,0 +1,208 @@
+From 739d2bf1b5f1d91e6d935e8a6645d8221c0cbd59 Mon Sep 17 00:00:00 2001
+From: tr7zw <tr7zw@live.de>
+Date: Sat, 18 Feb 2023 21:16:24 +0100
+Subject: [PATCH] Backport 1.19.2
+
+---
+ .github/FUNDING.yml                           |  2 -
+ .github/workflows/build.yml                   | 28 ----------
+ .github/workflows/tag.yml                     | 51 -------------------
+ .gitignore                                    |  5 +-
+ .../src/main/resources/fabric.mod.json        |  2 +-
+ .../src/main/resources/META-INF/mods.toml     |  2 +-
+ .../entityculling/EntityCullingModBase.java   |  8 +--
+ gradle-compose.yml                            |  2 +-
+ 8 files changed, 11 insertions(+), 89 deletions(-)
+ delete mode 100644 .github/FUNDING.yml
+ delete mode 100644 .github/workflows/build.yml
+ delete mode 100644 .github/workflows/tag.yml
+
+diff --git a/.github/FUNDING.yml b/.github/FUNDING.yml
+deleted file mode 100644
+index 987962e..0000000
+--- a/.github/FUNDING.yml
++++ /dev/null
+@@ -1,2 +0,0 @@
+-# These are supported funding model platforms
+-ko_fi: tr7zw
+\ No newline at end of file
+diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+deleted file mode 100644
+index d082576..0000000
+--- a/.github/workflows/build.yml
++++ /dev/null
+@@ -1,28 +0,0 @@
+-# Automatically build the project and run any configured tests for every push
+-# and submitted pull request. This can help catch issues that only occur on
+-# certain platforms or Java versions, and provides a first line of defence
+-# against bad commits.
+-name: build
+-on: [pull_request, push]
+-jobs:
+-  build:
+-    runs-on: ubuntu-latest
+-    steps:
+-      - name: checkout repository
+-        uses: actions/checkout@v2
+-      - name: setup jdk 17
+-        uses: actions/setup-java@v1
+-        with:
+-          java-version: 17
+-      - name: make gradle wrapper executable
+-        if: ${{ runner.os != 'Windows' }}
+-        run: chmod +x ./gradlecw
+-      - name: build
+-        run: ./gradlecw build
+-      - name: capture build artifacts
+-        uses: actions/upload-artifact@v2
+-        with:
+-          name: Artifacts
+-          path: |
+-            EntityCulling-Fabric/build/libs/*
+-            EntityCulling-Forge/build/libs/*
+diff --git a/.github/workflows/tag.yml b/.github/workflows/tag.yml
+deleted file mode 100644
+index a0e3c67..0000000
+--- a/.github/workflows/tag.yml
++++ /dev/null
+@@ -1,51 +0,0 @@
+-name: Create Release
+-on:
+-  release:
+-    types: [published]
+-jobs:
+-  build:
+-    runs-on: ubuntu-latest
+-    steps:
+-      - name: checkout repository
+-        uses: actions/checkout@v2
+-      - name: setup jdk 17
+-        uses: actions/setup-java@v1
+-        with:
+-          java-version: 17
+-      - name: make gradle wrapper executable
+-        run: chmod +x ./gradlecw
+-      - name: build
+-        run: ./gradlecw build
+-      - name: Release
+-        uses: softprops/action-gh-release@v1
+-        with:
+-          files: |
+-            EntityCulling-Fabric/build/libs/*
+-            EntityCulling-Forge/build/libs/*
+-      - name: Publish-Forge-Curseforge
+-        uses: Kir-Antipov/mc-publish@v3.2
+-        with:
+-          curseforge-id: 448233
+-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}  
+-          loaders: forge
+-          name: ${{github.ref_name}} - Forge
+-          version-type: beta
+-          files: '*Forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+-      - name: Publish-Forge-Modrinth
+-        uses: Kir-Antipov/mc-publish@v3.2
+-        with:
+-          modrinth-id: NNAgCjsB
+-          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+-          loaders: forge
+-          name: ${{github.ref_name}} - Forge
+-          files: '*Forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+-      - name: Publish-Fabric
+-        uses: Kir-Antipov/mc-publish@v3.2
+-        with:
+-          modrinth-id: NNAgCjsB
+-          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+-          curseforge-id: 448233
+-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}  
+-          loaders: fabric
+-          name: ${{github.ref_name}} - Fabric
+-          files: '*Fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+diff --git a/.gitignore b/.gitignore
+index 4d8ed8d..22ded9e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -38,4 +38,7 @@ run/
+ *.properties
+ gradle/wrapper
+ VersionShared
+-UtilityCode
+\ No newline at end of file
++UtilityCode
++
++# this is an internal fork, so this is not needed
++.github/
+\ No newline at end of file
+diff --git a/EntityCulling-Fabric/src/main/resources/fabric.mod.json b/EntityCulling-Fabric/src/main/resources/fabric.mod.json
+index 8b9f346..8626d4a 100644
+--- a/EntityCulling-Fabric/src/main/resources/fabric.mod.json
++++ b/EntityCulling-Fabric/src/main/resources/fabric.mod.json
+@@ -29,6 +29,6 @@
+ 
+   "depends": {
+     "fabric-api": "*",
+-    "minecraft": ">=1.19.3"
++    "minecraft": ">1.19.0 <=1.19.2"
+   }
+ }
+diff --git a/EntityCulling-Forge/src/main/resources/META-INF/mods.toml b/EntityCulling-Forge/src/main/resources/META-INF/mods.toml
+index c4f528d..eed137b 100644
+--- a/EntityCulling-Forge/src/main/resources/META-INF/mods.toml
++++ b/EntityCulling-Forge/src/main/resources/META-INF/mods.toml
+@@ -19,6 +19,6 @@ Using async raytracing to hide Tile-/Entities that are hidden behind solid block
+ [[dependencies.entityculling]]
+     modId="minecraft"
+     mandatory=true
+-    versionRange="[1.19.3,)"
++    versionRange="[1.19,1.19.3)"
+     ordering="NONE"
+     side="CLIENT"
+diff --git a/Shared/src/main/java/dev/tr7zw/entityculling/EntityCullingModBase.java b/Shared/src/main/java/dev/tr7zw/entityculling/EntityCullingModBase.java
+index 5168fc8..16e515c 100644
+--- a/Shared/src/main/java/dev/tr7zw/entityculling/EntityCullingModBase.java
++++ b/Shared/src/main/java/dev/tr7zw/entityculling/EntityCullingModBase.java
+@@ -18,7 +18,7 @@ import net.minecraft.client.KeyMapping;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.player.LocalPlayer;
+ import net.minecraft.core.BlockPos;
+-import net.minecraft.core.registries.BuiltInRegistries;
++import net.minecraft.core.Registry;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.world.entity.Entity;
+@@ -105,19 +105,19 @@ public abstract class EntityCullingModBase {
+     public void clientTick() {
+         if(!configKeysLoaded) {
+             for(String blockId : config.blockEntityWhitelist) {
+-                Optional<BlockEntityType<?>> block = BuiltInRegistries.BLOCK_ENTITY_TYPE.getOptional(new ResourceLocation(blockId));
++                Optional<BlockEntityType<?>> block = Registry.BLOCK_ENTITY_TYPE.getOptional(new ResourceLocation(blockId));
+                 block.ifPresent(b -> {
+                     blockEntityWhitelist.add(b);
+                 });
+             }
+             for(String entityType : config.tickCullingWhitelist) {
+-                Optional<EntityType<?>> entity = BuiltInRegistries.ENTITY_TYPE.getOptional(new ResourceLocation(entityType));
++                Optional<EntityType<?>> entity = Registry.ENTITY_TYPE.getOptional(new ResourceLocation(entityType));
+                 entity.ifPresent(e -> {
+                     entityWhistelist.add(e);
+                 });
+             }
+             for(String entityType : config.entityWhitelist) {
+-                Optional<EntityType<?>> entity = BuiltInRegistries.ENTITY_TYPE.getOptional(new ResourceLocation(entityType));
++                Optional<EntityType<?>> entity = Registry.ENTITY_TYPE.getOptional(new ResourceLocation(entityType));
+                 entity.ifPresent(e -> {
+                     entityWhistelist.add(e);
+                 });
+diff --git a/gradle-compose.yml b/gradle-compose.yml
+index 3e01e04..cf9f55a 100644
+--- a/gradle-compose.yml
++++ b/gradle-compose.yml
+@@ -1,5 +1,5 @@
+ version: '0.0.2'
+-source: "https://github.com/tr7zw/ModComposeTemplate/tree/1.19.3"
++source: "https://github.com/tr7zw/ModComposeTemplate/tree/1.19.2"
+ replacements:
+   group: "dev.tr7zw"
+   name: "EntityCulling"
+-- 
+2.32.0.windows.2
+
