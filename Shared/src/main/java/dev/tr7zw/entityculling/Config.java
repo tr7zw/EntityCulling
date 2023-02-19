@@ -19,7 +19,8 @@ public class Config {
     public boolean skipMarkerArmorStands = true;
     public boolean tickCulling = true;
     public Set<String> tickCullingWhitelist = new HashSet<>(
-            Arrays.asList("minecraft:firework_rocket", "minecraft:boat"));
+            Arrays.asList("minecraft:firework_rocket", "minecraft:boat", "create:carriage_contraption",
+                    "create:contraption", "create:gantry_contraption", "create:stationary_contraption"));
     public boolean disableF3 = false;
     public boolean skipEntityCulling = false;
     public boolean skipBlockEntityCulling = false;
