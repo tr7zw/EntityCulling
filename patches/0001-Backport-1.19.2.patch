@@ -1,4 +1,4 @@
-From 739d2bf1b5f1d91e6d935e8a6645d8221c0cbd59 Mon Sep 17 00:00:00 2001
+From bbe3851aa9a49de9baef92aa41bf60ef6e1452db Mon Sep 17 00:00:00 2001
 From: tr7zw <tr7zw@live.de>
 Date: Sat, 18 Feb 2023 21:16:24 +0100
 Subject: [PATCH] Backport 1.19.2
@@ -145,7 +145,7 @@ index 8b9f346..8626d4a 100644
    }
  }
 diff --git a/EntityCulling-Forge/src/main/resources/META-INF/mods.toml b/EntityCulling-Forge/src/main/resources/META-INF/mods.toml
-index c4f528d..eed137b 100644
+index fc7345d..d8e737f 100644
 --- a/EntityCulling-Forge/src/main/resources/META-INF/mods.toml
 +++ b/EntityCulling-Forge/src/main/resources/META-INF/mods.toml
 @@ -19,6 +19,6 @@ Using async raytracing to hide Tile-/Entities that are hidden behind solid block
@@ -193,7 +193,7 @@ index 5168fc8..16e515c 100644
                      entityWhistelist.add(e);
                  });
 diff --git a/gradle-compose.yml b/gradle-compose.yml
-index 3e01e04..cf9f55a 100644
+index ebe8bcc..c2a29ed 100644
 --- a/gradle-compose.yml
 +++ b/gradle-compose.yml
 @@ -1,5 +1,5 @@
