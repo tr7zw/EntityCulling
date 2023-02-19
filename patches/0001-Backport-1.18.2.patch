@@ -1,0 +1,152 @@
+From 3c8f6bb09df5addbc6bfa84b6929b55739c04854 Mon Sep 17 00:00:00 2001
+From: tr7zw <tr7zw@live.de>
+Date: Sun, 19 Feb 2023 18:51:30 +0100
+Subject: [PATCH] Backport 1.18.2
+
+---
+ .../src/main/resources/fabric.mod.json        |  4 ++--
+ .../tr7zw/entityculling/EntityCullingMod.java |  4 ++--
+ .../src/main/resources/META-INF/mods.toml     |  2 +-
+ .../entityculling/EntityCullingModBase.java   |  9 +++++---
+ .../entityculling/mixin/ClientWorldMixin.java | 22 -------------------
+ gradle-compose.yml                            |  2 +-
+ 6 files changed, 12 insertions(+), 31 deletions(-)
+
+diff --git a/EntityCulling-Fabric/src/main/resources/fabric.mod.json b/EntityCulling-Fabric/src/main/resources/fabric.mod.json
+index 8626d4a..16aabf6 100644
+--- a/EntityCulling-Fabric/src/main/resources/fabric.mod.json
++++ b/EntityCulling-Fabric/src/main/resources/fabric.mod.json
+@@ -28,7 +28,7 @@
+   ],
+ 
+   "depends": {
+-    "fabric-api": "*",
+-    "minecraft": ">1.19.0 <=1.19.2"
++    "fabric": "*",
++    "minecraft": "1.18.2"
+   }
+ }
+diff --git a/EntityCulling-Forge/src/main/java/dev/tr7zw/entityculling/EntityCullingMod.java b/EntityCulling-Forge/src/main/java/dev/tr7zw/entityculling/EntityCullingMod.java
+index 58d878b..c481133 100644
+--- a/EntityCulling-Forge/src/main/java/dev/tr7zw/entityculling/EntityCullingMod.java
++++ b/EntityCulling-Forge/src/main/java/dev/tr7zw/entityculling/EntityCullingMod.java
+@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
+ import net.minecraft.world.phys.AABB;
+ import net.minecraftforge.common.MinecraftForge;
+ import net.minecraftforge.event.TickEvent.ClientTickEvent;
+-import net.minecraftforge.event.TickEvent.LevelTickEvent;
++import net.minecraftforge.event.TickEvent.WorldTickEvent;
+ import net.minecraftforge.fml.IExtensionPoint;
+ import net.minecraftforge.fml.ModLoadingContext;
+ import net.minecraftforge.fml.common.Mod;
+@@ -42,7 +42,7 @@ public class EntityCullingMod extends EntityCullingModBase {
+         this.clientTick();
+     }
+     
+-    private void doWorldTick(LevelTickEvent event) {
++    private void doWorldTick(WorldTickEvent event) {
+         this.worldTick();
+     }
+ 
+diff --git a/EntityCulling-Forge/src/main/resources/META-INF/mods.toml b/EntityCulling-Forge/src/main/resources/META-INF/mods.toml
+index d8e737f..a3b02df 100644
+--- a/EntityCulling-Forge/src/main/resources/META-INF/mods.toml
++++ b/EntityCulling-Forge/src/main/resources/META-INF/mods.toml
+@@ -19,6 +19,6 @@ Using async raytracing to hide Tile-/Entities that are hidden behind solid block
+ [[dependencies.entityculling]]
+     modId="minecraft"
+     mandatory=true
+-    versionRange="[1.19,1.19.3)"
++    versionRange="1.18.2"
+     ordering="NONE"
+     side="CLIENT"
+diff --git a/Shared/src/main/java/dev/tr7zw/entityculling/EntityCullingModBase.java b/Shared/src/main/java/dev/tr7zw/entityculling/EntityCullingModBase.java
+index 16e515c..4b3973f 100644
+--- a/Shared/src/main/java/dev/tr7zw/entityculling/EntityCullingModBase.java
++++ b/Shared/src/main/java/dev/tr7zw/entityculling/EntityCullingModBase.java
+@@ -13,13 +13,14 @@ import com.google.gson.Gson;
+ import com.google.gson.GsonBuilder;
+ import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
+ 
++import net.minecraft.Util;
+ import net.minecraft.ChatFormatting;
+ import net.minecraft.client.KeyMapping;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.player.LocalPlayer;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Registry;
+-import net.minecraft.network.chat.Component;
++import net.minecraft.network.chat.TextComponent;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntityType;
+@@ -131,11 +132,13 @@ public abstract class EntityCullingModBase {
+             LocalPlayer player = Minecraft.getInstance().player;
+             if(enabled) {
+                 if (player != null) {
+-                    player.sendSystemMessage(Component.literal("Culling on").withStyle(ChatFormatting.GREEN));
++                    player.sendMessage(new TextComponent("Culling on").withStyle(ChatFormatting.GREEN),
++                    Util.NIL_UUID);
+                 }
+             } else {
+                 if (player != null) {
+-                    player.sendSystemMessage(Component.literal("Culling off").withStyle(ChatFormatting.RED));
++                    player.sendMessage(new TextComponent("Culling off").withStyle(ChatFormatting.RED),
++                    Util.NIL_UUID);
+                 }
+             }
+         } else {
+diff --git a/Shared/src/main/java/dev/tr7zw/entityculling/mixin/ClientWorldMixin.java b/Shared/src/main/java/dev/tr7zw/entityculling/mixin/ClientWorldMixin.java
+index 04d568c..2a6e196 100644
+--- a/Shared/src/main/java/dev/tr7zw/entityculling/mixin/ClientWorldMixin.java
++++ b/Shared/src/main/java/dev/tr7zw/entityculling/mixin/ClientWorldMixin.java
+@@ -13,8 +13,6 @@ import net.minecraft.sounds.SoundEvents;
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.LivingEntity;
+-import net.minecraft.world.entity.monster.warden.AngerLevel;
+-import net.minecraft.world.entity.monster.warden.Warden;
+ import net.minecraft.world.entity.vehicle.AbstractMinecart;
+ 
+ @Mixin(ClientLevel.class)
+@@ -61,26 +59,6 @@ public class ClientWorldMixin {
+             if (living.hurtTime > 0)
+                 living.hurtTime--;
+         }
+-        // the warden sounds are generated clientside instead of serverside, so simulate that part of the code here.
+-        if (entity instanceof Warden warden) {
+-            if (mc.level.isClientSide() && !warden.isSilent()
+-                    && warden.tickCount % getWardenHeartBeatDelay(warden) == 0) {
+-                mc.level.playLocalSound(warden.getX(), warden.getY(), warden.getZ(), SoundEvents.WARDEN_HEARTBEAT,
+-                        warden.getSoundSource(), 5.0F, warden.getVoicePitch(), false);
+-            }
+-        }
+-    }
+-
+-    /**
+-     * Copy of that method, since it's private. No need to use an access widener for
+-     * this
+-     * 
+-     * @param warden
+-     * @return
+-     */
+-    private int getWardenHeartBeatDelay(Warden warden) {
+-        float f = warden.getClientAngerLevel() / AngerLevel.ANGRY.getMinimumAnger();
+-        return 40 - Mth.floor(Mth.clamp(f, 0.0F, 1.0F) * 30.0F);
+     }
+ 
+ }
+diff --git a/gradle-compose.yml b/gradle-compose.yml
+index c2a29ed..c65607a 100644
+--- a/gradle-compose.yml
++++ b/gradle-compose.yml
+@@ -1,5 +1,5 @@
+ version: '0.0.2'
+-source: "https://github.com/tr7zw/ModComposeTemplate/tree/1.19.2"
++source: "https://github.com/tr7zw/ModComposeTemplate/tree/1.18.2"
+ replacements:
+   group: "dev.tr7zw"
+   name: "EntityCulling"
+-- 
+2.32.0.windows.2
+

@@ -37,10 +37,6 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}  
           loaders: forge
-          game-versions: |
-            1.19
-            1.19.1
-            1.19.2
           name: ${{github.ref_name}} - Forge
           version-type: beta
           files: 'workspace/*Forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
@@ -50,10 +46,6 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: forge
-          game-versions: |
-            1.19
-            1.19.1
-            1.19.2
           name: ${{github.ref_name}} - Forge
           files: 'workspace/*Forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
       - name: Publish-Fabric
@@ -64,9 +56,5 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}  
           loaders: fabric
-          game-versions: |
-            1.19
-            1.19.1
-            1.19.2
           name: ${{github.ref_name}} - Fabric
           files: 'workspace/*Fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
