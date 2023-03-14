@@ -49,7 +49,7 @@ public class CullTask implements Runnable {
 
     @Override
     public void run() {
-        while (client.getGame() != null) { // client.isRunning() returns false at the start?!?
+        while (client.isRunning()) { // client.isRunning() returns false at the start?!?
             try {
                 Thread.sleep(sleepDelay);
                 if (EntityCullingModBase.enabled && client.level != null && client.player != null

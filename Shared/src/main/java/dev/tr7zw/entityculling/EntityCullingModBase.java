@@ -40,24 +40,24 @@ public abstract class EntityCullingModBase {
     private Thread cullThread;
     protected KeyMapping keybind = new KeyMapping("key.entityculling.toggle", -1, "EntityCulling");
     protected boolean pressed = false;
-    private boolean configKeysLoaded = false;
+    private boolean lateInit = false;
     private Set<Function<BlockEntity, Boolean>> dynamicBlockEntityWhitelist = new HashSet<>();
     private Set<Function<Entity, Boolean>> dynamicEntityWhitelist = new HashSet<>();
-	
+
     public Config config;
     private final File settingsFile = new File("config", "entityculling.json");
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-	
-	//stats
-	public int renderedBlockEntities = 0;
-	public int skippedBlockEntities = 0;
-	public int renderedEntities = 0;
-	public int skippedEntities = 0;
-	public int tickedEntities = 0;
-	public int skippedEntityTicks = 0;
 
-	public void onInitialize() {
-		instance = this;
+    // stats
+    public int renderedBlockEntities = 0;
+    public int skippedBlockEntities = 0;
+    public int renderedEntities = 0;
+    public int skippedEntities = 0;
+    public int tickedEntities = 0;
+    public int skippedEntityTicks = 0;
+
+    public void onInitialize() {
+        instance = this;
         if (settingsFile.exists()) {
             try {
                 config = gson.fromJson(new String(Files.readAllBytes(settingsFile.toPath()), StandardCharsets.UTF_8),
@@ -71,22 +71,22 @@ public abstract class EntityCullingModBase {
             config = new Config();
             writeConfig();
         } else {
-            if(ConfigUpgrader.upgradeConfig(config)) {
+            if (ConfigUpgrader.upgradeConfig(config)) {
                 writeConfig(); // Config got modified
             }
         }
         culling = new OcclusionCullingInstance(config.tracingDistance, new Provider());
         cullTask = new CullTask(culling, blockEntityWhitelist, entityWhistelist);
 
-		cullThread = new Thread(cullTask, "CullThread");
-		cullThread.setUncaughtExceptionHandler((thread, ex) -> {
-			System.out.println("The CullingThread has crashed! Please report the following stacktrace!");
-			ex.printStackTrace();
-		});
-		cullThread.start();
-		initModloader();
-	}
-	
+        cullThread = new Thread(cullTask, "CullThread");
+        cullThread.setUncaughtExceptionHandler((thread, ex) -> {
+            System.out.println("The CullingThread has crashed! Please report the following stacktrace!");
+            ex.printStackTrace();
+        });
+        
+        initModloader();
+    }
+
     public void writeConfig() {
         if (settingsFile.exists())
             settingsFile.delete();
@@ -96,28 +96,33 @@ public abstract class EntityCullingModBase {
             e1.printStackTrace();
         }
     }
-    
+
     public void worldTick() {
         cullTask.requestCull = true;
     }
-    
+
     @SuppressWarnings("resource")
     public void clientTick() {
-        if(!configKeysLoaded) {
-            for(String blockId : config.blockEntityWhitelist) {
-                Optional<BlockEntityType<?>> block = BuiltInRegistries.BLOCK_ENTITY_TYPE.getOptional(new ResourceLocation(blockId));
+        if (!lateInit) {
+            lateInit = true;
+            cullThread.start();
+            for (String blockId : config.blockEntityWhitelist) {
+                Optional<BlockEntityType<?>> block = BuiltInRegistries.BLOCK_ENTITY_TYPE
+                        .getOptional(new ResourceLocation(blockId));
                 block.ifPresent(b -> {
                     blockEntityWhitelist.add(b);
                 });
             }
-            for(String entityType : config.tickCullingWhitelist) {
-                Optional<EntityType<?>> entity = BuiltInRegistries.ENTITY_TYPE.getOptional(new ResourceLocation(entityType));
+            for (String entityType : config.tickCullingWhitelist) {
+                Optional<EntityType<?>> entity = BuiltInRegistries.ENTITY_TYPE
+                        .getOptional(new ResourceLocation(entityType));
                 entity.ifPresent(e -> {
                     entityWhistelist.add(e);
                 });
             }
-            for(String entityType : config.entityWhitelist) {
-                Optional<EntityType<?>> entity = BuiltInRegistries.ENTITY_TYPE.getOptional(new ResourceLocation(entityType));
+            for (String entityType : config.entityWhitelist) {
+                Optional<EntityType<?>> entity = BuiltInRegistries.ENTITY_TYPE
+                        .getOptional(new ResourceLocation(entityType));
                 entity.ifPresent(e -> {
                     entityWhistelist.add(e);
                 });
@@ -129,7 +134,7 @@ public abstract class EntityCullingModBase {
             pressed = true;
             enabled = !enabled;
             LocalPlayer player = Minecraft.getInstance().player;
-            if(enabled) {
+            if (enabled) {
                 if (player != null) {
                     player.sendSystemMessage(Component.literal("Culling on").withStyle(ChatFormatting.GREEN));
                 }
@@ -145,43 +150,45 @@ public abstract class EntityCullingModBase {
     }
 
     public abstract void initModloader();
-    
+
     public abstract AABB setupAABB(BlockEntity entity, BlockPos pos);
-    
+
     public boolean isDynamicWhitelisted(BlockEntity entity) {
-        for(Function<BlockEntity, Boolean> fun : dynamicBlockEntityWhitelist) {
-            if(fun.apply(entity)) {
+        for (Function<BlockEntity, Boolean> fun : dynamicBlockEntityWhitelist) {
+            if (fun.apply(entity)) {
                 return true;
             }
         }
         return false;
     }
-	
+
     public boolean isDynamicWhitelisted(Entity entity) {
-        for(Function<Entity, Boolean> fun : dynamicEntityWhitelist) {
-            if(fun.apply(entity)) {
+        for (Function<Entity, Boolean> fun : dynamicEntityWhitelist) {
+            if (fun.apply(entity)) {
                 return true;
             }
         }
         return false;
     }
-    
+
     /**
-     * Add a dynamic function that can return true to disable culling for a BlockEntity temporarly. 
+     * Add a dynamic function that can return true to disable culling for a
+     * BlockEntity temporarly.
      * 
      * @param function
      */
     public void addDynamicBlockEntityWhitelist(Function<BlockEntity, Boolean> function) {
         this.dynamicBlockEntityWhitelist.add(function);
     }
-    
+
     /**
-     * Add a dynamic function that can return true to disable culling for an entity temporarly. 
+     * Add a dynamic function that can return true to disable culling for an entity
+     * temporarly.
      * 
      * @param function
      */
     public void addDynamicEntityWhitelist(Function<Entity, Boolean> function) {
         this.dynamicEntityWhitelist.add(function);
     }
-    
+
 }

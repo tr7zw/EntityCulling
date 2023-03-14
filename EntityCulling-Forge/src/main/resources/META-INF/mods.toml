@@ -3,7 +3,7 @@ loaderVersion="[35,)"
 license="tr7zw Protective License"
 [[mods]]
 modId="entityculling"
-version="1.6.1"
+version="1.6.2"
 displayName="EntityCulling"
 authors="tr7zw"
 description='''
@@ -19,6 +19,6 @@ Using async raytracing to hide Tile-/Entities that are hidden behind solid block
 [[dependencies.entityculling]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19.3,)"
+    versionRange="[1.19.4,)"
     ordering="NONE"
     side="CLIENT"
