@@ -1,0 +1,8 @@
+.gradle/
+upstream/
+tmp/
+workspace/
+scripts/
+patcher
+.project
+/bin/

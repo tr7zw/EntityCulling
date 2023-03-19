@@ -1,0 +1,60 @@
+name: Create Release
+on:
+  release:
+    types: [published]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+      - name: setup jdk 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: setup fork
+        run: |
+          git config --global user.email "ci@github.com"
+          git config --global user.name "Github CI"
+          java -jar fabricweight.jar patch
+      - name: make gradle wrapper executable
+        working-directory: ./workspace
+        if: ${{ runner.os != 'Windows' }}
+        run: chmod +x ./gradlecw
+      - name: build
+        working-directory: ./workspace
+        run: ./gradlecw build
+      - name: capture build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Artifacts
+          path: |
+            workspace/EntityCulling-Fabric/build/libs/*
+            workspace/EntityCulling-Forge/build/libs/*
+      - name: Publish-Forge-Curseforge
+        uses: Kir-Antipov/mc-publish@v3.2
+        with:
+          curseforge-id: 448233
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}  
+          loaders: forge
+          name: ${{github.ref_name}} - Forge
+          version-type: beta
+          files: 'workspace/*Forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+      - name: Publish-Forge-Modrinth
+        uses: Kir-Antipov/mc-publish@v3.2
+        with:
+          modrinth-id: NNAgCjsB
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          loaders: forge
+          name: ${{github.ref_name}} - Forge
+          files: 'workspace/*Forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+      - name: Publish-Fabric
+        uses: Kir-Antipov/mc-publish@v3.2
+        with:
+          modrinth-id: NNAgCjsB
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-id: 448233
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}  
+          loaders: fabric
+          name: ${{github.ref_name}} - Fabric
+          files: 'workspace/*Fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
