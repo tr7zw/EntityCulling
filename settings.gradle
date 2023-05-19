@@ -1,4 +1,4 @@
-pluginManagement {
+/*pluginManagement {
     repositories {
         gradlePluginPortal()
         mavenCentral()
@@ -12,18 +12,18 @@ pluginManagement {
             url = "https://jitpack.io/"
         }
     }
-    resolutionStrategy {
+   resolutionStrategy {
         eachPlugin {
             switch (requested.id.id) {
                 case 'net.minecraftforge.gradle.forge':
                     useModule "com.github.asbyth:ForgeGradle:${requested.version}"
-                    break
+                    break //broken?
                 case 'org.spongepowered.mixin':
                     useModule "com.github.Skytils:MixinGradle:${requested.version}"
                     break
             }
         }
     }
-}
+}*/
 
 include 'EntityCulling-Forge'
