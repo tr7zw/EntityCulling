@@ -1,5 +1,5 @@
 version: '0.0.2'
-source: "https://github.com/tr7zw/ModComposeTemplate/tree/1.20"
+source: "https://github.com/tr7zw/ModComposeTemplate/tree/1.20.2"
 replacements:
   group: "dev.tr7zw"
   name: "EntityCulling"
