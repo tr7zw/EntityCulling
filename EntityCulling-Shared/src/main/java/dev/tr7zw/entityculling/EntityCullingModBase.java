@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,8 +12,8 @@ import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ChatType;
+import net.minecraft.util.text.TextComponentString;
 
 public abstract class EntityCullingModBase {
 
@@ -91,14 +89,14 @@ public abstract class EntityCullingModBase {
                 return;
             pressed = true;
             enabled = !enabled;
-            EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+            EntityPlayerSP player = Minecraft.getMinecraft().player;
             if(enabled) {
                 if (player != null) {
-                    player.addChatMessage(new ChatComponentText("Culling on"));
+                    Minecraft.getMinecraft().ingameGUI.addChatMessage(ChatType.SYSTEM, new TextComponentString("Culling on"));
                 }
             } else {
                 if (player != null) {
-                    player.addChatMessage(new ChatComponentText("Culling off"));
+                    Minecraft.getMinecraft().ingameGUI.addChatMessage(ChatType.SYSTEM, new TextComponentString("Culling off"));
                 }
             }
         } else {

@@ -1,23 +1,24 @@
 buildscript {
     repositories {
-        //new forge repository
-        maven { url "https://maven.minecraftforge.net" }
-        maven { url 'https://repo.spongepowered.org/maven'}
+        maven { url = 'https://maven.minecraftforge.net/' }
+        mavenCentral()
+        maven {
+            name = "Sponge"
+            url = "https://repo.spongepowered.org/repository/maven-public/"
+        }
     }
     dependencies {
-        classpath "net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT"
-        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:4.+'
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 
 plugins {
     id "java"
     id "com.github.johnrengelman.shadow" version "2.0.4"
-    //id "forge" version "ddb1eb0" //ddb1eb0
-    //id 'org.spongepowered.mixin' version "d5f9873"
 }
 
-apply plugin: "net.minecraftforge.gradle.forge"
+apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
 repositories {
@@ -36,17 +37,11 @@ sourceCompatibility = targetCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
 
 minecraft {
-    version = "1.8.9-11.15.1.2318-1.8.9"
-    mappings = "stable_22"
-    runDir = "run"
-    replace('@NAME@', "EntityCulling")
-    replace('@VER@': project.mod_version)
-    replace('@ID@', "entityculling")
-    makeObfSourceJar = false
-    /*clientRunArgs += "--tweakClass"
-    clientRunArgs += "org.spongepowered.asm.launch.MixinTweaker"
-    clientRunArgs += "--mixin" 
-    clientRunArgs += "entityculling.mixins.json"*/
+    mappings channel: 'snapshot', version: '20171003-1.12'
+//    clientRunArgs += "--tweakClass" 
+//    clientRunArgs += "org.spongepowered.asm.launch.MixinTweaker"
+//    clientRunArgs += "--mixin" 
+//    clientRunArgs += "waveycapes.mixins.json"
 }
 
 configurations {
@@ -76,20 +71,23 @@ repositories {
 
 dependencies {
 //    annotationProcessor 'org.spongepowered:mixin:0.7.11-SNAPSHOT'
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5'
+    annotationProcessor 'com.google.code.gson:gson:2.9.0'
+    annotationProcessor 'com.google.guava:guava:31.1-jre'
+    annotationProcessor 'org.ow2.asm:asm:9.3'
+    annotationProcessor 'org.ow2.asm:asm-tree:9.3'
+
     include "com.logisticscraft:occlusionculling:${project.occlusionculling_version}"
 
-    include 'org.spongepowered:mixin:0.7.11-SNAPSHOT'
+    include 'org.spongepowered:mixin:0.8.5'
 
     sourceSets.main.java.srcDirs += new File(project.rootDir, "EntityCulling-Shared/src/main/java");//(project(':EntityCulling-Shared').sourceSets.main.java.srcDirs)
 	sourceSets.main.resources.srcDirs += new File(project.rootDir, "EntityCulling-Shared/src/main/resources");//sourceSets.main.resources.srcDirs += (project(':EntityCulling-Shared').sourceSets.main.resources.srcDirs)
 }
 
-
-mixin {
-    defaultObfuscationEnv = "notch"
-}
-
 shadowJar {
+    finalizedBy('reobfJar') 
 //    archiveClassifier.set('')
     configurations = [project.configurations.include]
     duplicatesStrategy DuplicatesStrategy.EXCLUDE
@@ -116,14 +114,14 @@ shadowJar {
 
 processResources {
     inputs.property 'version', project.version
-    inputs.property 'mcversion', project.minecraft.version
+    inputs.property 'mcversion', '1.12.2'
     inputs.property 'name', 'entityculling'
     inputs.property 'modid', 'entityculling'
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
         expand (
                 'version':project.version,
-                'mcversion':project.minecraft.version,
+                'mcversion':'1.12.2',
                 'name':'EntityCulling',
                 'modid': 'entityculling'
         )
@@ -145,6 +143,7 @@ moveResources.dependsOn processResources
 classes.dependsOn moveResources
 
 jar {
+    finalizedBy('shadowJar') 
     manifest.attributes(
             "ForceLoadAsMod": true,
             "ModSide": "CLIENT",
@@ -154,19 +153,11 @@ jar {
             "Manifest-Version": 1.0
     )
 
-    enabled = false
 }
 
 mixin {
     disableRefMapWarning = true
-    defaultObfuscationEnv searge
-    add sourceSets.main, "entityculling.refmap.json"
-}
-
-reobf {
-    shadowJar {
-        mappingType = "SEARGE"
-    }
+    defaultObfuscationEnv = 'searge'
 }
 
 sourceSets {
@@ -175,4 +166,3 @@ sourceSets {
     }
 }
 
-tasks.reobfJar.dependsOn(shadowJar)

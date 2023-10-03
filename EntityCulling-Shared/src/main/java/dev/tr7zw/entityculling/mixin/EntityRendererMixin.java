@@ -16,12 +16,12 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
     }
 
     @Override
-    public void shadowRenderNameTag(T p_renderName_1_, double p_renderName_2_, double d1, double d2) {
-        renderName(p_renderName_1_, p_renderName_2_, d1, d2);
+    public void shadowRenderNameTag(T p_renderName_1_,  double x, double y, double z) {
+        renderName(p_renderName_1_, x, y, z);
     }
 
     @Shadow
-    protected abstract void renderName(T p_renderName_1_, double p_renderName_2_, double d1, double d2);
+    protected abstract void renderName(T p_renderName_1_, double x, double y, double z);
     
     @Shadow
     protected abstract boolean canRenderName(T p_canRenderName_1_);

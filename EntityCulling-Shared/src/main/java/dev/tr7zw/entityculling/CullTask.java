@@ -2,7 +2,6 @@ package dev.tr7zw.entityculling;
 
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
@@ -13,10 +12,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 
 public class CullTask implements Runnable {
 
@@ -45,21 +42,21 @@ public class CullTask implements Runnable {
 			try {
 				Thread.sleep(sleepDelay);
 
-				if (EntityCullingModBase.enabled && client.theWorld != null && client.thePlayer != null && client.thePlayer.ticksExisted > 10 && client.getRenderViewEntity() != null) {
-				    Vec3 cameraMC = null;
+				if (EntityCullingModBase.enabled && client.world != null && client.player != null && client.player.ticksExisted > 10 && client.getRenderViewEntity() != null) {
+				    net.minecraft.util.math.Vec3d cameraMC = null;
 				    if(EntityCullingModBase.instance.config.debugMode) {
-				        cameraMC = client.thePlayer.getPositionEyes(0);
+				        cameraMC = client.player.getPositionEyes(0);
 				    } else {
 			            cameraMC = getCameraPos();
 				    }
-					if (requestCull || !(cameraMC.xCoord == lastPos.x && cameraMC.yCoord == lastPos.y && cameraMC.zCoord == lastPos.z)) {
+					if (requestCull || !(cameraMC.x == lastPos.x && cameraMC.y == lastPos.y && cameraMC.z == lastPos.z)) {
 						long start = System.currentTimeMillis();
 						requestCull = false;
-						lastPos.set(cameraMC.xCoord, cameraMC.yCoord, cameraMC.zCoord);
+						lastPos.set(cameraMC.x, cameraMC.y, cameraMC.z);
 						Vec3d camera = lastPos;
 						culling.resetCache();
-						boolean noCulling = client.thePlayer.isSpectator() || client.gameSettings.thirdPersonView != 0;
-						Iterator<TileEntity> iterator = client.theWorld.loadedTileEntityList.iterator();
+						boolean noCulling = client.player.isSpectator() || client.gameSettings.thirdPersonView != 0;
+						Iterator<TileEntity> iterator = client.world.loadedTileEntityList.iterator();
 						TileEntity entry;
 						while(iterator.hasNext()) {
 							try {
@@ -78,7 +75,7 @@ public class CullTask implements Runnable {
 									continue;
 								}
 								BlockPos pos = entry.getPos();
-								if(pos.distanceSq(cameraMC.xCoord, cameraMC.yCoord, cameraMC.zCoord) < 64*64) { // 64 is the fixed max tile view distance
+								if(pos.distanceSq(cameraMC.x, cameraMC.y, cameraMC.z) < 64*64) { // 64 is the fixed max tile view distance
 								    aabbMin.set(pos.getX(), pos.getY(), pos.getZ());
 								    aabbMax.set(pos.getX()+1d, pos.getY()+1d, pos.getZ()+1d);
 									boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
@@ -88,7 +85,7 @@ public class CullTask implements Runnable {
 							}
 						}
 						Entity entity = null;
-						Iterator<Entity> iterable = client.theWorld.getLoadedEntityList().iterator();
+						Iterator<Entity> iterable = client.world.getLoadedEntityList().iterator();
 						while (iterable.hasNext()) {
 							try {
 								entity = iterable.next();
@@ -131,7 +128,7 @@ public class CullTask implements Runnable {
 	}
 	
 	// 1.8 doesnt know where the heck the camera is... what?!?
-	private Vec3 getCameraPos() {
+	private net.minecraft.util.math.Vec3d getCameraPos() {
 	    if (client.gameSettings.thirdPersonView == 0) {
 	        return client.getRenderViewEntity().getPositionEyes(0);
 	    }
