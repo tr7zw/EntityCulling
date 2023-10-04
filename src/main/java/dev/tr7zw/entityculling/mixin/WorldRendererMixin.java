@@ -21,9 +21,9 @@ public abstract class WorldRendererMixin {
     //private EntityRenderDispatcher entityRenderDispatcher;
 
     @Shadow
-    public abstract <T extends Entity> Render<T> getEntityRenderObject(Entity p_getEntityRenderObject_1_);
+    public abstract Render getEntityRenderObject(Entity p_78713_1_);
 
-    @Inject(at = @At("HEAD"), method = "doRenderEntity", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "func_147939_a", cancellable = true)
     public void doRenderEntity(Entity entity, double p_doRenderEntity_2_, double d1, double d2,
             float tickDelta, float p_doRenderEntity_9_, boolean p_doRenderEntity_10_, CallbackInfoReturnable<Boolean> info) {
         Cullable cullable = (Cullable) entity;
