@@ -11,12 +11,9 @@ import com.logisticscraft.occlusionculling.util.Vec3d;
 import dev.tr7zw.entityculling.access.Cullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.chunk.Chunk;
 
 public class CullTask implements Runnable {
 
@@ -28,7 +25,7 @@ public class CullTask implements Runnable {
 	private final int hitboxLimit = EntityCullingModBase.instance.config.hitboxLimit;
 	private final Set<String> unCullable;
 	public long lastTime = 0;
-	
+
 	// reused preallocated vars
 	private Vec3d lastPos = new Vec3d(0, 0, 0);
 	private Vec3d aabbMin = new Vec3d(0, 0, 0);
@@ -38,7 +35,7 @@ public class CullTask implements Runnable {
 		this.culling = culling;
 		this.unCullable = unCullable;
 	}
-	
+
 	@Override
 	public void run() {
 		while (client != null) { // not correct, but the running field is hidden
@@ -58,7 +55,7 @@ public class CullTask implements Runnable {
 						lastPos.set(cameraMC.xCoord, cameraMC.yCoord, cameraMC.zCoord);
 						Vec3d camera = lastPos;
 						culling.resetCache();
-						boolean noCulling = client.thePlayer.isSpectator() || client.gameSettings.thirdPersonView != 0;
+						boolean noCulling = client.gameSettings.thirdPersonView != 0;
 						Iterator<TileEntity> iterator = client.theWorld.loadedTileEntityList.iterator();
 						TileEntity entry;
 						while(iterator.hasNext()) {
@@ -101,7 +98,7 @@ public class CullTask implements Runnable {
 							}
 							Cullable cullable = (Cullable) entity;
 							if (!cullable.isForcedVisible()) {
-								if (noCulling || isSkippableArmorstand(entity)) {
+								if (noCulling) {
 									cullable.setCulled(false);
 									continue;
 								}
@@ -129,7 +126,7 @@ public class CullTask implements Runnable {
 		}
 		System.out.println("Shutting down culling task!");
 	}
-	
+
 	// 1.8 doesnt know where the heck the camera is... what?!?
 	private Vec3 getCameraPos() {
 	    if (client.gameSettings.thirdPersonView == 0) {
@@ -174,10 +171,5 @@ public class CullTask implements Runnable {
 //        Vec3 vec = new Vec3(newPosX, newPosY, newPosZ);
 //        System.out.println(newPosX + " " + newPosY + " " + newPosZ);
 //        return vec;
-	}
-	
-	private boolean isSkippableArmorstand(Entity entity) {
-	    if(!EntityCullingModBase.instance.config.skipMarkerArmorStands)return false;
-	    return entity instanceof EntityArmorStand && ((EntityArmorStand) entity).hasMarker();
 	}
 }
