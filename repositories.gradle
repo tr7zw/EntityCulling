@@ -1,0 +1,7 @@
+// Add any additional repositories for your dependencies here
+
+repositories {
+    maven {
+        url "https://repo.codemc.io/repository/maven-public/"
+    }
+}

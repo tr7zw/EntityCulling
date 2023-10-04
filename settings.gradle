@@ -1,29 +1,28 @@
-/*pluginManagement {
+
+pluginManagement {
     repositories {
+        maven {
+            // RetroFuturaGradle
+            name "GTNH Maven"
+            url "http://jenkins.usrv.eu:8081/nexus/content/groups/public/"
+            allowInsecureProtocol = true
+            mavenContent {
+                includeGroup("com.gtnewhorizons.retrofuturagradle")
+            }
+        }
         gradlePluginPortal()
         mavenCentral()
         mavenLocal()
-        maven {
-            name = "Forge"
-            url = "https://maven.minecraftforge.net/"
-        }
-        maven {
-            name = "Jitpack"
-            url = "https://jitpack.io/"
-        }
     }
-   resolutionStrategy {
-        eachPlugin {
-            switch (requested.id.id) {
-                case 'net.minecraftforge.gradle.forge':
-                    useModule "com.github.asbyth:ForgeGradle:${requested.version}"
-                    break //broken?
-                case 'org.spongepowered.mixin':
-                    useModule "com.github.Skytils:MixinGradle:${requested.version}"
-                    break
-            }
-        }
-    }
-}*/
+}
 
-include 'EntityCulling-Forge'
+plugins {
+    id 'com.diffplug.blowdryerSetup' version '1.6.0'
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.4.0' // Provides java toolchains
+}
+
+blowdryerSetup {
+    repoSubfolder 'gtnhShared'
+    github('GTNewHorizons/ExampleMod1.7.10', 'tag', '0.2.2')
+    //devLocal '.' // Use this when testing config updates locally
+}
