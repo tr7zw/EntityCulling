@@ -27,11 +27,11 @@ public abstract class EntityCullingModBase {
     private Thread cullThread;
     protected KeyBinding keybind = new KeyBinding("key.entityculling.toggle", -1, "EntityCulling");
     protected boolean pressed = false;
-	
+
     public Config config;
     private final File settingsFile = new File("config", "entityculling.json");
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-	
+
 	//stats
 	public int renderedBlockEntities = 0;
 	public int skippedBlockEntities = 0;
@@ -70,7 +70,7 @@ public abstract class EntityCullingModBase {
 		cullThread.start();
 		initModloader();
 	}
-	
+
     public void writeConfig() {
         if (settingsFile.exists())
             settingsFile.delete();
@@ -80,13 +80,13 @@ public abstract class EntityCullingModBase {
             e1.printStackTrace();
         }
     }
-    
+
     public void worldTick() {
         cullTask.requestCull = true;
     }
-    
+
     public void clientTick() {
-        if (keybind.isKeyDown()) {
+        if (keybind.getIsKeyPressed()) {
             if (pressed)
                 return;
             pressed = true;
@@ -108,5 +108,5 @@ public abstract class EntityCullingModBase {
     }
 
     public abstract void initModloader();
-	
+
 }
