@@ -1,5 +1,6 @@
 package dev.tr7zw.entityculling.mixin;
 
+import net.minecraft.entity.EntityLivingBase;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -8,8 +9,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import dev.tr7zw.entityculling.EntityCullingModBase;
 import dev.tr7zw.entityculling.access.Cullable;
-import dev.tr7zw.entityculling.access.EntityRendererInter;
-import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
@@ -28,9 +27,9 @@ public abstract class WorldRendererMixin {
             float tickDelta, float p_doRenderEntity_9_, boolean p_doRenderEntity_10_, CallbackInfoReturnable<Boolean> info) {
         Cullable cullable = (Cullable) entity;
         if (!cullable.isForcedVisible() && cullable.isCulled()) {
-            EntityRendererInter<Entity> entityRenderer = (EntityRendererInter) getEntityRenderObject(entity);
-            if (EntityCullingModBase.instance.config.renderNametagsThroughWalls && entityRenderer.shadowShouldShowName(entity)) {
-                entityRenderer.shadowRenderNameTag(entity, p_doRenderEntity_2_, d1, d2);
+            if (EntityCullingModBase.instance.config.renderNametagsThroughWalls && entity instanceof EntityLivingBase) {
+                RenderLivingEntityAccessor livingEntity = (RenderLivingEntityAccessor) getEntityRenderObject(entity);
+                livingEntity.callPassSpecialRender(((EntityLivingBase) entity), p_doRenderEntity_2_, d1, d2);
                 //entityRenderer.doRender(entity, entity.posX, entity.posY, entity.posZ, tickDelta, tickDelta);
             }
             EntityCullingModBase.instance.skippedEntities++;
