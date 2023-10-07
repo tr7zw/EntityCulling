@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "entityculling",
+    "name": "EntityCulling",
+    "description": "Using async raytracing to hide Tile-/Entities that are hidden behind solid blocks.",
+    "version": "1.6.2",
+    "mcversion": "1.7.10",
+    "url": "",
+    "updateUrl": "",
+    "authorList": ["tr7zw"],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]

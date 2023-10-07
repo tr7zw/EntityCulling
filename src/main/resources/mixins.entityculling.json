@@ -1,18 +1,16 @@
 {
   "required": true,
+  "minVersion": "0.8.5-GTNH",
   "package": "dev.tr7zw.entityculling.mixin",
+  "refmap": "mixins.entityculling.refmap.json",
+  "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "entityculling.refmap.json",
-  "mixins": [
-  ],
+  "mixins": [],
   "client": [
+    "RenderLivingEntityAccessor",
     "BlockEntityRenderDispatcherMixin",
-    "EntityRendererMixin",
     "CullableMixin",
-    "DebugHudMixin",
     "WorldRendererMixin"
   ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+  "server": []
 }
