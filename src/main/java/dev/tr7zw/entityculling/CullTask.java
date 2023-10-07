@@ -42,10 +42,10 @@ public class CullTask implements Runnable {
 			try {
 				Thread.sleep(sleepDelay);
 
-				if (EntityCullingModBase.enabled && client.theWorld != null && client.thePlayer != null && client.thePlayer.ticksExisted > 10 && client.getRenderViewEntity() != null) {
+				if (EntityCullingModBase.enabled && client.theWorld != null && client.thePlayer != null && client.thePlayer.ticksExisted > 10 && client.renderViewEntity != null) {
 				    Vec3 cameraMC = null;
 				    if(EntityCullingModBase.instance.config.debugMode) {
-				        cameraMC = client.thePlayer.getPositionEyes(0);
+				        cameraMC = client.thePlayer.getPosition(0).addVector(0, client.thePlayer.getEyeHeight(), 0);
 				    } else {
 			            cameraMC = getCameraPos();
 				    }
@@ -74,10 +74,9 @@ public class CullTask implements Runnable {
 									cullable.setCulled(false);
 									continue;
 								}
-								BlockPos pos = entry.getPos();
-								if(pos.distanceSq(cameraMC.xCoord, cameraMC.yCoord, cameraMC.zCoord) < 64*64) { // 64 is the fixed max tile view distance
-								    aabbMin.set(pos.getX(), pos.getY(), pos.getZ());
-								    aabbMax.set(pos.getX()+1d, pos.getY()+1d, pos.getZ()+1d);
+								if(distanceSq(entry.xCoord, entry.yCoord, entry.zCoord, cameraMC.xCoord, cameraMC.yCoord, cameraMC.zCoord) < 64*64) { // 64 is the fixed max tile view distance
+								    aabbMin.set(entry.xCoord, entry.yCoord, entry.zCoord);
+								    aabbMax.set(entry.xCoord + 1, entry.yCoord + 1, entry.zCoord + 1);
 									boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
 									cullable.setCulled(!visible);
 								}
@@ -102,11 +101,11 @@ public class CullTask implements Runnable {
 									cullable.setCulled(false);
 									continue;
 								}
-							    if(entity.getPositionVector().squareDistanceTo(cameraMC) > EntityCullingModBase.instance.config.tracingDistance * EntityCullingModBase.instance.config.tracingDistance) {
+							    if(distanceSq(entity.posX, entity.posY, entity.posZ, cameraMC.xCoord, cameraMC.yCoord, cameraMC.zCoord) > EntityCullingModBase.instance.config.tracingDistance * EntityCullingModBase.instance.config.tracingDistance) {
 							        cullable.setCulled(false); // If your entity view distance is larger than tracingDistance just render it
 							        continue;
 							    }
-							    AxisAlignedBB boundingBox = entity.getEntityBoundingBox();
+                                AxisAlignedBB boundingBox = entity.boundingBox;
 							    if(boundingBox.maxX - boundingBox.minX > hitboxLimit || boundingBox.maxY - boundingBox.minY > hitboxLimit || boundingBox.maxZ - boundingBox.minZ > hitboxLimit) {
 								    cullable.setCulled(false); // To big to bother to cull
 								    continue;
@@ -130,9 +129,9 @@ public class CullTask implements Runnable {
 	// 1.8 doesnt know where the heck the camera is... what?!?
 	private Vec3 getCameraPos() {
 	    if (client.gameSettings.thirdPersonView == 0) {
-	        return client.getRenderViewEntity().getPositionEyes(0);
+	        return client.renderViewEntity.getPosition(0).addVector(0, client.thePlayer.getEyeHeight(), 0);
 	    }
-	    return client.getRenderViewEntity().getPositionEyes(0);
+	    return client.renderViewEntity.getPosition(0).addVector(0, client.thePlayer.getEyeHeight(), 0);
 	    // doesnt work correctly
 //        Entity entity = client.getRenderViewEntity();
 //        float f = entity.getEyeHeight();
@@ -172,4 +171,11 @@ public class CullTask implements Runnable {
 //        System.out.println(newPosX + " " + newPosY + " " + newPosZ);
 //        return vec;
 	}
+
+    private double distanceSq(double x1, double y1, double z1, double x2, double y2, double z2) {
+        double d3 = x1 - x2;
+        double d4 = y1 - y2;
+        double d5 = z1 - z2;
+        return d3 * d3 + d4 * d4 + d5 * d5;
+    }
 }
