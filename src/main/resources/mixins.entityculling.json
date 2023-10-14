@@ -7,10 +7,13 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [],
   "client": [
-    "RenderLivingEntityAccessor",
     "BlockEntityRenderDispatcherMixin",
     "CullableMixin",
+    "RenderLivingEntityAccessor",
     "WorldRendererMixin"
   ],
-  "server": []
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }
