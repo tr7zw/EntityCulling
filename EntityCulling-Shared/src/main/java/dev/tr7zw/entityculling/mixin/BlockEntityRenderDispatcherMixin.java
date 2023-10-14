@@ -22,5 +22,13 @@ public class BlockEntityRenderDispatcherMixin {
         }
         EntityCullingModBase.instance.renderedBlockEntities++;
     }
+    
+    @Inject(method = "Lnet/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher;render(Lnet/minecraft/tileentity/TileEntity;FI)V", at = @At("HEAD"), cancellable = true)
+    public void render(TileEntity blockEntity, float partialTicks, int destroyStage, CallbackInfo info) {
+        if (!((Cullable) blockEntity).isForcedVisible() && ((Cullable) blockEntity).isCulled()) {
+            EntityCullingModBase.instance.skippedBlockEntities++;
+            info.cancel();
+        }
+    }
 
 }
