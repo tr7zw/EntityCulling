@@ -1,4 +1,4 @@
-package dev.tr7zw.entityculling;
+package dev.tr7zw.entityculling.versionless;
 
 import java.util.Arrays;
 import java.util.HashSet;

@@ -1,20 +1,19 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "dev.tr7zw.entityculling.mixin",
-  "compatibilityLevel": "JAVA_16",
-  "refmap": "entityculling.refmap.mixins.json",
-  "mixins": [
-  ],
-  "client": [
-    "BlockEntityRenderDispatcherMixin",
-    "WorldRendererMixin",
-    "EntityRendererMixin",
-    "CullableMixin",
-    "DebugHudMixin",
-    "ClientWorldMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+    "required": true,
+    "minVersion": "0.8",
+    "package": "dev.tr7zw.entityculling.mixin",
+    "compatibilityLevel": "JAVA_16",
+    "refmap": "entityculling.refmap.mixins.json",
+    "mixins": [],
+    "client": [
+        "BlockEntityRenderDispatcherMixin",
+        "WorldRendererMixin",
+        "EntityRendererMixin",
+        "CullableMixin",
+        "DebugHudMixin",
+        "ClientWorldMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
 }

@@ -1,8 +1,7 @@
 package dev.tr7zw.entityculling;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLEnvironment;
 
 /**
  * Stupid Forge bootstrap class to work around their removal of sidedness
@@ -14,7 +13,9 @@ import net.minecraftforge.fml.common.Mod;
 public class EntityCullingBootstrap {
 
     public EntityCullingBootstrap() {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> EntityCullingMod::new);
+        if (FMLEnvironment.dist.isClient()) {
+            new EntityCullingMod();
+        }
     }
 
 }

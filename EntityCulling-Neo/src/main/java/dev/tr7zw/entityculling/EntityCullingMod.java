@@ -6,14 +6,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent.ClientTickEvent;
-import net.minecraftforge.event.TickEvent.LevelTickEvent;
-import net.minecraftforge.fml.IExtensionPoint;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.fml.IExtensionPoint;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.TickEvent.ClientTickEvent;
+import net.neoforged.neoforge.event.TickEvent.LevelTickEvent;
 
 public class EntityCullingMod extends EntityCullingModBase {
 
@@ -29,8 +28,8 @@ public class EntityCullingMod extends EntityCullingModBase {
     public void initModloader() {
         Minecraft.getInstance().options.keyMappings = ArrayUtils.add(Minecraft.getInstance().options.keyMappings,
                 keybind);
-        MinecraftForge.EVENT_BUS.addListener(this::doClientTick);
-        MinecraftForge.EVENT_BUS.addListener(this::doWorldTick);
+        NeoForge.EVENT_BUS.addListener(this::doClientTick);
+        NeoForge.EVENT_BUS.addListener(this::doWorldTick);
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
                 () -> new IExtensionPoint.DisplayTest(
                         () -> ModLoadingContext.get().getActiveContainer().getModInfo().getVersion().toString(),
@@ -47,7 +46,7 @@ public class EntityCullingMod extends EntityCullingModBase {
 
     @Override
     public AABB setupAABB(BlockEntity entity, BlockPos pos) {
-        return entity.getRenderBoundingBox();
+        return new AABB(pos);
     }
 
 }

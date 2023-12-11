@@ -17,7 +17,7 @@ Minecraft skips rendering things that are behind you, so why is it rendering eve
 - Sodium
 - Iris
 - Optifine
- 
+
 ## Note to why it works even with Sodium/Optifine
 
 This has been tested with other mods, Optifine(Optifabric), Iris, and Sodium, in all cases resulting in fps gains in places like Game Server lobbies.

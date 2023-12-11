@@ -24,11 +24,11 @@ Minecraft skips rendering things that are behind you, so why is it rendering eve
 
 Make sure you pick the correct File depending on Forge/Fabric!
 
-- 1.18.x [⬇️](https://www.curseforge.com/minecraft/mc-mods/entityculling/files/all?filter-status=1&filter-game-version=1738749986%3A73250) 
-- 1.17.x [⬇️](https://www.curseforge.com/minecraft/mc-mods/entityculling/files/all?filter-status=1&filter-game-version=1738749986%3A73242) 
-- 1.16.x [⬇️](https://www.curseforge.com/minecraft/mc-mods/entityculling/files/all?filter-status=1&filter-game-version=1738749986%3A70886) 
+- 1.18.x [⬇️](https://www.curseforge.com/minecraft/mc-mods/entityculling/files/all?filter-status=1&filter-game-version=1738749986%3A73250)
+- 1.17.x [⬇️](https://www.curseforge.com/minecraft/mc-mods/entityculling/files/all?filter-status=1&filter-game-version=1738749986%3A73242)
+- 1.16.x [⬇️](https://www.curseforge.com/minecraft/mc-mods/entityculling/files/all?filter-status=1&filter-game-version=1738749986%3A70886)
 - 1.8.9 [⬇️](https://www.curseforge.com/minecraft/mc-mods/entityculling/files/all?filter-status=1&filter-game-version=1738749986%3A4)
- 
+
 ## Note to why it works even with Sodium/Optifine
 
 This has been tested with other mods, Optifine(Optifabric), Iris, and Sodium, in all cases resulting in fps gains in places like Game Server lobbies.

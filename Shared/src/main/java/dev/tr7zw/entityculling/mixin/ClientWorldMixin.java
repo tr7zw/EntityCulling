@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import dev.tr7zw.entityculling.EntityCullingModBase;
-import dev.tr7zw.entityculling.access.Cullable;
+import dev.tr7zw.entityculling.versionless.access.Cullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -24,13 +24,14 @@ public class ClientWorldMixin {
 
     @Inject(method = "tickNonPassenger", at = @At("HEAD"), cancellable = true)
     public void tickEntity(Entity entity, CallbackInfo info) {
-        if (!EntityCullingModBase.instance.config.tickCulling || EntityCullingModBase.instance.config.skipEntityCulling) {
+        if (!EntityCullingModBase.instance.config.tickCulling
+                || EntityCullingModBase.instance.config.skipEntityCulling) {
             EntityCullingModBase.instance.tickedEntities++;
             return; // disabled
         }
         // Use abstract minecart instead of whitelist to also catch modded Minecarts
-        if (entity.noCulling || entity == mc.player || entity == mc.cameraEntity || entity.isPassenger() || entity.isVehicle()
-                || (entity instanceof AbstractMinecart)) {
+        if (entity.noCulling || entity == mc.player || entity == mc.cameraEntity || entity.isPassenger()
+                || entity.isVehicle() || (entity instanceof AbstractMinecart)) {
             EntityCullingModBase.instance.tickedEntities++;
             return; // never skip the client tick for the player or entities in vehicles/with
                     // passengers. Also respect the "noCulling" flag
@@ -61,7 +62,8 @@ public class ClientWorldMixin {
             if (living.hurtTime > 0)
                 living.hurtTime--;
         }
-        // the warden sounds are generated clientside instead of serverside, so simulate that part of the code here.
+        // the warden sounds are generated clientside instead of serverside, so simulate
+        // that part of the code here.
         if (entity instanceof Warden warden) {
             if (mc.level.isClientSide() && !warden.isSilent()
                     && warden.tickCount % getWardenHeartBeatDelay(warden) == 0) {

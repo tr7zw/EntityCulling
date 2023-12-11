@@ -1,34 +1,29 @@
 {
-  "schemaVersion": 1,
-  "id": "entityculling",
-  "version": "${version}",
-
-  "name": "EntityCulling-Fabric",
-  "description": "This mod uses async path-tracing to hide Tiles/Entities that are not visible.",
-  "authors": [
-    "tr7zw"
-  ],
-  "contact": {
-    "homepage": "https://github.com/tr7zw/EntityCulling-Fabric",
-    "sources": "https://github.com/tr7zw/EntityCulling-Fabric",
-    "issues": "https://github.com/tr7zw/EntityCulling-Fabric/issues"
-  },
-
-  "license": "tr7zw Protective License",
-  "icon": "assets/entityculling/icon.png",
-
-  "environment": "client",
-  "entrypoints": {
-    "client": [
-      "dev.tr7zw.entityculling.EntityCullingMod"
-    ]
-  },
-  "mixins": [
-    "entityculling.mixins.json"
-  ],
-
-  "depends": {
-    "fabric-api": "*",
-    "minecraft": ">=1.20.2"
-  }
+    "schemaVersion": 1,
+    "id": "${mod_id}",
+    "version": "${version}",
+    "name": "${mod_name}",
+    "description": "${description}",
+    "authors": [
+        "${mod_author}"
+    ],
+    "contact": {
+        "homepage": "${homepage_url}",
+        "sources": "${sources_url}",
+        "issues": "${issues_url}"
+    },
+    "license": "${license_name}",
+    "icon": "assets/${mod_id}/icon.png",
+    "environment": "CLIENT",
+    "entrypoints": {
+        "client": [
+            "dev.tr7zw.entityculling.EntityCullingMod"
+        ]
+    },
+    "mixins": [
+        "${mod_id}.mixins.json"
+    ],
+    "depends": {
+        "minecraft": "${minecraft_version_range_fabric}"
+    }
 }

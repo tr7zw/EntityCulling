@@ -8,7 +8,8 @@ import java.util.Set;
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 import com.logisticscraft.occlusionculling.util.Vec3d;
 
-import dev.tr7zw.entityculling.access.Cullable;
+import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
+import dev.tr7zw.entityculling.versionless.access.Cullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Position;
@@ -52,7 +53,7 @@ public class CullTask implements Runnable {
         while (client.isRunning()) { // client.isRunning() returns false at the start?!?
             try {
                 Thread.sleep(sleepDelay);
-                if (EntityCullingModBase.enabled && client.level != null && client.player != null
+                if (EntityCullingVersionlessBase.enabled && client.level != null && client.player != null
                         && client.player.tickCount > 10) {
                     Vec3 cameraMC = EntityCullingModBase.instance.config.debugMode
                             ? client.player.getEyePosition(client.getDeltaFrameTime())
@@ -79,7 +80,7 @@ public class CullTask implements Runnable {
     }
 
     private void cullEntities(Vec3 cameraMC, Vec3d camera, boolean spectator) {
-        if(disableEntityCulling) {
+        if (disableEntityCulling) {
             return;
         }
         Entity entity = null;
@@ -128,7 +129,7 @@ public class CullTask implements Runnable {
     }
 
     private void cullBlockEntities(Vec3 cameraMC, Vec3d camera, boolean spectator) {
-        if(disableBlockEntityCulling) {
+        if (disableBlockEntityCulling) {
             return;
         }
         for (int x = -8; x <= 8; x++) {

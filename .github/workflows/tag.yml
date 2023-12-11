@@ -15,13 +15,34 @@ jobs:
       - name: make gradle wrapper executable
         run: chmod +x ./gradlecw
       - name: build
-        run: ./gradlecw build
+        run: ./gradlecw build -Pbuild.release=true
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
             EntityCulling-Fabric/build/libs/*
             EntityCulling-Forge/build/libs/*
+            EntityCulling-Neo/build/libs/*
+            EntityCulling-Versionless/build/libs/*
+      - name: Publish-Neo-Curseforge
+        uses: Kir-Antipov/mc-publish@v3.2
+        with:
+          curseforge-id: 448233
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}  
+          loaders: neoforge
+          name: ${{github.ref_name}} - NeoForge
+          version-type: beta
+          files: '*Neo/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.20.2
+      - name: Publish-Neo-Modrinth
+        uses: Kir-Antipov/mc-publish@v3.2
+        with:
+          modrinth-id: NNAgCjsB
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          loaders: neoforge
+          name: ${{github.ref_name}} - NeoForge
+          files: '*Neo/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.20.2
       - name: Publish-Forge-Curseforge
         uses: Kir-Antipov/mc-publish@v3.2
         with:
@@ -31,6 +52,7 @@ jobs:
           name: ${{github.ref_name}} - Forge
           version-type: beta
           files: '*Forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.20.2
       - name: Publish-Forge-Modrinth
         uses: Kir-Antipov/mc-publish@v3.2
         with:
@@ -39,6 +61,7 @@ jobs:
           loaders: forge
           name: ${{github.ref_name}} - Forge
           files: '*Forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.20.2
       - name: Publish-Fabric
         uses: Kir-Antipov/mc-publish@v3.2
         with:
@@ -49,3 +72,4 @@ jobs:
           loaders: fabric
           name: ${{github.ref_name}} - Fabric
           files: '*Fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.20.2

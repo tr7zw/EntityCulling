@@ -19,8 +19,7 @@ public class EntityCullingMod extends EntityCullingModBase implements ClientModI
         ClientTickEvents.START_WORLD_TICK.register((event) -> {
             this.worldTick();
         });
-        ClientTickEvents.START_CLIENT_TICK.register(e ->
-        {
+        ClientTickEvents.START_CLIENT_TICK.register(e -> {
             this.clientTick();
         });
         KeyBindingHelper.registerKeyBinding(keybind);

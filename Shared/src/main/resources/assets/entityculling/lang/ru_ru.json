@@ -1,5 +1,5 @@
 {
-  "modmenu.descriptionTranslation.entityculling": "Мод, использующий параллельную трассировку путей для определения видимости сущностей и блоков-сущностей, скрытых за блоками.",
-  "text.entityculling.title": "EntityCulling",
-  "key.entityculling.toggle": "Переключить отбраковку"
+    "modmenu.descriptionTranslation.entityculling": "Мод, использующий параллельную трассировку путей для определения видимости сущностей и блоков-сущностей, скрытых за блоками.",
+    "text.entityculling.title": "EntityCulling",
+    "key.entityculling.toggle": "Переключить отбраковку"
 }

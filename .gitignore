@@ -40,3 +40,4 @@ logs/
 gradle/wrapper
 VersionShared
 UtilityCode
+formatter.xml

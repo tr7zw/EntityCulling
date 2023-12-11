@@ -10,7 +10,7 @@ public class Provider implements DataProvider {
 
     private final Minecraft client = Minecraft.getInstance();
     private ClientLevel world = null;
-    
+
     @Override
     public boolean prepareChunk(int chunkX, int chunkZ) {
         world = client.level;

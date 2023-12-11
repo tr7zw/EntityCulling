@@ -8,9 +8,9 @@ import net.minecraft.world.entity.Entity;
 
 public interface EntityRendererInter<T extends Entity> {
 
-	boolean shadowShouldShowName(T entity);
+    boolean shadowShouldShowName(T entity);
 
-	void shadowRenderNameTag(T entity, Component component, PoseStack poseStack,
-            MultiBufferSource multiBufferSource, int light);
+    void shadowRenderNameTag(T entity, Component component, PoseStack poseStack, MultiBufferSource multiBufferSource,
+            int light);
 
 }

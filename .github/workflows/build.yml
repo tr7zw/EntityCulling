@@ -14,6 +14,12 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
+      # to cache gradle files
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          cache-read-only: false
+          gradle-home-cache-cleanup: true
       - name: make gradle wrapper executable
         if: ${{ runner.os != 'Windows' }}
         run: chmod +x ./gradlecw
@@ -26,6 +32,8 @@ jobs:
           path: |
             EntityCulling-Fabric/build/libs/*
             EntityCulling-Forge/build/libs/*
+            EntityCulling-Neo/build/libs/*
+            EntityCulling-Versionless/build/libs/*
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: success() || failure()

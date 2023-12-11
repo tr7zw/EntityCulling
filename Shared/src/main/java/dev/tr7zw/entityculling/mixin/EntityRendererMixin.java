@@ -14,22 +14,22 @@ import net.minecraft.world.entity.Entity;
 @Mixin(EntityRenderer.class)
 public abstract class EntityRendererMixin<T extends Entity> implements EntityRendererInter<T> {
 
-	@Override
-	public boolean shadowShouldShowName(T entity) {
-		return shouldShowName(entity);
-	}
-	
-	@Override
-	public void shadowRenderNameTag(T entity, Component component, PoseStack poseStack,
+    @Override
+    public boolean shadowShouldShowName(T entity) {
+        return shouldShowName(entity);
+    }
+
+    @Override
+    public void shadowRenderNameTag(T entity, Component component, PoseStack poseStack,
             MultiBufferSource multiBufferSource, int light) {
-	    renderNameTag(entity, component, poseStack, multiBufferSource, light);
-	}
-	
-	@Shadow
-	public abstract boolean shouldShowName(T entity);
-	
-	@Shadow
-	public abstract void renderNameTag(T entity, Component component, PoseStack poseStack,
+        renderNameTag(entity, component, poseStack, multiBufferSource, light);
+    }
+
+    @Shadow
+    public abstract boolean shouldShowName(T entity);
+
+    @Shadow
+    public abstract void renderNameTag(T entity, Component component, PoseStack poseStack,
             MultiBufferSource multiBufferSource, int i);
-	
+
 }
