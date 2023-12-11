@@ -1,5 +1,5 @@
 version: '0.0.2'
-source: "https://github.com/tr7zw/ModComposeTemplate/tree/1.20.2"
+source: "https://github.com/tr7zw/ModComposeTemplate/tree/1.20.4"
 replacements:
   name: "EntityCulling"
   id: "entityculling"
