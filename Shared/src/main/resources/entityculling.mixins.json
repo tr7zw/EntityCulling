@@ -12,7 +12,8 @@
     "EntityRendererMixin",
     "CullableMixin",
     "DebugHudMixin",
-    "ClientWorldMixin"
+    "ClientWorldMixin",
+    "CameraMixin"
   ],
   "injectors": {
     "defaultRequire": 1
