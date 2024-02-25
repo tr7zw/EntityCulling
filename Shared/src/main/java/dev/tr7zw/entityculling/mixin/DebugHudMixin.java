@@ -1,6 +1,7 @@
 package dev.tr7zw.entityculling.mixin;
 
 import dev.tr7zw.entityculling.EntityCullingModBase;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -37,6 +38,9 @@ public class DebugHudMixin {
         if(!EntityCullingModBase.instance.config.skipEntityCulling) {
             list.add("[Culling] Rendered Entities: " + EntityCullingModBase.instance.renderedEntities + " Skipped: " + EntityCullingModBase.instance.skippedEntities);
             list.add("[Culling] Ticked Entities: " + lastTickedEntities + " Skipped: " + lastSkippedEntityTicks);
+        }
+        if (EntityCullingModBase.instance.config.debugMode) {
+            list.add("[Culling] Camera: " + Minecraft.getInstance().gameRenderer.getMainCamera().getPosition());
         }
 
         EntityCullingModBase.instance.renderedBlockEntities = 0;

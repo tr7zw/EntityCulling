@@ -1,5 +1,6 @@
 package dev.tr7zw.entityculling.mixin;
 
+import dev.tr7zw.entityculling.api.fixes.CameraThirdPersonFixApi;
 import net.minecraft.client.Camera;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class CameraMixin {
     @Inject(at = @At("RETURN"), method = "getMaxZoom", cancellable = true)
     private void getDetachedCameraMaxDistanceFix(double startingDistance, CallbackInfoReturnable<Double> cir) {
-        cir.setReturnValue(cir.getReturnValueD() - 0.04);
+        if (CameraThirdPersonFixApi.isFixEnable()) {
+            cir.setReturnValue(cir.getReturnValueD() - 0.04);
+        }
     }
 }
