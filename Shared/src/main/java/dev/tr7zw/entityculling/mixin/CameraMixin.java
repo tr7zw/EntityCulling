@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  *
  * <p>Description: When the camera is rotated more than ~85 degrees, the camera position goes into the block by thousandths.</p>
  * <br>
- * <p>Solution: Subtract from the distance of the camera from</p>
+ * <p>Solution: Subtract 4 hundredths from the distance of the camera from the player. This solves the problem and is visually impossible to distinguish.</p>
  * @author BenXII12
  */
 @Mixin(Camera.class)
