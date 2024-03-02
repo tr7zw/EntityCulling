@@ -14,7 +14,7 @@
     },
     "license": "d",
     "icon": "assets/entityculling/icon.png",
-    "environment": "CLIENT",
+    "environment": "client",
     "entrypoints": {
         "client": [
             "dev.tr7zw.entityculling.EntityCullingMod"

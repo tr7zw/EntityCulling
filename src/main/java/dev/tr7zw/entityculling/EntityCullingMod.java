@@ -26,9 +26,8 @@ public class EntityCullingMod extends EntityCullingModBase implements ClientModI
 
     @Override
     public Box setupBox(BlockEntity entity, BlockPos pos) {
-        Box boundingBox = entity.getBlock().getBoundingBox(entity.world, entity.x, entity.y, entity.z);
-        if (entity instanceof SignBlockEntity) System.out.println(boundingBox);
-        return boundingBox;
+        //if (entity instanceof SignBlockEntity) System.out.println(boundingBox);
+        return entity.getBlock().getBoundingBox(entity.world, entity.x, entity.y, entity.z);
     }
 
 }

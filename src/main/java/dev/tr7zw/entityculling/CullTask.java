@@ -135,9 +135,9 @@ public class CullTask implements Runnable {
                     if (!cullable.isForcedVisible()) {
                         BlockPos pos = entry.getKey();
                         idk = entry.getValue() instanceof SignBlockEntity;
-                        if (idk) System.out.println("sup");
+                        //if (idk) System.out.println("sup");
                         if (closerThan(pos, cameraMC, 64)) { // 64 is the fixed max tile view distance
-                            if (idk) System.out.println("I am going insane");
+                            //if (idk) System.out.println("I am going insane");
                             Box boundingBox = EntityCullingModBase.instance.setupBox(entry.getValue(), pos);
                             idk(camera, cullable, boundingBox);
                         }
@@ -153,7 +153,7 @@ public class CullTask implements Runnable {
     private void idk(Vec3d camera, Cullable cullable, Box boundingBox) {
         if (Math.abs(boundingBox.maxX - boundingBox.minX) > hitboxLimit || Math.abs(boundingBox.maxY - boundingBox.minY) > hitboxLimit
                 || Math.abs(boundingBox.maxZ - boundingBox.minZ) > hitboxLimit) {
-            if (idk) System.out.println("too big");
+            //if (idk) System.out.println("too big");
             cullable.setCulled(false); // To big to bother to cull
             return;
         }
@@ -161,7 +161,7 @@ public class CullTask implements Runnable {
         aabbMax.set(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ);
         //System.out.println(boundingBox);
         boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
-        if (!visible && idk) System.out.println("not visible!!!!");
+        //if (!visible && idk) System.out.println("not visible!!!!");
         cullable.setCulled(!visible);
     }
 

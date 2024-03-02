@@ -57,7 +57,7 @@ public class DebugHudMixin extends DrawContext {
         TextRenderer textRenderer = this.minecraft.textRenderer;
         for (int i1 = 0; i1 < list.size(); i1++) {
             String s = list.get(i1);
-            this.drawTextWithShadow(textRenderer, s, 2, 89+i1*9, 0xE0E0E0);
+            this.drawTextWithShadow(textRenderer, s, 2, 110+i1*9, 0xE0E0E0);
         }
     }
 

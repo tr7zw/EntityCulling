@@ -28,10 +28,8 @@ public abstract class BlockEntityRenderDispatcherMixin {
             EntityCullingModBase.instance.renderedBlockEntities++;
             return;
         }*/
-        if (blockEntity instanceof SignBlockEntity) System.out.println("we are here");
         if (!((Cullable) blockEntity).isForcedVisible() && ((Cullable) blockEntity).isCulled()) {
             EntityCullingModBase.instance.skippedBlockEntities++;
-            if (blockEntity instanceof SignBlockEntity) System.out.println("cancelled!!!!");
             ci.cancel();
             return;
         }
