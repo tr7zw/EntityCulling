@@ -25,7 +25,7 @@ jobs:
             EntityCulling-Neo/build/libs/*
             EntityCulling-Versionless/build/libs/*
       - name: Publish-Neo-Curseforge
-        uses: Kir-Antipov/mc-publish@v3.2
+        uses: Kir-Antipov/mc-publish@v3.3.0
         with:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}  
@@ -35,7 +35,7 @@ jobs:
           files: '*Neo/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.4
       - name: Publish-Neo-Modrinth
-        uses: Kir-Antipov/mc-publish@v3.2
+        uses: Kir-Antipov/mc-publish@v3.3.0
         with:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
@@ -44,7 +44,7 @@ jobs:
           files: '*Neo/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.4
       - name: Publish-Forge-Curseforge
-        uses: Kir-Antipov/mc-publish@v3.2
+        uses: Kir-Antipov/mc-publish@v3.3.0
         with:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}  
@@ -54,7 +54,7 @@ jobs:
           files: '*Forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.4
       - name: Publish-Forge-Modrinth
-        uses: Kir-Antipov/mc-publish@v3.2
+        uses: Kir-Antipov/mc-publish@v3.3.0
         with:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
@@ -63,7 +63,7 @@ jobs:
           files: '*Forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.4
       - name: Publish-Fabric
-        uses: Kir-Antipov/mc-publish@v3.2
+        uses: Kir-Antipov/mc-publish@v3.3.0
         with:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}

@@ -10,7 +10,7 @@ replacements:
   issuesUrl: "https://github.com/tr7zw/EntityCulling/issues"
   relocationpackage: "dev.tr7zw.entityculling"
   dependencies: '
-  	inc "com.logisticscraft:occlusionculling:0.0.7-SNAPSHOT"
+  	inc "com.logisticscraft:occlusionculling:0.0.8-SNAPSHOT"
 
     inc project(":EntityCulling-Versionless")
   '
@@ -33,9 +33,9 @@ subProjects:
     template: "Forge"
     replacements:
       dependencies: '
-        inc "com.logisticscraft:occlusionculling:0.0.7-SNAPSHOT"
+        inc "com.logisticscraft:occlusionculling:0.0.8-SNAPSHOT"
 
-        forgeRuntimeLibrary "com.logisticscraft:occlusionculling:0.0.7-SNAPSHOT"
+        forgeRuntimeLibrary "com.logisticscraft:occlusionculling:0.0.8-SNAPSHOT"
 
         inc project(":EntityCulling-Versionless")
 
@@ -45,9 +45,9 @@ subProjects:
     template: "Neo"
     replacements:
       dependencies: '
-        inc "com.logisticscraft:occlusionculling:0.0.7-SNAPSHOT"
+        inc "com.logisticscraft:occlusionculling:0.0.8-SNAPSHOT"
 
-        forgeRuntimeLibrary "com.logisticscraft:occlusionculling:0.0.7-SNAPSHOT"
+        forgeRuntimeLibrary "com.logisticscraft:occlusionculling:0.0.8-SNAPSHOT"
 
         inc project(":EntityCulling-Versionless")
 
@@ -57,7 +57,7 @@ subProjects:
     template: "Versionless"
     replacements:
       dependencies: '
-      compileOnly "com.logisticscraft:occlusionculling:0.0.7-SNAPSHOT"
+      compileOnly "com.logisticscraft:occlusionculling:0.0.8-SNAPSHOT"
 
       compileOnly "com.google.code.gson:gson:2.10.1"
 

@@ -66,9 +66,8 @@ public class CullTask implements Runnable {
                         lastPos.set(cameraMC.x, cameraMC.y, cameraMC.z);
                         Vec3d camera = lastPos;
                         culling.resetCache();
-                        boolean spectator = client.player.isSpectator();
-                        cullBlockEntities(cameraMC, camera, spectator);
-                        cullEntities(cameraMC, camera, spectator);
+                        cullBlockEntities(cameraMC, camera);
+                        cullEntities(cameraMC, camera);
                         lastTime = (System.currentTimeMillis() - start);
                     }
                 }
@@ -79,7 +78,7 @@ public class CullTask implements Runnable {
         System.out.println("Shutting down culling task!");
     }
 
-    private void cullEntities(Vec3 cameraMC, Vec3d camera, boolean spectator) {
+    private void cullEntities(Vec3 cameraMC, Vec3d camera) {
         if (disableEntityCulling) {
             return;
         }
@@ -105,7 +104,7 @@ public class CullTask implements Runnable {
             }
             Cullable cullable = (Cullable) entity;
             if (!cullable.isForcedVisible()) {
-                if (spectator || entity.isCurrentlyGlowing() || isSkippableArmorstand(entity)) {
+                if (entity.isCurrentlyGlowing() || isSkippableArmorstand(entity)) {
                     cullable.setCulled(false);
                     continue;
                 }
@@ -128,7 +127,7 @@ public class CullTask implements Runnable {
         }
     }
 
-    private void cullBlockEntities(Vec3 cameraMC, Vec3d camera, boolean spectator) {
+    private void cullBlockEntities(Vec3 cameraMC, Vec3d camera) {
         if (disableBlockEntityCulling) {
             return;
         }
@@ -154,10 +153,6 @@ public class CullTask implements Runnable {
                     }
                     Cullable cullable = (Cullable) entry.getValue();
                     if (!cullable.isForcedVisible()) {
-                        if (spectator) {
-                            cullable.setCulled(false);
-                            continue;
-                        }
                         BlockPos pos = entry.getKey();
                         if (closerThan(pos, cameraMC, 64)) { // 64 is the fixed max tile view distance
                             AABB boundingBox = EntityCullingModBase.instance.setupAABB(entry.getValue(), pos);
