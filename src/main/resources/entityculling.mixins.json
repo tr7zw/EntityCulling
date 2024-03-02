@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.tr7zw.entityculling.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "refmap": "entityculling.refmap.mixins.json",
+  "mixins": [],
+  "client": [
+    "BlockEntityRenderDispatcherMixin",
+    "CullableMixin",
+    "DebugHudMixin",
+    "EntityRendererMixin",
+    "MinecraftAccessor",
+    "MinecraftMixin",
+    "WorldRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

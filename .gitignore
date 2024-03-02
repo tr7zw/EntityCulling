@@ -35,8 +35,6 @@ logs/
 
 # compose
 
-*.gradle
-*.properties
 gradle/wrapper
 VersionShared
 UtilityCode
