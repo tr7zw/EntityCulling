@@ -1,5 +1,7 @@
 package dev.tr7zw.entityculling.versionless;
 
+import java.util.Arrays;
+
 public class ConfigUpgrader {
 
     public static boolean upgradeConfig(Config config) {
@@ -22,6 +24,12 @@ public class ConfigUpgrader {
         if (config.configVersion < 5) {
             config.configVersion = 5;
             changed = true;
+        }
+        if (config.configVersion < 6) {
+            config.configVersion = 6;
+            changed = true;
+            config.tickCullingWhitelist
+                    .addAll(Arrays.asList("mts:builder_existing", "mts:builder_rendering", "mts:builder_seat"));
         }
         // check for more changes here
 

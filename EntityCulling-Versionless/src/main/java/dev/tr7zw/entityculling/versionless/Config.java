@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class Config {
 
-    public int configVersion = 5;
+    public int configVersion = 6;
     public boolean renderNametagsThroughWalls = true;
     public Set<String> blockEntityWhitelist = new HashSet<>(
             Arrays.asList("minecraft:beacon", "create:rope_pulley", "create:hose_pulley", "betterend:eternal_pedestal",
@@ -20,7 +20,8 @@ public class Config {
     public boolean tickCulling = true;
     public Set<String> tickCullingWhitelist = new HashSet<>(
             Arrays.asList("minecraft:firework_rocket", "minecraft:boat", "create:carriage_contraption",
-                    "create:contraption", "create:gantry_contraption", "create:stationary_contraption"));
+                    "create:contraption", "create:gantry_contraption", "create:stationary_contraption",
+                    "mts:builder_existing", "mts:builder_rendering", "mts:builder_seat"));
     public boolean disableF3 = false;
     public boolean skipEntityCulling = false;
     public boolean skipBlockEntityCulling = false;
