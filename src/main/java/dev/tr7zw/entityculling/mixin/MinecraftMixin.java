@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Minecraft.class)
 public class MinecraftMixin {
     @Inject(method = "tick", at=@At("HEAD"))
-    public void yes(CallbackInfo ci) {
+    public void clientTick(CallbackInfo ci) {
         EntityCullingMod.instance.clientTick();
     }
 

@@ -12,17 +12,19 @@ import dev.tr7zw.entityculling.mixin.MinecraftAccessor;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ClientPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.chunk.Chunk;
 
+@SuppressWarnings("unchecked")
 public class CullTask implements Runnable {
 
     public boolean requestCull = false;
-    public boolean disableEntityCulling = false;
-    public boolean disableBlockEntityCulling = false;
 
     private final OcclusionCullingInstance culling;
     private final Minecraft client = MinecraftAccessor.getInstance();
@@ -33,9 +35,9 @@ public class CullTask implements Runnable {
     public long lastTime = 0;
 
     // reused preallocated vars
-    private Vec3d lastPos = new Vec3d(0, 0, 0);
-    private Vec3d aabbMin = new Vec3d(0, 0, 0);
-    private Vec3d aabbMax = new Vec3d(0, 0, 0);
+    private final Vec3d lastPos = new Vec3d(0, 0, 0);
+    private final Vec3d aabbMin = new Vec3d(0, 0, 0);
+    private final Vec3d aabbMax = new Vec3d(0, 0, 0);
 
     public CullTask(OcclusionCullingInstance culling) {
         this.culling = culling;
@@ -61,8 +63,8 @@ public class CullTask implements Runnable {
                         lastPos.set(cameraMC.x, cameraMC.y, cameraMC.z);
                         Vec3d camera = lastPos;
                         culling.resetCache();
-                        cullBlockEntities(cameraMC, camera);
-                        cullEntities(cameraMC, camera);
+                        if (!Config.Fields.disableBlockEntityCulling) cullBlockEntities(cameraMC, camera);
+                        if (!Config.Fields.disableEntityCulling) cullEntities(cameraMC, camera);
                         lastTime = (System.currentTimeMillis() - start);
                     }
                 }
@@ -74,11 +76,8 @@ public class CullTask implements Runnable {
     }
 
     private void cullEntities(net.minecraft.util.math.Vec3d cameraMC, Vec3d camera) {
-        if (disableEntityCulling) {
-            return;
-        }
         Entity entity;
-        Iterator iterable = client.world.method_291().iterator();
+        Iterator<?> iterable = client.world.method_291().iterator();
         while (iterable.hasNext()) {
             try {
                 entity = (Entity) iterable.next();
@@ -87,14 +86,13 @@ public class CullTask implements Runnable {
                        // less
                        // overhead probably than trying to sync stuff up for no really good reason
             }
-            if (!(entity instanceof Cullable)) {
+            if (!(entity instanceof Cullable cullable)) {
                 continue; // Not sure how this could happen outside from mixin screwing up the inject into
                           // Entity
             }
-            if (EntityCullingModBase.instance.isDynamicWhitelisted(entity)) {
+            if (EntityCullingMod.instance.isDynamicWhitelisted(entity)) {
                 continue;
             }
-            Cullable cullable = (Cullable) entity;
             if (!cullable.isForcedVisible()) {
                 if (!isInRange(getPos(entity), cameraMC, 128 /*EntityCullingModBase.instance.config.tracingDistance*/)) {
                     cullable.setCulled(false); // If your entity view distance is larger than tracingDistance just
@@ -109,13 +107,10 @@ public class CullTask implements Runnable {
     }
 
     private void cullBlockEntities(net.minecraft.util.math.Vec3d cameraMC, Vec3d camera) {
-        if (disableBlockEntityCulling) {
-            return;
-        }
         for (int x = -8; x <= 8; x++) {
             for (int z = -8; z <= 8; z++) {
                 Chunk chunk = client.world.method_214(client.player.chunkX + x, client.player.chunkZ + z);
-                Iterator iterator = chunk.blockEntities.entrySet().iterator();
+                Iterator<?> iterator = chunk.blockEntities.entrySet().iterator();
                 Entry<BlockPos, BlockEntity> entry;
                 while (iterator.hasNext()) {
                     try {
@@ -128,17 +123,18 @@ public class CullTask implements Runnable {
                     /*if (blockEntityWhitelist.contains(entry.getValue().getType())) {
                         continue;
                     }*/
-                    if (EntityCullingModBase.instance.isDynamicWhitelisted(entry.getValue())) {
+                    if (EntityCullingMod.instance.isDynamicWhitelisted(entry.getValue())) {
                         continue;
                     }
                     Cullable cullable = (Cullable) entry.getValue();
                     if (!cullable.isForcedVisible()) {
                         BlockPos pos = entry.getKey();
-                        idk = entry.getValue() instanceof SignBlockEntity;
+
+                        if (!BlockEntityRenderDispatcher.INSTANCE.method_1276(entry.getValue())) continue;
                         //if (idk) System.out.println("sup");
                         if (closerThan(pos, cameraMC, 64)) { // 64 is the fixed max tile view distance
                             //if (idk) System.out.println("I am going insane");
-                            Box boundingBox = EntityCullingModBase.instance.setupBox(entry.getValue(), pos);
+                            Box boundingBox = EntityCullingMod.instance.setupBox(entry.getValue(), pos);
                             idk(camera, cullable, boundingBox);
                         }
                     }
@@ -182,15 +178,25 @@ public class CullTask implements Runnable {
     }
 
     // Vec3i forward compatibility functions
+    @SuppressWarnings("SameParameterValue")
     private static boolean closerThan(BlockPos blockPos, net.minecraft.util.math.Vec3d position, double d) {
         return distSqr(blockPos, position.x, position.y, position.z, true) < d * d*d;
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static double distSqr(BlockPos blockPos, double d, double e, double f, boolean bl) {
         double g = bl ? 0.5D : 0.0D;
         double h = (double) blockPos.x + g - d;
         double i = (double) blockPos.y + g - e;
         double j = (double) blockPos.z + g - f;
         return h * h + i * i + j * j;
+    }
+
+    private static net.minecraft.util.math.Vec3d lookVector(LivingEntity entity) {
+        float f2 = MathHelper.cos(-entity.yaw * ((float)Math.PI / 180) - (float)Math.PI);
+        float f3 = MathHelper.sin(-entity.yaw * ((float)Math.PI / 180) - (float)Math.PI);
+        float f4 = -MathHelper.cos(-entity.pitch * ((float)Math.PI / 180));
+        float f5 = MathHelper.sin(-entity.pitch * ((float)Math.PI / 180));
+        return net.minecraft.util.math.Vec3d.create(f3 * f4, f5, f2 * f4);
     }
 }

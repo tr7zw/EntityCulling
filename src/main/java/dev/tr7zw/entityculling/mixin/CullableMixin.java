@@ -5,12 +5,17 @@ import dev.tr7zw.entityculling.access.Cullable;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
+@SuppressWarnings("AddedMixinMembersNamePattern")
 @Mixin(value = { Entity.class, BlockEntity.class })
 public class CullableMixin implements Cullable {
 
+    @Unique
     private long lasttime = 0;
+    @Unique
     private boolean culled = false;
+    @Unique
     private boolean outOfCamera = false;
 
     @Override

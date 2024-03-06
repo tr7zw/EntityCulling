@@ -9,10 +9,10 @@
     "ClientPlayerEntityMixin",
     "CullableMixin",
     "DebugHudMixin",
-    "EntityRendererMixin",
+    "LivingEntityRendererAccessor",
     "MinecraftAccessor",
     "MinecraftMixin",
-    "WorldRendererMixin"
+    "EntityRenderDispatcherMixin"
   ],
   "injectors": {
     "defaultRequire": 1
