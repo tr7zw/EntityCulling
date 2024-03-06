@@ -10,7 +10,6 @@ import com.logisticscraft.occlusionculling.util.Vec3d;
 import dev.tr7zw.entityculling.access.Cullable;
 import dev.tr7zw.entityculling.mixin.MinecraftAccessor;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.entity.Entity;

@@ -9,12 +9,9 @@ import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class EntityCullingMod implements ClientModInitializer {
 
@@ -39,9 +36,7 @@ public class EntityCullingMod implements ClientModInitializer {
         cullTask = new CullTask(culling/*, blockEntityWhitelist, entityWhistelist*/);
 
         cullThread = new Thread(cullTask, "CullThread");
-        cullThread.setUncaughtExceptionHandler((thread, ex) -> {
-            System.out.println("The CullingThread has crashed! Please report the following stacktrace!" + ex.toString());
-        });
+        cullThread.setUncaughtExceptionHandler((thread, ex) -> System.out.println("The CullingThread has crashed! Please report the following stacktrace!" + ex.toString()));
     }
 
     public void worldTick() {
