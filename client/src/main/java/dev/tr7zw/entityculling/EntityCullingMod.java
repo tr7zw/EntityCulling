@@ -53,7 +53,7 @@ public class EntityCullingMod implements ClientModInitializer {
     public Box setupBox(BlockEntity entity, BlockPos pos)  {
         Block block = entity.getBlock();
         // Can't use createCached due to being off thread.
-        return Box.create(block.minX+entity.x, block.minY+ entity.y, block.minZ + entity.z, block.maxX + entity.x, block.maxY + entity.y, block.maxZ + entity.z);
+        return Box.of(block.minX+entity.x, block.minY+ entity.y, block.minZ + entity.z, block.maxX + entity.x, block.maxY + entity.y, block.maxZ + entity.z);
         //return entity.getBlock().getBoundingBox(entity.world, entity.x, entity.y, entity.z);
     }
 

@@ -5,9 +5,9 @@ import java.util.List;
 
 import dev.tr7zw.entityculling.Config;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.gui.GameGui;
+import net.minecraft.client.gui.GuiElement;
+import net.minecraft.client.render.TextRenderer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,8 +18,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import dev.tr7zw.entityculling.EntityCullingMod;
 
-@Mixin(InGameHud.class)
-public class DebugHudMixin extends DrawContext {
+@Mixin(GameGui.class)
+public class DebugHudMixin extends GuiElement {
 
     @Shadow private Minecraft minecraft;
 
@@ -43,7 +43,7 @@ public class DebugHudMixin extends DrawContext {
         TextRenderer textRenderer = this.minecraft.textRenderer;
         for (int i1 = 0; i1 < list.size(); i1++) {
             String s = list.get(i1);
-            this.drawTextWithShadow(textRenderer, s, 2, 106+i1*9, 0xE0E0E0);
+            this.drawString(textRenderer, s, 2, 106+i1*9, 0xE0E0E0);
         }
     }
 

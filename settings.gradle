@@ -5,10 +5,18 @@ pluginManagement {
             url = 'https://maven.fabricmc.net/'
         }
         maven {
-            name = 'Babric'
-            url = 'https://maven.glass-launcher.net/babric'
+            name = 'Ornithe Releases'
+            url = 'https://maven.ornithemc.net/releases'
+        }
+        maven {
+            name = 'Ornithe Snapshots'
+            url = 'https://maven.ornithemc.net/snapshots'
         }
         mavenCentral()
         gradlePluginPortal()
     }
 }
+
+include ':client'
+// No server build :))
+//include ':server'

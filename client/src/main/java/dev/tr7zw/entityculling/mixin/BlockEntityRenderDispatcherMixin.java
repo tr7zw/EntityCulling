@@ -16,12 +16,14 @@ import dev.tr7zw.entityculling.EntityCullingMod;
 @Mixin(BlockEntityRenderDispatcher.class)
 public abstract class BlockEntityRenderDispatcherMixin {
 
-    @Inject(method = "method_1278", at = @At("HEAD"), cancellable = true)
+    @Shadow public abstract BlockEntityRenderer getRenderer(BlockEntity blockEntity);
+
+    @Inject(method = "render(Lnet/minecraft/block/entity/BlockEntity;F)V", at = @At("HEAD"), cancellable = true)
     public void render(BlockEntity blockEntity, float par2, CallbackInfo ci) {
         if (Config.Fields.disableBlockEntityCulling) {
             return;
         }
-        BlockEntityRenderer blockEntityRenderer = method_1279(blockEntity);
+        BlockEntityRenderer blockEntityRenderer = getRenderer(blockEntity);
         if (blockEntityRenderer == null) return;
         // respect the "shouldRenderOffScreen" method
         // shouldRenderOffScreen would probably be false in beta
@@ -36,8 +38,5 @@ public abstract class BlockEntityRenderDispatcherMixin {
         }
         EntityCullingMod.instance.renderedBlockEntities++;
     }
-
-    @Shadow
-    public abstract BlockEntityRenderer method_1279(BlockEntity blockEntity);
 
 }

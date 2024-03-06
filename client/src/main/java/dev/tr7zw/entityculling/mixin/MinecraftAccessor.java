@@ -1,7 +1,7 @@
 package dev.tr7zw.entityculling.mixin;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.util.Timer;
+import net.minecraft.unmapped.C_8739928;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
@@ -13,5 +13,5 @@ public interface MinecraftAccessor {
     }
 
     @Accessor("timer")
-    Timer getTimer();
+    C_8739928 getTimer();
 }
