@@ -1,5 +1,6 @@
 package dev.tr7zw.entityculling;
 
+import blue.endless.jankson.Comment;
 import net.glasslauncher.mods.api.gcapi.api.ConfigName;
 import net.glasslauncher.mods.api.gcapi.api.GConfig;
 
@@ -19,5 +20,9 @@ public class Config {
 
         @ConfigName("F3 Info")
         public static Boolean showF3Info = true;
+
+        @ConfigName("Make glass cull entities and blocks")
+        @Comment("for funsies/debugging")
+        public static Boolean glassCulls = false;
     }
 }
