@@ -16,6 +16,6 @@ public class Config {
         public static Boolean showF3Info = true;
 
 
-        public static Boolean glassCulls = true;
+        public static Boolean glassCulls = false;
     }
 }
