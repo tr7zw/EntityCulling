@@ -6,6 +6,17 @@ Minecraft beta (probably doesn't) skips rendering things that are behind you, so
 
 This mod calculates the visibility of tile/-entities 64 blocks in each direction of the player(so a 128x128x128 cube in total), everything outside of that is considered too far away and is invisible(should somewhat line up with the vanilla "Entity Distance" setting, but future changes to this size are possible).
 
+<details>
+<summary>Before after in RetroMC mall</summary>
+
+## Before:
+![image](https://github.com/viciscat/EntityCulling/assets/51047087/3970f423-f964-4242-abd7-24426e95d269)
+
+## After:
+![image](https://github.com/viciscat/EntityCulling/assets/51047087/0bce6b35-0d39-4dd0-8e5e-bc3f4b30bb6a)
+
+</details>
+
 ## Compatibility
 
 This has been tested with SmoothBeta in all cases resulting in massive fps gains in places like the mall on RetroMC.
