@@ -35,7 +35,6 @@ logs/
 
 # compose
 
-gradle/wrapper
 VersionShared
 UtilityCode
 formatter.xml
