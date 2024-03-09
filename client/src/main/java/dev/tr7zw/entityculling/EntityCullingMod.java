@@ -5,7 +5,8 @@ import java.util.Set;
 import java.util.function.Function;
 
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
-
+import io.github.axolotlclient.AxolotlClientConfig.annotation.AxolotlClientAnnotationConfig;
+import io.github.axolotlclient.AxolotlClientConfig.annotation.ConfigInstance;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
@@ -16,6 +17,7 @@ import net.minecraft.util.math.Box;
 public class EntityCullingMod implements ClientModInitializer {
 
     public static EntityCullingMod instance;
+    public Config config;
     public CullTask cullTask;
     private final Set<Function<BlockEntity, Boolean>> dynamicBlockEntityWhitelist = new HashSet<>();
     private final Set<Function<Entity, Boolean>> dynamicEntityWhitelist = new HashSet<>();
@@ -32,6 +34,10 @@ public class EntityCullingMod implements ClientModInitializer {
 
     public void onInitializeClient() {
         instance = this;
+
+        ConfigInstance<Config> instance = AxolotlClientAnnotationConfig.getInstance().registerConfig(Config.class);
+        config = instance.getConfig();
+
         culling = new OcclusionCullingInstance(/*config.tracingDistance*/ 128, new Provider());
         cullTask = new CullTask(culling/*, blockEntityWhitelist, entityWhistelist*/);
 

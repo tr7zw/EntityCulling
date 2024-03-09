@@ -23,7 +23,7 @@ public abstract class EntityRenderDispatcherMixin {
 
     @Inject(at = @At("HEAD"), method = "render(Lnet/minecraft/entity/Entity;DDDFF)V", cancellable = true)
     private void renderEntity(Entity entity, double e, double f, double g, float h, float par6, CallbackInfo ci) {
-        if (Config.Fields.disableEntityCulling) {
+        if (EntityCullingMod.instance.config.disableEntityCulling) {
             return;
         }
         Cullable cullable = (Cullable) entity;

@@ -20,7 +20,7 @@ public abstract class BlockEntityRenderDispatcherMixin {
 
     @Inject(method = "render(Lnet/minecraft/block/entity/BlockEntity;F)V", at = @At("HEAD"), cancellable = true)
     public void render(BlockEntity blockEntity, float par2, CallbackInfo ci) {
-        if (Config.Fields.disableBlockEntityCulling) {
+        if (EntityCullingMod.instance.config.disableBlockEntityCulling) {
             return;
         }
         BlockEntityRenderer blockEntityRenderer = getRenderer(blockEntity);

@@ -64,8 +64,8 @@ public class CullTask implements Runnable {
                         lastPos.set(cameraMC.x, cameraMC.y, cameraMC.z);
                         Vec3d camera = lastPos;
                         culling.resetCache();
-                        if (!Config.Fields.disableBlockEntityCulling) cullBlockEntities(cameraMC, camera);
-                        if (!Config.Fields.disableEntityCulling) cullEntities(cameraMC, camera);
+                        if (!EntityCullingMod.instance.config.disableBlockEntityCulling) cullBlockEntities(cameraMC, camera);
+                        if (!EntityCullingMod.instance.config.disableEntityCulling) cullEntities(cameraMC, camera);
                         lastTime = (System.currentTimeMillis() - start);
                     }
                 }

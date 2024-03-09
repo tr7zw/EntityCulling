@@ -30,7 +30,7 @@ public class DebugHudMixin extends GuiElement {
             EntityCullingMod.instance.tickedEntities = 0;
             EntityCullingMod.instance.skippedEntityTicks = 0;
         }
-        if (!Config.Fields.showF3Info) {
+        if (!EntityCullingMod.instance.config.showF3Info) {
             return;
         }
         List<String> list = getStrings();
@@ -52,11 +52,11 @@ public class DebugHudMixin extends GuiElement {
     private static List<String> getStrings() {
         List<String> list = new ArrayList<>();
         list.add("[Culling] Last pass: " + EntityCullingMod.instance.cullTask.lastTime + "ms");
-        if (!Config.Fields.disableBlockEntityCulling) {
+        if (!EntityCullingMod.instance.config.disableBlockEntityCulling) {
             list.add("[Culling] Rendered Block Entities: " + EntityCullingMod.instance.renderedBlockEntities
                     + " Skipped: " + EntityCullingMod.instance.skippedBlockEntities);
         }
-        if (!Config.Fields.disableEntityCulling) {
+        if (!EntityCullingMod.instance.config.disableEntityCulling) {
             list.add("[Culling] Rendered Entities: " + EntityCullingMod.instance.renderedEntities + " Skipped: "
                     + EntityCullingMod.instance.skippedEntities);
             //list.add("[Culling] Ticked Entities: " + lastTickedEntities + " Skipped: " + lastSkippedEntityTicks);

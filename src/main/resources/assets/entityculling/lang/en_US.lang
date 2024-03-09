@@ -1,0 +1,5 @@
+entityculling=EntityCulling
+disable_entity_culling=Disable Entity Culling
+disable_block_entity_culling=Disable Block Entity Culling
+show_f3_info=Show F3 Information
+glass_culls=Glass culls

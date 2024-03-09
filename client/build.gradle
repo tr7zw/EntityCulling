@@ -7,3 +7,20 @@ loom {
 ploceus {
     clientOnlyMappings()
 }
+
+repositories {
+    maven { url = "https://moehreag.duckdns.org/maven/snapshots" }
+}
+
+dependencies {
+
+    dependencies {
+
+        // check for versions at https://moehreag.duckdns.org/maven/#/snapshots/io/github/
+        implementation include('io.github.axolotlclient.AxolotlClient-config:AxolotlClientConfig-common:3.0.0-beta.45')
+        modImplementation include('io.github.axolotlclient.extra:AxolotlClient-config:0.0.1-beta.6+b1.7.3')
+        implementation include("io.github.moehreag:AxolotlClientConfig-Annotation:0.0.1-alpha.6")
+
+        modImplementation "com.terraformersmc:modmenu:0.2.1+mcb1.7.3"
+    }
+}

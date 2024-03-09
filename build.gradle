@@ -66,8 +66,7 @@ def configure(project) {
         include "com.logisticscraft:occlusionculling:${project.occlusionculling_version}"
 
         project.ploceus.addCommonLibraries()
-        //project.ploceus.dependOsl(project.osl_version, project.environment)
-        //project.ploceus.dependOslModule('config', '0.4.3')
+        project.ploceus.dependOsl(project.osl_version, project.environment)
     }
 
     project.sourceSets {

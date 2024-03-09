@@ -1,21 +1,23 @@
 package dev.tr7zw.entityculling;
+
+import io.github.axolotlclient.AxolotlClientConfig.annotation.annotations.SerializedName;
+
+@io.github.axolotlclient.AxolotlClientConfig.annotation.annotations.Config(name = "entityculling")
 public class Config {
-    // TODO Ornithe config
-    public static final Fields FIELDS = new Fields();
 
-    @SuppressWarnings("CanBeFinal")
-    public static class Fields {
+	@SerializedName("disable_entity_culling")
+	public boolean disableEntityCulling = false;
 
 
-        public static Boolean disableEntityCulling = false;
+	@SerializedName("disable_block_entity_culling")
+	public boolean disableBlockEntityCulling = false;
 
 
-        public static Boolean disableBlockEntityCulling = false;
+	@SerializedName("show_f3_info")
+	public boolean showF3Info = true;
 
 
-        public static Boolean showF3Info = true;
+	@SerializedName("glass_culls")
+	public boolean glassCulls = false;
 
-
-        public static Boolean glassCulls = false;
-    }
 }
