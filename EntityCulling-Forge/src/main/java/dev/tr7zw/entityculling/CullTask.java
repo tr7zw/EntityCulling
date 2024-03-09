@@ -55,7 +55,7 @@ public class CullTask implements Runnable {
 						lastPos.set(cameraMC.x, cameraMC.y, cameraMC.z);
 						Vec3d camera = lastPos;
 						culling.resetCache();
-						boolean noCulling = client.player.isSpectator() || client.gameSettings.thirdPersonView != 0;
+						boolean noCulling = client.gameSettings.thirdPersonView != 0;
 						Iterator<TileEntity> iterator = client.world.loadedTileEntityList.iterator();
 						TileEntity entry;
 						while(iterator.hasNext()) {
