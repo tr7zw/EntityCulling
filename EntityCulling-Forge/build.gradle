@@ -44,12 +44,6 @@ propertyDefaultIfUnset("relocateShadowedDependencies", true)
 
 // Project property assertions
 
-final String javaSourceDir = 'src/main/java/'
-
-final String modGroupPath = modGroup.toString().replace('.' as char, '/' as char)
-
-String targetPackageJava = javaSourceDir + modGroupPath
-
 // Plugin application
 
 // Git version checking, also checking for if this is a submodule
@@ -80,24 +74,7 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
-tasks.withType(ScalaCompile).configureEach {
-    options.encoding = 'UTF-8'
-}
-
 // Configure Minecraft
-
-// Try to gather mod version from git tags if version is not manually specified
-if (!modVersion) {
-    try {
-        modVersion = gitVersion()
-    } catch (Exception ignored) {
-        out.style(Style.Failure).text(
-                "Mod version could not be determined! Property 'modVersion' is not set, and either git is not installed or no git tags exist.\n" +
-                        "Either specify a mod version in 'gradle.properties', or create at least one tag in git for this project."
-        )
-        modVersion = 'NO-GIT-TAG-SET'
-    }
-}
 
 if (includeMCVersionJar.toBoolean()){
     version = "${minecraftVersion}-${modVersion}"
