@@ -464,7 +464,7 @@ def getManifestAttributes() {
         attributes['FMLCorePlugin'] = "${modGroup}.${coreModClass}"
     }
     if (!containsMixinsAndOrCoreModOnly.toBoolean() && (usesMixins.toBoolean() || coreModClass)) {
-   //     attributes['FMLCorePluginContainsFMLMod'] = true
+        attributes['FMLCorePluginContainsFMLMod'] = true
     }
     if (accessTransformersFile) {
         attributes['FMLAT'] = accessTransformersFile.toString()
