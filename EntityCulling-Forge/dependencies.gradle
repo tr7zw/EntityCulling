@@ -1,0 +1,3 @@
+dependencies {
+    shadowImplementation "com.logisticscraft:occlusionculling:${project.occlusionculling_version}"
+}

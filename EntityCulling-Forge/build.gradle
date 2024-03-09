@@ -24,7 +24,6 @@ checkPropertyExists("modName")
 checkPropertyExists("modId")
 checkPropertyExists("modGroup")
 checkPropertyExists("minecraftVersion") // hard-coding this makes it harder to immediately tell what version a mod is in (even though this only really supports 1.12.2)
-checkPropertyExists("apiPackage")
 checkPropertyExists("accessTransformersFile")
 checkPropertyExists("usesMixins")
 checkPropertyExists("mixinsPackage")
@@ -34,37 +33,13 @@ checkPropertyExists("containsMixinsAndOrCoreModOnly")
 // Optional properties: we can assume some default behavior if these are missing
 propertyDefaultIfUnset("modVersion", "")
 propertyDefaultIfUnset("includeMCVersionJar", false)
-propertyDefaultIfUnset("autoUpdateBuildScript", false)
 propertyDefaultIfUnset("modArchivesBaseName", project.modId)
 propertyDefaultIfUnsetWithEnvVar("developmentEnvironmentUserName", "Developer", "DEV_USERNAME")
-propertyDefaultIfUnset("generateGradleTokenClass", "")
-propertyDefaultIfUnset("gradleTokenModId", "")
-propertyDefaultIfUnset("gradleTokenModName", "")
-propertyDefaultIfUnset("gradleTokenVersion", "")
-propertyDefaultIfUnset("useSrcApiPath", false)
-propertyDefaultIfUnset("includeWellKnownRepositories", true)
-propertyDefaultIfUnset("includeCommonDevEnvMods", true)
 propertyDefaultIfUnset("noPublishedSources", false)
-propertyDefaultIfUnset("forceEnableMixins", false)
-propertyDefaultIfUnsetWithEnvVar("enableCoreModDebug", false, "CORE_MOD_DEBUG")
 propertyDefaultIfUnset("generateMixinConfig", true)
 propertyDefaultIfUnset("usesShadowedDependencies", false)
 propertyDefaultIfUnset("minimizeShadowedDependencies", true)
 propertyDefaultIfUnset("relocateShadowedDependencies", true)
-propertyDefaultIfUnset("separateRunDirectories", false)
-propertyDefaultIfUnset("versionDisplayFormat", '$MOD_NAME \u2212 $VERSION')
-propertyDefaultIfUnsetWithEnvVar("modrinthProjectId", "", "MODRINTH_PROJECT_ID")
-propertyDefaultIfUnset("modrinthRelations", "")
-propertyDefaultIfUnsetWithEnvVar("curseForgeProjectId", "", "CURSEFORGE_PROJECT_ID")
-propertyDefaultIfUnset("curseForgeRelations", "")
-propertyDefaultIfUnsetWithEnvVar("releaseType", "release", "RELEASE_TYPE")
-propertyDefaultIfUnset("generateDefaultChangelog", false)
-propertyDefaultIfUnset("customMavenPublishUrl", "")
-propertyDefaultIfUnset("mavenArtifactGroup", getDefaultArtifactGroup())
-propertyDefaultIfUnset("enableModernJavaSyntax", false)
-propertyDefaultIfUnset("enableSpotless", false)
-propertyDefaultIfUnset("enableJUnit", false)
-propertyDefaultIfUnsetWithEnvVar("deploymentDebug", false, "DEPLOYMENT_DEBUG")
 
 
 // Project property assertions
@@ -72,7 +47,6 @@ propertyDefaultIfUnsetWithEnvVar("deploymentDebug", false, "DEPLOYMENT_DEBUG")
 final String javaSourceDir = 'src/main/java/'
 
 final String modGroupPath = modGroup.toString().replace('.' as char, '/' as char)
-final String apiPackagePath = apiPackage.toString().replace('.' as char, '/' as char)
 
 String targetPackageJava = javaSourceDir + modGroupPath
 
@@ -93,11 +67,7 @@ if (usesShadowedDependencies.toBoolean()) {
 
 java {
     toolchain {
-        if (enableModernJavaSyntax.toBoolean()) {
-            languageVersion.set(JavaLanguageVersion.of(17))
-        } else {
-            languageVersion.set(JavaLanguageVersion.of(8))
-        }
+        languageVersion.set(JavaLanguageVersion.of(8))
         // Azul covers the most platforms for Java 8+ toolchains, crucially including MacOS arm64
         vendor.set(JvmVendorSpec.AZUL)
     }
@@ -108,20 +78,6 @@ java {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-
-    if (enableModernJavaSyntax.toBoolean()) {
-        if (it.name in ['compileMcLauncherJava', 'compilePatchedMcJava']) {
-            return
-        }
-
-        sourceCompatibility = 17
-        options.release.set(8)
-
-        javaCompiler.set(javaToolchains.compilerFor {
-            languageVersion.set(JavaLanguageVersion.of(17))
-            vendor.set(JvmVendorSpec.AZUL)
-        })
-    }
 }
 
 tasks.withType(ScalaCompile).configureEach {
@@ -161,17 +117,6 @@ minecraft {
     username = developmentEnvironmentUserName.toString()
     useDependencyAccessTransformers = true
 
-    // Automatic token injection with RetroFuturaGradle
-    if (gradleTokenModId) {
-        injectedTags.put gradleTokenModId, modId
-    }
-    if (gradleTokenModName) {
-        injectedTags.put gradleTokenModName, modName
-    }
-    if (gradleTokenVersion) {
-        injectedTags.put gradleTokenVersion, modVersion
-    }
-
     // JVM arguments
     extraRunJvmArguments.add("-ea:${modGroup}")
     if (usesMixins.toBoolean()) {
@@ -182,17 +127,6 @@ minecraft {
         ])
     }
 
-    if (enableCoreModDebug.toBoolean()) {
-        extraRunJvmArguments.addAll([
-                '-Dlegacy.debugClassLoading=true',
-                '-Dlegacy.debugClassLoadingFiner=true',
-                '-Dlegacy.debugClassLoadingSave=true'
-        ])
-    }
-}
-
-if (generateGradleTokenClass) {
-    tasks.injectTags.outputClassName.set(generateGradleTokenClass)
 }
 
 
@@ -253,7 +187,7 @@ repositories {
         maven {
             url "https://repo.codemc.io/repository/maven-public/"
         }
-    if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
+    if (usesMixins.toBoolean()) {
         maven {
             name 'Cleanroom Maven'
             url 'https://maven.cleanroommc.com'
@@ -313,8 +247,12 @@ dependencies {
         transitive = false
     }
 
-    shadowImplementation "com.logisticscraft:occlusionculling:${project.occlusionculling_version}"
+}
 
+if (getFile('dependencies.gradle').exists()) {
+    apply from: 'dependencies.gradle'
+} else if (getFile('dependencies.gradle.kts').exists()) {
+    apply from: 'dependencies.gradle.kts'
 }
 
 // Resource processing and jar building
@@ -345,68 +283,6 @@ processResources {
         }
     }
 }
-
-// Automatically generate a mixin json file if it does not already exist
-tasks.register('generateAssets') {
-    group = 'GT Buildscript'
-    description = 'Generates a pack.mcmeta, mcmod.info, or mixins.{modid}.json if needed'
-    doLast {
-        // pack.mcmeta
-        def packMcmetaFile = getFile('src/main/resources/pack.mcmeta')
-        if (!packMcmetaFile.exists()) {
-            packMcmetaFile.text = """{
-  "pack": {
-    "pack_format": 3,
-    "description": "${modName} Resource Pack"
-  }
-}
-"""
-        }
-
-        // mcmod.info
-        def mcmodInfoFile = getFile('src/main/resources/mcmod.info')
-        if (!mcmodInfoFile.exists()) {
-            mcmodInfoFile.text = """[{
-    "modid": "\${modid}",
-    "name": "\${modname}",
-    "description": "An example mod for Minecraft 1.12.2 with Forge",
-    "version": "\${version}",
-    "mcversion": "\${mcversion}",
-    "logoFile": "",
-    "url": "",
-    "authorList": [],
-    "credits": "",
-    "dependencies": []
-}]
-"""
-        }
-
-        // mixins.{modid}.json
-        if (usesMixins.toBoolean() && generateMixinConfig.toBoolean()) {
-            def mixinConfigFile = getFile("src/main/resources/mixins.${modId}.json")
-            if (!mixinConfigFile.exists()) {
-                def mixinConfigRefmap = "mixins.${modId}.refmap.json"
-
-                mixinConfigFile.text = """{
-  "package": "${modGroup}.${mixinsPackage}",
-  "refmap": "${mixinConfigRefmap}",
-  "target": "@env(DEFAULT)",
-  "minVersion": "0.8",
-  "compatibilityLevel": "JAVA_8",
-  "mixins": [],
-  "client": [],
-  "server": []
-}
-"""
-            }
-        }
-    }
-}
-
-tasks.named('processResources').configure {
-    dependsOn('generateAssets')
-}
-
 
 jar {
     manifest {
@@ -473,7 +349,7 @@ def getManifestAttributes() {
     if (usesMixins.toBoolean()) {
         attributes['ForceLoadAsMod'] = !containsMixinsAndOrCoreModOnly.toBoolean()
     }
-    attributes['FMLCorePlugin'] = "dev.tr7zw.entityculling.EntityCullingEarlyLoader"
+    attributes['FMLCorePlugin'] = "${coreModClass}"
     return attributes
 }
 
