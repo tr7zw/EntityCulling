@@ -65,7 +65,7 @@ public class CullTask implements Runnable {
 								break; // We are not synced to the main thread, so NPE's/CME are allowed here and way less
 								// overhead probably than trying to sync stuff up for no really good reason
 							}
-							if(unCullable.contains(entry.getBlockType().getUnlocalizedName())) {
+							if(unCullable.contains(entry.getBlockType().getLocalizedName())) {
 								continue;
 							}
 							Cullable cullable = (Cullable) entry;

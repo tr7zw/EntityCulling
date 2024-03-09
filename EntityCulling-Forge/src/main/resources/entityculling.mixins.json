@@ -2,7 +2,8 @@
   "required": true,
   "package": "dev.tr7zw.entityculling.mixin",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "entityculling.refmap.json",
+  "minVersion": "0.8",
+  "refmap": "entityculling.mixins.refmap.json",
   "mixins": [
   ],
   "client": [

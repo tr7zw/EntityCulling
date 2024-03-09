@@ -1,168 +1,544 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net/' }
-        mavenCentral()
-        maven {
-            name = "Sponge"
-            url = "https://repo.spongepowered.org/repository/maven-public/"
-        }
-    }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:4.+'
-        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
-    }
-}
+// heavily cut down version of the GregTechCEu buildscript
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.gtnewhorizons.retrofuturagradle.mcp.ReobfuscatedJar
+import org.gradle.internal.logging.text.StyledTextOutputFactory
+
+import static org.gradle.internal.logging.text.StyledTextOutput.Style
 
 plugins {
-    id "java"
-    id "com.github.johnrengelman.shadow" version "2.0.4"
+    id 'java'
+    id 'java-library'
+    id 'base'
+    id 'com.gtnewhorizons.retrofuturagradle' version '1.3.33'
+    id 'com.palantir.git-version' version '3.0.0' apply false
+    id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
 }
 
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.spongepowered.mixin'
+def out = services.get(StyledTextOutputFactory).create('an-output')
 
-repositories {
-    mavenCentral()
-    maven { url 'https://jitpack.io/' }
-    maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
-    maven { url 'https://repo.sk1er.club/repository/maven-releases/' }
-    maven { url 'https://maven.minecraftforge.net/'}
+
+// Project properties
+
+// Required properties: we don't know how to handle these being missing gracefully
+checkPropertyExists("modName")
+checkPropertyExists("modId")
+checkPropertyExists("modGroup")
+checkPropertyExists("minecraftVersion") // hard-coding this makes it harder to immediately tell what version a mod is in (even though this only really supports 1.12.2)
+checkPropertyExists("apiPackage")
+checkPropertyExists("accessTransformersFile")
+checkPropertyExists("usesMixins")
+checkPropertyExists("mixinsPackage")
+checkPropertyExists("coreModClass")
+checkPropertyExists("containsMixinsAndOrCoreModOnly")
+
+// Optional properties: we can assume some default behavior if these are missing
+propertyDefaultIfUnset("modVersion", "")
+propertyDefaultIfUnset("includeMCVersionJar", false)
+propertyDefaultIfUnset("autoUpdateBuildScript", false)
+propertyDefaultIfUnset("modArchivesBaseName", project.modId)
+propertyDefaultIfUnsetWithEnvVar("developmentEnvironmentUserName", "Developer", "DEV_USERNAME")
+propertyDefaultIfUnset("generateGradleTokenClass", "")
+propertyDefaultIfUnset("gradleTokenModId", "")
+propertyDefaultIfUnset("gradleTokenModName", "")
+propertyDefaultIfUnset("gradleTokenVersion", "")
+propertyDefaultIfUnset("useSrcApiPath", false)
+propertyDefaultIfUnset("includeWellKnownRepositories", true)
+propertyDefaultIfUnset("includeCommonDevEnvMods", true)
+propertyDefaultIfUnset("noPublishedSources", false)
+propertyDefaultIfUnset("forceEnableMixins", false)
+propertyDefaultIfUnsetWithEnvVar("enableCoreModDebug", false, "CORE_MOD_DEBUG")
+propertyDefaultIfUnset("generateMixinConfig", true)
+propertyDefaultIfUnset("usesShadowedDependencies", false)
+propertyDefaultIfUnset("minimizeShadowedDependencies", true)
+propertyDefaultIfUnset("relocateShadowedDependencies", true)
+propertyDefaultIfUnset("separateRunDirectories", false)
+propertyDefaultIfUnset("versionDisplayFormat", '$MOD_NAME \u2212 $VERSION')
+propertyDefaultIfUnsetWithEnvVar("modrinthProjectId", "", "MODRINTH_PROJECT_ID")
+propertyDefaultIfUnset("modrinthRelations", "")
+propertyDefaultIfUnsetWithEnvVar("curseForgeProjectId", "", "CURSEFORGE_PROJECT_ID")
+propertyDefaultIfUnset("curseForgeRelations", "")
+propertyDefaultIfUnsetWithEnvVar("releaseType", "release", "RELEASE_TYPE")
+propertyDefaultIfUnset("generateDefaultChangelog", false)
+propertyDefaultIfUnset("customMavenPublishUrl", "")
+propertyDefaultIfUnset("mavenArtifactGroup", getDefaultArtifactGroup())
+propertyDefaultIfUnset("enableModernJavaSyntax", false)
+propertyDefaultIfUnset("enableSpotless", false)
+propertyDefaultIfUnset("enableJUnit", false)
+propertyDefaultIfUnsetWithEnvVar("deploymentDebug", false, "DEPLOYMENT_DEBUG")
+
+
+// Project property assertions
+
+final String javaSourceDir = 'src/main/java/'
+
+final String modGroupPath = modGroup.toString().replace('.' as char, '/' as char)
+final String apiPackagePath = apiPackage.toString().replace('.' as char, '/' as char)
+
+String targetPackageJava = javaSourceDir + modGroupPath
+
+// Plugin application
+
+// Git version checking, also checking for if this is a submodule
+if (project.file('.git/HEAD').isFile() || project.file('.git').isFile()) {
+    apply plugin: 'com.palantir.git-version'
 }
 
-version = project.mod_version
-group = project.maven_group
-archivesBaseName = 'entityculling-forge-mc' + project.minecraft_version
+// Shadowing
+if (usesShadowedDependencies.toBoolean()) {
+    apply plugin: 'com.github.johnrengelman.shadow'
+}
 
-sourceCompatibility = targetCompatibility = 1.8
-compileJava.options.encoding = 'UTF-8'
+
+// Configure Java
+
+java {
+    toolchain {
+        if (enableModernJavaSyntax.toBoolean()) {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        } else {
+            languageVersion.set(JavaLanguageVersion.of(8))
+        }
+        // Azul covers the most platforms for Java 8+ toolchains, crucially including MacOS arm64
+        vendor.set(JvmVendorSpec.AZUL)
+    }
+    if (!noPublishedSources.toBoolean()) {
+        withSourcesJar()
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+
+    if (enableModernJavaSyntax.toBoolean()) {
+        if (it.name in ['compileMcLauncherJava', 'compilePatchedMcJava']) {
+            return
+        }
+
+        sourceCompatibility = 17
+        options.release.set(8)
+
+        javaCompiler.set(javaToolchains.compilerFor {
+            languageVersion.set(JavaLanguageVersion.of(17))
+            vendor.set(JvmVendorSpec.AZUL)
+        })
+    }
+}
+
+tasks.withType(ScalaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// Configure Minecraft
+
+// Try to gather mod version from git tags if version is not manually specified
+if (!modVersion) {
+    try {
+        modVersion = gitVersion()
+    } catch (Exception ignored) {
+        out.style(Style.Failure).text(
+                "Mod version could not be determined! Property 'modVersion' is not set, and either git is not installed or no git tags exist.\n" +
+                        "Either specify a mod version in 'gradle.properties', or create at least one tag in git for this project."
+        )
+        modVersion = 'NO-GIT-TAG-SET'
+    }
+}
+
+if (includeMCVersionJar.toBoolean()){
+    version = "${minecraftVersion}-${modVersion}"
+}
+else {
+    version = modVersion
+}
+
+group = modGroup
+
+base {
+    archivesName = modArchivesBaseName
+}
 
 minecraft {
-    mappings channel: 'snapshot', version: '20171003-1.12'
-//    clientRunArgs += "--tweakClass" 
-//    clientRunArgs += "org.spongepowered.asm.launch.MixinTweaker"
-//    clientRunArgs += "--mixin" 
-//    clientRunArgs += "waveycapes.mixins.json"
+    mcVersion = minecraftVersion
+    username = developmentEnvironmentUserName.toString()
+    useDependencyAccessTransformers = true
+
+    // Automatic token injection with RetroFuturaGradle
+    if (gradleTokenModId) {
+        injectedTags.put gradleTokenModId, modId
+    }
+    if (gradleTokenModName) {
+        injectedTags.put gradleTokenModName, modName
+    }
+    if (gradleTokenVersion) {
+        injectedTags.put gradleTokenVersion, modVersion
+    }
+
+    // JVM arguments
+    extraRunJvmArguments.add("-ea:${modGroup}")
+    if (usesMixins.toBoolean()) {
+        extraRunJvmArguments.addAll([
+            '-Dmixin.hotSwap=true',
+            '-Dmixin.checks.interfaces=true',
+            '-Dmixin.debug.export=true'
+        ])
+    }
+
+    if (enableCoreModDebug.toBoolean()) {
+        extraRunJvmArguments.addAll([
+                '-Dlegacy.debugClassLoading=true',
+                '-Dlegacy.debugClassLoadingFiner=true',
+                '-Dlegacy.debugClassLoadingSave=true'
+        ])
+    }
 }
 
-configurations {
-    // Creates an extra configuration that implements `implementation` to be used later as the configuration that shades libraries
-    include
-    implementation.extendsFrom(include)
-    configurations.runtimeOnly.canBeResolved = true
+if (generateGradleTokenClass) {
+    tasks.injectTags.outputClassName.set(generateGradleTokenClass)
+}
+
+
+// Repositories
+
+// Allow unsafe repos but warn
+repositories.configureEach { repo ->
+    if (repo instanceof UrlArtifactRepository) {
+        if (repo.getUrl() != null && repo.getUrl().getScheme() == "http" && !repo.allowInsecureProtocol) {
+            logger.warn("Deprecated: Allowing insecure connections for repo '${repo.name}' - add 'allowInsecureProtocol = true'")
+            repo.allowInsecureProtocol = true
+        }
+    }
 }
 
 repositories {
-    jcenter()
-    maven {
-        url "https://repo.codemc.io/repository/maven-public/"
+        exclusiveContent {
+            forRepository {
+                //noinspection ForeignDelegate
+                maven {
+                    name = 'Curse Maven'
+                    url = 'https://www.cursemaven.com'
+                    // url = 'https://beta.cursemaven.com'
+                }
+            }
+            filter {
+                includeGroup 'curse.maven'
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                //noinspection ForeignDelegate
+                maven {
+                    name = 'Modrinth'
+                    url = 'https://api.modrinth.com/maven'
+                }
+            }
+            filter {
+                includeGroup 'maven.modrinth'
+            }
+        }
+        maven {
+            name 'Cleanroom Maven'
+            url 'https://maven.cleanroommc.com'
+        }
+        maven {
+            name 'BlameJared Maven'
+            url 'https://maven.blamejared.com'
+        }
+        maven {
+            name 'GTNH Maven'
+            url 'https://nexus.gtnewhorizons.com/repository/public/'
+        }
+        maven {
+            name 'GTCEu Maven'
+            url 'https://maven.gtceu.com'
+        }
+        maven {
+            url "https://repo.codemc.io/repository/maven-public/"
+        }
+    if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
+        maven {
+            name 'Cleanroom Maven'
+            url 'https://maven.cleanroommc.com'
+        }
     }
-    maven {
-        name "spongepowered"
-        url "https://repo.spongepowered.org/maven/"
-    }
-    maven { url 'https://jitpack.io' } //fabric asm
-    maven { url 'https://repo.sk1er.club/repository/maven-releases/' }
-    maven {
-        url "https://repo.codemc.io/repository/maven-public/"
-    }
-	maven { url "https://maven.legacyfabric.net"}
-    maven { url 'https://maven.minecraftforge.net/'}
+    mavenLocal() // Must be last for caching to work
 }
 
+
+// Dependencies
+
+// Configure dependency configurations
+configurations {
+    embed
+    implementation.extendsFrom(embed)
+
+    for (config in [compileClasspath, runtimeClasspath, testCompileClasspath, testRuntimeClasspath]) {
+        config.extendsFrom(shadowImplementation)
+        config.extendsFrom(shadowCompile)
+    }
+
+    create("runtimeOnlyNonPublishable") {
+        description = "Runtime only dependencies that are not published alongside the jar"
+        canBeConsumed = false
+        canBeResolved = false
+    }
+    create("devOnlyNonPublishable") {
+        description = "Runtime and compiletime dependencies that are not published alongside the jar (compileOnly + runtimeOnlyNonPublishable)"
+        canBeConsumed = false
+        canBeResolved = false
+    }
+
+    compileOnly.extendsFrom(devOnlyNonPublishable)
+    runtimeOnlyNonPublishable.extendsFrom(devOnlyNonPublishable)
+    runtimeClasspath.extendsFrom(runtimeOnlyNonPublishable)
+    testRuntimeClasspath.extendsFrom(runtimeOnlyNonPublishable)
+}
+
+String mixinProviderSpec = 'zone.rong:mixinbooter:9.1'
 dependencies {
-//    annotationProcessor 'org.spongepowered:mixin:0.7.11-SNAPSHOT'
-    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
-    annotationProcessor 'org.spongepowered:mixin:0.8.5'
-    annotationProcessor 'com.google.code.gson:gson:2.9.0'
-    annotationProcessor 'com.google.guava:guava:31.1-jre'
-    annotationProcessor 'org.ow2.asm:asm:9.3'
-    annotationProcessor 'org.ow2.asm:asm-tree:9.3'
+    annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
+    // should use 24.1.1 but 30.0+ has a vulnerability fix
+    annotationProcessor 'com.google.guava:guava:30.0-jre'
+    // should use 2.8.6 but 2.8.9+ has a vulnerability fix
+    annotationProcessor 'com.google.code.gson:gson:2.8.9'
 
-    include "com.logisticscraft:occlusionculling:${project.occlusionculling_version}"
+    mixinProviderSpec = modUtils.enableMixins(mixinProviderSpec, "${modId}.mixins.refmap.json")
+    api (mixinProviderSpec) {
+        transitive = false
+    }
 
-    include 'org.spongepowered:mixin:0.8.5'
+    annotationProcessor(mixinProviderSpec) {
+        transitive = false
+    }
 
-    sourceSets.main.java.srcDirs += new File(project.rootDir, "EntityCulling-Shared/src/main/java");//(project(':EntityCulling-Shared').sourceSets.main.java.srcDirs)
-	sourceSets.main.resources.srcDirs += new File(project.rootDir, "EntityCulling-Shared/src/main/resources");//sourceSets.main.resources.srcDirs += (project(':EntityCulling-Shared').sourceSets.main.resources.srcDirs)
+    patchedMinecraft('net.minecraft:launchwrapper:1.17.2') {
+        transitive = false
+    }
+
+    shadowImplementation "com.logisticscraft:occlusionculling:${project.occlusionculling_version}"
+
 }
 
-shadowJar {
-    finalizedBy('reobfJar') 
-//    archiveClassifier.set('')
-    configurations = [project.configurations.include]
-    duplicatesStrategy DuplicatesStrategy.EXCLUDE
-    classifier "" //prevent creation of unshadowed jar
-    exclude 'pack.mcmeta'
-    exclude 'dummyThing'
-    exclude '**/module-info.class'
-    exclude '*.so'
-    exclude '*.dylib'
-    exclude '*.dll'
-    exclude '*.jnilib'
-    exclude 'ibxm/**'
-    exclude 'com/jcraft/**'
-    exclude 'org/lwjgl/**'
-    exclude 'net/java/**'
-
-    exclude 'META-INF/proguard/**'
-    exclude 'META-INF/maven/**'
-    exclude 'META-INF/versions/**'
-    exclude 'META-INF/com.android.tools/**'
-
-    exclude 'fabric.mod.json'
-}
+// Resource processing and jar building
 
 processResources {
-    inputs.property 'version', project.version
-    inputs.property 'mcversion', '1.12.2'
-    inputs.property 'name', 'entityculling'
-    inputs.property 'modid', 'entityculling'
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-        expand (
-                'version':project.version,
-                'mcversion':'1.12.2',
-                'name':'EntityCulling',
-                'modid': 'entityculling'
+    // this will ensure that this task is redone when the versions change.
+    inputs.property 'version', modVersion
+    inputs.property 'mcversion', minecraftVersion
+    // Blowdryer puts these files into the resource directory, so
+    // exclude them from builds (doesn't hurt to exclude even if not present)
+    exclude('spotless.importorder')
+    exclude('spotless.eclipseformat.xml')
+
+    // replace stuff in mcmod.info, nothing else
+    filesMatching('mcmod.info') { fcd ->
+        fcd.expand(
+                'version': modVersion,
+                'mcversion': minecraftVersion,
+                'modid': modId,
+                'modname': modName
         )
     }
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+
+    if (accessTransformersFile) {
+        String[] ats = accessTransformersFile.split(',')
+        ats.each { at ->
+            rename "(${at})", 'META-INF/$1'
+        }
     }
 }
 
-// move resources so they can be accessed at runtime
-task moveResources {
+// Automatically generate a mixin json file if it does not already exist
+tasks.register('generateAssets') {
+    group = 'GT Buildscript'
+    description = 'Generates a pack.mcmeta, mcmod.info, or mixins.{modid}.json if needed'
     doLast {
-        ant.move file: "${buildDir}/resources/main",
-                todir: "${buildDir}/classes/java"
+        // pack.mcmeta
+        def packMcmetaFile = getFile('src/main/resources/pack.mcmeta')
+        if (!packMcmetaFile.exists()) {
+            packMcmetaFile.text = """{
+  "pack": {
+    "pack_format": 3,
+    "description": "${modName} Resource Pack"
+  }
+}
+"""
+        }
+
+        // mcmod.info
+        def mcmodInfoFile = getFile('src/main/resources/mcmod.info')
+        if (!mcmodInfoFile.exists()) {
+            mcmodInfoFile.text = """[{
+    "modid": "\${modid}",
+    "name": "\${modname}",
+    "description": "An example mod for Minecraft 1.12.2 with Forge",
+    "version": "\${version}",
+    "mcversion": "\${mcversion}",
+    "logoFile": "",
+    "url": "",
+    "authorList": [],
+    "credits": "",
+    "dependencies": []
+}]
+"""
+        }
+
+        // mixins.{modid}.json
+        if (usesMixins.toBoolean() && generateMixinConfig.toBoolean()) {
+            def mixinConfigFile = getFile("src/main/resources/mixins.${modId}.json")
+            if (!mixinConfigFile.exists()) {
+                def mixinConfigRefmap = "mixins.${modId}.refmap.json"
+
+                mixinConfigFile.text = """{
+  "package": "${modGroup}.${mixinsPackage}",
+  "refmap": "${mixinConfigRefmap}",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [],
+  "client": [],
+  "server": []
+}
+"""
+            }
+        }
     }
 }
 
-moveResources.dependsOn processResources
-classes.dependsOn moveResources
+tasks.named('processResources').configure {
+    dependsOn('generateAssets')
+}
+
 
 jar {
-    finalizedBy('shadowJar') 
-    manifest.attributes(
-            "ForceLoadAsMod": true,
-            "ModSide": "CLIENT",
-            "MixinConfigs": 'entityculling.mixins.json',
-            "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
-            "TweakOrder": 0,
-            "Manifest-Version": 1.0
-    )
+    manifest {
+        attributes(getManifestAttributes())
+    }
+
+    // Add all embedded dependencies into the jar
+    from provider {
+        configurations.embed.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
 
 }
 
-mixin {
-    disableRefMapWarning = true
-    defaultObfuscationEnv = 'searge'
+// Configure shadow jar task
+tasks.named('shadowJar', ShadowJar).configure {
+    manifest {
+        attributes(getManifestAttributes())
+    }
+    configurations = [
+            project.configurations.shadowImplementation,
+            project.configurations.shadowCompile
+    ]
+    archiveClassifier.set('dev')
+    if (relocateShadowedDependencies.toBoolean()) {
+        relocationPrefix = modGroup + '.shadow'
+        enableRelocation = true
+    }
 }
-
-sourceSets {
-    main {
-        ext.refMap = "entityculling.refmap.json"
+configurations.runtimeElements.outgoing.artifacts.clear()
+configurations.apiElements.outgoing.artifacts.clear()
+configurations.runtimeElements.outgoing.artifact(tasks.named('shadowJar', ShadowJar))
+configurations.apiElements.outgoing.artifact(tasks.named('shadowJar', ShadowJar))
+tasks.named('jar', Jar) {
+    enabled = false
+    finalizedBy(tasks.shadowJar)
+}
+tasks.named('reobfJar', ReobfuscatedJar) {
+    inputJar.set(tasks.named('shadowJar', ShadowJar).flatMap({it.archiveFile}))
+}
+AdhocComponentWithVariants javaComponent = (AdhocComponentWithVariants) project.components.findByName('java')
+javaComponent.withVariantsFromConfiguration(configurations.shadowRuntimeElements) {
+    skip()
+}
+for (runTask in ['runClient', 'runServer']) {
+    tasks.named(runTask).configure {
+        dependsOn('shadowJar')
     }
 }
 
+def getManifestAttributes() {
+    def attributes = [:]
+    if (coreModClass) {
+        attributes['FMLCorePlugin'] = "${modGroup}.${coreModClass}"
+    }
+    if (!containsMixinsAndOrCoreModOnly.toBoolean() && (usesMixins.toBoolean() || coreModClass)) {
+   //     attributes['FMLCorePluginContainsFMLMod'] = true
+    }
+    if (accessTransformersFile) {
+        attributes['FMLAT'] = accessTransformersFile.toString()
+    }
+
+    if (usesMixins.toBoolean()) {
+        attributes['ForceLoadAsMod'] = !containsMixinsAndOrCoreModOnly.toBoolean()
+    }
+    attributes['FMLCorePlugin'] = "dev.tr7zw.entityculling.EntityCullingEarlyLoader"
+    return attributes
+}
+
+def getSecondaryArtifacts() {
+    def secondaryArtifacts = [usesShadowedDependencies.toBoolean() ? tasks.shadowJar : tasks.jar]
+    if (!noPublishedSources.toBoolean()) secondaryArtifacts += [sourcesJar]
+    return secondaryArtifacts
+}
+
+def getReleaseType() {
+    String type = project.releaseType
+    if (!(type in ['release', 'beta', 'alpha'])) {
+        throw new Exception("Release type invalid! Found \"" + type + "\", allowed: \"release\", \"beta\", \"alpha\"")
+    }
+    return type
+}
+
+// Helpers
+
+def getDefaultArtifactGroup() {
+    def lastIndex = project.modGroup.lastIndexOf('.')
+    return lastIndex < 0 ? project.modGroup : project.modGroup.substring(0, lastIndex)
+}
+
+def getFile(String relativePath) {
+    return new File(projectDir, relativePath)
+}
+
+def checkPropertyExists(String propertyName) {
+    if (!project.hasProperty(propertyName)) {
+        throw new GradleException("This project requires a property \"" + propertyName + "\"! Please add it your \"gradle.properties\". You can find all properties and their description here: https://github.com/GregTechCEu/Buildscripts/blob/main/gradle.properties")
+    }
+}
+
+def propertyDefaultIfUnset(String propertyName, defaultValue) {
+    if (!project.hasProperty(propertyName) || project.property(propertyName) == "") {
+        project.ext.setProperty(propertyName, defaultValue)
+    }
+}
+
+def propertyDefaultIfUnsetWithEnvVar(String propertyName, defaultValue, String envVarName) {
+    def envVar = providers.environmentVariable(envVarName)
+    if (envVar.isPresent()) {
+        project.ext.setProperty(propertyName, envVar.get())
+    } else {
+        propertyDefaultIfUnset(propertyName, defaultValue)
+    }
+}
+
+static runShell(command) {
+    def process = command.execute()
+    def outputStream = new StringBuffer()
+    def errorStream = new StringBuffer()
+    process.waitForProcessOutput(outputStream, errorStream)
+
+    errorStream.toString().with {
+        if (it) {
+            throw new GradleException("Error executing ${command}:\n> ${it}")
+        }
+    }
+    return outputStream.toString().trim()
+}
+
+def getLastTag() {
+    def githubTag = providers.environmentVariable('GITHUB_TAG')
+    return runShell('git describe --abbrev=0 --tags ' +
+            (githubTag.isPresent() ? runShell('git rev-list --tags --skip=1 --max-count=1') : ''))
+}

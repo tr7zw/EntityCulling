@@ -1,6 +1,6 @@
 modLoader="javafml"
 loaderVersion="[35,)"
-license="MIT"
+license="tr7zw Protective License"
 [[mods]]
 modId="entityculling"
 version="1.6.2"

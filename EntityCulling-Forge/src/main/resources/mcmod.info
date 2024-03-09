@@ -1,0 +1,12 @@
+[{
+    "modid": "${modid}",
+    "name": "${modname}",
+    "description": "Using async raytracing to hide Tile-/Entities that are hidden behind solid blocks.",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "logoFile": "icon.png",
+    "url": "",
+    "authorList": ["tr7zw"],
+    "credits": "",
+    "dependencies": []
+}]

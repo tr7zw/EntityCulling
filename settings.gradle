@@ -1,29 +1,25 @@
-/*pluginManagement {
+pluginManagement {
     repositories {
+        maven {
+            // RetroFuturaGradle
+            name 'GTNH Maven'
+            url 'https://nexus.gtnewhorizons.com/repository/public/'
+            //noinspection GroovyAssignabilityCheck
+            mavenContent {
+                includeGroup 'com.gtnewhorizons'
+                includeGroup 'com.gtnewhorizons.retrofuturagradle'
+            }
+        }
         gradlePluginPortal()
         mavenCentral()
         mavenLocal()
-        maven {
-            name = "Forge"
-            url = "https://maven.minecraftforge.net/"
-        }
-        maven {
-            name = "Jitpack"
-            url = "https://jitpack.io/"
-        }
     }
-   resolutionStrategy {
-        eachPlugin {
-            switch (requested.id.id) {
-                case 'net.minecraftforge.gradle.forge':
-                    useModule "com.github.asbyth:ForgeGradle:${requested.version}"
-                    break //broken?
-                case 'org.spongepowered.mixin':
-                    useModule "com.github.Skytils:MixinGradle:${requested.version}"
-                    break
-            }
-        }
-    }
-}*/
+}
+
+plugins {
+    // Automatic toolchain provisioning
+    //id 'org.gradle.toolchains.foojay-resolver-convention' version '0.7.0'
+}
+
 
 include 'EntityCulling-Forge'
