@@ -18,11 +18,11 @@ jobs:
         if: ${{ runner.os != 'Windows' }}
         run: chmod +x ./gradlew
       - name: build
-        run: ./gradlew build
+        run: ./gradlew build :client:build
       - name: capture build artifacts
         uses: actions/upload-artifact@v2
         with:
           name: Artifacts
           path: |
-            build/libs/*
+            client/build/libs/*
             
