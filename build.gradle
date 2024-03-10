@@ -13,7 +13,7 @@ def configure(project) {
     project.apply plugin: 'ploceus'
 
     project.base {
-        archivesName = "${project.rootProject.archives_base_name}-${project.environment}"
+        archivesName = "${project.rootProject.archives_base_name}-fabric-ornithe-${project.environment}"
     }
     project.version = "${project.rootProject.mod_version}+mc${project.rootProject.minecraft_version}"
     project.maven_group = project.rootProject.maven_group
