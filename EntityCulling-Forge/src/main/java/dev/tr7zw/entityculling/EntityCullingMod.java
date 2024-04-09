@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+@Mod("entityculling")
 public class EntityCullingMod extends EntityCullingModBase {
 
     public EntityCullingMod() {
@@ -31,10 +32,6 @@ public class EntityCullingMod extends EntityCullingModBase {
                 keybind);
         MinecraftForge.EVENT_BUS.addListener(this::doClientTick);
         MinecraftForge.EVENT_BUS.addListener(this::doWorldTick);
-        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
-                () -> new IExtensionPoint.DisplayTest(
-                        () -> ModLoadingContext.get().getActiveContainer().getModInfo().getVersion().toString(),
-                        (remote, isServer) -> true));
     }
 
     private void doClientTick(ClientTickEvent event) {

@@ -3,6 +3,7 @@ loaderVersion="${loader_version_range_forge}"
 issueTrackerURL="${issues_url}"
 
 license="${license_name}"
+clientSideOnly=true
 [[mods]]
 modId="${mod_id}"
 version="${version}"
