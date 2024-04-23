@@ -21,8 +21,8 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
 
     @Override
     public void shadowRenderNameTag(T entity, Component component, PoseStack poseStack,
-            MultiBufferSource multiBufferSource, int light) {
-        renderNameTag(entity, component, poseStack, multiBufferSource, light);
+            MultiBufferSource multiBufferSource, int light, float f) {
+        renderNameTag(entity, component, poseStack, multiBufferSource, light, f);
     }
 
     @Shadow
@@ -30,6 +30,6 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
 
     @Shadow
     public abstract void renderNameTag(T entity, Component component, PoseStack poseStack,
-            MultiBufferSource multiBufferSource, int i);
+            MultiBufferSource multiBufferSource, int i, float f);
 
 }

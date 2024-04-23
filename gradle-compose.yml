@@ -1,5 +1,5 @@
 version: '0.0.2'
-source: "https://github.com/tr7zw/ModComposeTemplate/tree/1.20.4"
+source: "https://github.com/tr7zw/ProcessedModTemplate/tree/master"
 replacements:
   name: "EntityCulling"
   id: "entityculling"
@@ -8,15 +8,16 @@ replacements:
   homepageUrl: "https://modrinth.com/mod/entityculling"
   sourcesUrl: "https://github.com/tr7zw/EntityCulling"
   issuesUrl: "https://github.com/tr7zw/EntityCulling/issues"
+  fabric_entrypoint: "dev.tr7zw.entityculling.EntityCullingMod"
+  fabric_modmenu_entrypoint: "none"
   relocationpackage: "dev.tr7zw.entityculling"
   dependencies: '
   	inc "com.logisticscraft:occlusionculling:0.0.8-SNAPSHOT"
-
-    inc project(":EntityCulling-Versionless")
   '
   licensename: "LICENSE-EntityCulling"
   modrinthid: NNAgCjsB
   curseforgeid: 448233
+  versionlessname: "EntityCulling-Versionless"
 enabledFlags:
   - autopublish
   - publishFabric
@@ -24,35 +25,10 @@ enabledFlags:
   - publishNeo
   - modrinth
   - curseforge
+  - versionless
 rootProject:
   template: "."
 subProjects:
-  EntityCulling-Fabric:
-    template: "Fabric"
-  EntityCulling-Forge:
-    template: "Forge"
-    replacements:
-      dependencies: '
-        inc "com.logisticscraft:occlusionculling:0.0.8-SNAPSHOT"
-
-        forgeRuntimeLibrary "com.logisticscraft:occlusionculling:0.0.8-SNAPSHOT"
-
-        inc project(":EntityCulling-Versionless")
-
-        forgeRuntimeLibrary project(":EntityCulling-Versionless")
-      '
-  EntityCulling-Neo:
-    template: "Neo"
-    replacements:
-      dependencies: '
-        inc "com.logisticscraft:occlusionculling:0.0.8-SNAPSHOT"
-
-        forgeRuntimeLibrary "com.logisticscraft:occlusionculling:0.0.8-SNAPSHOT"
-
-        inc project(":EntityCulling-Versionless")
-
-        forgeRuntimeLibrary project(":EntityCulling-Versionless")
-      '
   EntityCulling-Versionless:
     template: "Versionless"
     replacements:

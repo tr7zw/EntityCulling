@@ -41,3 +41,11 @@ gradle/wrapper
 VersionShared
 UtilityCode
 formatter.xml
+src/main/fabric-resources/fabric.mod.json
+src/main/forge-resources/META-INF/mods.toml
+src/main/neoforge-resources/META-INF/mods.toml
+**/src/main/java/dev/tr7zw/config/CustomConfigScreen.java
+**/src/main/java/dev/tr7zw/util/ComponentProvider.java
+src/main/resources/pack.mcmeta
+src/main/java/dev/tr7zw/util/ModLoaderUtil.java
+src/main/java/dev/tr7zw/util/NMSHelper.java

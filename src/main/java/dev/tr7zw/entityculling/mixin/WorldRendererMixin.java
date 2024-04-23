@@ -49,7 +49,7 @@ public class WorldRendererMixin {
                 matrices.pushPose();
                 matrices.translate(d, e, f);
                 entityRendererInter.shadowRenderNameTag(entity, entity.getDisplayName(), matrices, vertexConsumers,
-                        this.entityRenderDispatcher.getPackedLightCoords(entity, tickDelta));
+                        this.entityRenderDispatcher.getPackedLightCoords(entity, tickDelta), tickDelta);
                 matrices.popPose();
             }
             EntityCullingModBase.instance.skippedEntities++;
