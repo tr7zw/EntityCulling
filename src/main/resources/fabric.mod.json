@@ -1,0 +1,35 @@
+{
+    "schemaVersion": 1,
+    "id": "${mod_id}",
+    "version": "${version}",
+    "name": "${mod_name}",
+    "description": "${description}",
+    "authors": [
+        "${mod_author}"
+    ],
+    "contact": {
+        "homepage": "${homepage_url}",
+        "sources": "${sources_url}"
+    },
+    "license": "${license_name}",
+    "icon": "icon.png",
+    "entrypoints": {
+        "client": [
+            "${fabric_entrypoint}"
+        ]
+    },
+    "mixins": [
+        "${mod_id}.mixins.json"
+    ],
+    "depends": {
+        "minecraft": "${minecraft_version_range_fabric}",
+        "${fabric_api_name}": "*"
+    },
+    "custom": {
+        "modmenu": {
+            "links": {
+                "modmenu.discord": "https://discord.gg/UdfNaDtbwb"
+            }
+        }
+    }
+}
