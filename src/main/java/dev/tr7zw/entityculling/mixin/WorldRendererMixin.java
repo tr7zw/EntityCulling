@@ -27,7 +27,7 @@ public abstract class WorldRendererMixin {
             float tickDelta, float p_doRenderEntity_9_, boolean p_doRenderEntity_10_, CallbackInfoReturnable<Boolean> info) {
         Cullable cullable = (Cullable) entity;
         if (!cullable.isForcedVisible() && cullable.isCulled()) {
-            if (EntityCullingModBase.instance.config.renderNametagsThroughWalls && entity instanceof EntityLivingBase) {
+            if (EntityCullingModBase.instance.config.renderNametagsThroughWalls && entity instanceof EntityLivingBase && getEntityRenderObject(entity) instanceof RenderLivingEntityAccessor) {
                 RenderLivingEntityAccessor livingEntity = (RenderLivingEntityAccessor) getEntityRenderObject(entity);
                 livingEntity.callPassSpecialRender(((EntityLivingBase) entity), p_doRenderEntity_2_, d1, d2);
                 //entityRenderer.doRender(entity, entity.posX, entity.posY, entity.posZ, tickDelta, tickDelta);
