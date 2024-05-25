@@ -9,13 +9,18 @@ import net.minecraft.world.phys.AABB;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 //#elseif NEOFORGE
+//#if MC >= 12005
+//$$ import net.neoforged.neoforge.client.event.ClientTickEvent;
+//$$ import net.neoforged.neoforge.event.tick.LevelTickEvent;
+//#else
+//$$ import net.neoforged.neoforge.event.TickEvent.ClientTickEvent;
+//$$ import net.neoforged.neoforge.event.TickEvent.LevelTickEvent;
+//#endif
 //$$ import net.neoforged.fml.IExtensionPoint;
 //$$ import net.neoforged.fml.ModLoadingContext;
 //$$ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 //$$ import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
-//$$ import net.neoforged.neoforge.client.event.ClientTickEvent;
 //$$ import net.neoforged.neoforge.common.NeoForge;
-//$$ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 //#else
 //$$ import net.minecraftforge.common.MinecraftForge;
 //$$ import net.minecraftforge.event.TickEvent.ClientTickEvent;
@@ -72,7 +77,7 @@ public class EntityCullingMod extends EntityCullingModBase implements ClientModI
     //#endif
   //$$    }
   //$$
-    //#if NEOFORGE
+    //#if NEOFORGE && MC >= 12005
   //$$    private void doClientTick(ClientTickEvent.Pre event) {
     //#else
   //$$    private void doClientTick(ClientTickEvent event) {
@@ -80,7 +85,7 @@ public class EntityCullingMod extends EntityCullingModBase implements ClientModI
   //$$       this.clientTick();
   //$$    }
   //$$
-  //#if NEOFORGE
+  //#if NEOFORGE && MC >= 12005
   //$$   private void doWorldTick(LevelTickEvent.Pre event) {
   //#else
   //$$   private void doWorldTick(LevelTickEvent event) {

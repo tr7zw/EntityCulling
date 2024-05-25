@@ -22,7 +22,14 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
     @Override
     public void shadowRenderNameTag(T entity, Component component, PoseStack poseStack,
             MultiBufferSource multiBufferSource, int light, float f) {
-        renderNameTag(entity, component, poseStack, multiBufferSource, light, f);
+        renderNameTag(entity, component, poseStack, multiBufferSource, light
+        // spotless:off
+                //#if MC >= 12005
+                    , f);
+                //#else
+                //$$);
+                //#endif
+                //spotless:on
     }
 
     @Shadow
@@ -30,6 +37,13 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
 
     @Shadow
     public abstract void renderNameTag(T entity, Component component, PoseStack poseStack,
-            MultiBufferSource multiBufferSource, int i, float f);
+            MultiBufferSource multiBufferSource, int i
+            // spotless:off
+          //#if MC >= 12005
+            , float f);
+          //#else
+          //$$);
+          //#endif
+          //spotless:on
 
 }
