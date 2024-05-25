@@ -87,7 +87,7 @@ public class CullTask implements Runnable {
         while (iterable.hasNext()) {
             try {
                 entity = iterable.next();
-            } catch (NullPointerException | ConcurrentModificationException ex) {
+            } catch (NullPointerException | ConcurrentModificationException | ArrayIndexOutOfBoundsException ex) {
                 break; // We are not synced to the main thread, so NPE's/CME are allowed here and way
                        // less
                        // overhead probably than trying to sync stuff up for no really good reason
