@@ -8,6 +8,7 @@ import java.util.function.Function;
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 
 import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
+import dev.tr7zw.util.NMSHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -58,21 +59,21 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
             cullThread.start();
             for (String blockId : config.blockEntityWhitelist) {
                 Optional<BlockEntityType<?>> block = BuiltInRegistries.BLOCK_ENTITY_TYPE
-                        .getOptional(new ResourceLocation(blockId));
+                        .getOptional(NMSHelper.getResourceLocation(blockId));
                 block.ifPresent(b -> {
                     blockEntityWhitelist.add(b);
                 });
             }
             for (String entityType : config.tickCullingWhitelist) {
                 Optional<EntityType<?>> entity = BuiltInRegistries.ENTITY_TYPE
-                        .getOptional(new ResourceLocation(entityType));
+                        .getOptional(NMSHelper.getResourceLocation(entityType));
                 entity.ifPresent(e -> {
                     entityWhistelist.add(e);
                 });
             }
             for (String entityType : config.entityWhitelist) {
                 Optional<EntityType<?>> entity = BuiltInRegistries.ENTITY_TYPE
-                        .getOptional(new ResourceLocation(entityType));
+                        .getOptional(NMSHelper.getResourceLocation(entityType));
                 entity.ifPresent(e -> {
                     entityWhistelist.add(e);
                 });

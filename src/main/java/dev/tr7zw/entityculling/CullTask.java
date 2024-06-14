@@ -55,8 +55,8 @@ public class CullTask implements Runnable {
                 Thread.sleep(sleepDelay);
                 if (EntityCullingVersionlessBase.enabled && client.level != null && client.player != null
                         && client.player.tickCount > 10) {
-                    Vec3 cameraMC = EntityCullingModBase.instance.config.debugMode
-                            ? client.player.getEyePosition(client.getDeltaFrameTime())
+                    // getEyePosition can use a fixed delta as its debug only anyway
+                    Vec3 cameraMC = EntityCullingModBase.instance.config.debugMode ? client.player.getEyePosition(0)
                             : client.gameRenderer.getMainCamera().getPosition();
 
                     if (requestCull
@@ -143,7 +143,7 @@ public class CullTask implements Runnable {
                     } catch (NullPointerException | ConcurrentModificationException ex) {
                         break; // We are not synced to the main thread, so NPE's/CME are allowed here and way
                                // less
-                        // overhead probably than trying to sync stuff up for no really good reason
+                               // overhead probably than trying to sync stuff up for no really good reason
                     }
                     if (blockEntityWhitelist.contains(entry.getValue().getType())) {
                         continue;

@@ -19,7 +19,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 //$$ import net.neoforged.fml.IExtensionPoint;
 //$$ import net.neoforged.fml.ModLoadingContext;
 //$$ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-//$$ import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 //$$ import net.neoforged.neoforge.common.NeoForge;
 //#else
 //$$ import net.minecraftforge.common.MinecraftForge;
@@ -57,12 +56,8 @@ public class EntityCullingMod extends EntityCullingModBase implements ClientModI
   //$$  public class EntityCullingMod extends EntityCullingModBase {
   //$$
   //$$        public EntityCullingMod() {
-  //$$           FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+  //$$           ModLoaderUtil.registerClientSetupListener(this::onInitialize);
   //$$       }
-  //$$
-  //$$      private void setup(final FMLCommonSetupEvent event) {
-  //$$          onInitialize();
-  //$$      }
   //$$
   //$$      @Override
   //$$      public void initModloader() {
