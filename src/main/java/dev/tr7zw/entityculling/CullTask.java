@@ -104,7 +104,7 @@ public class CullTask implements Runnable {
             }
             Cullable cullable = (Cullable) entity;
             if (!cullable.isForcedVisible()) {
-                if (entity.isCurrentlyGlowing() || isSkippableArmorstand(entity)) {
+                if (Minecraft.getInstance().shouldEntityAppearGlowing(entity) || isSkippableArmorstand(entity)) {
                     cullable.setCulled(false);
                     continue;
                 }
