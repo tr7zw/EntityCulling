@@ -14,5 +14,6 @@ public class Config {
     public int sleepDelay = 10;
     public int hitboxLimit = 50;
     public boolean skipMarkerArmorStands = true;
+    public boolean showDebugScreenInfo = true;
     
 }

@@ -54,7 +54,7 @@ public class EntityCullingMod extends EntityCullingModBase {
 
     @SubscribeEvent
     public void doRenderGameOverlayEvent(RenderGameOverlayEvent.Text event) {
-        if (!Minecraft.getMinecraft().gameSettings.showDebugInfo) return;
+        if (!Minecraft.getMinecraft().gameSettings.showDebugInfo || !config.showDebugScreenInfo) return;
         ArrayList<String> left = event.left;
         left.add("[Culling] Last pass: " + EntityCullingModBase.instance.cullTask.lastTime + "ms");
         left.add("[Culling] Rendered Block Entities: " + EntityCullingModBase.instance.renderedBlockEntities + " Skipped: " + EntityCullingModBase.instance.skippedBlockEntities);
