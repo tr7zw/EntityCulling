@@ -3,7 +3,7 @@ source: "https://github.com/tr7zw/ProcessedModTemplate/tree/master"
 replacements:
   name: "EntityCulling"
   id: "entityculling"
-  version: "1.6.6"
+  version: "1.6.7"
   description: "This mod uses async path-tracing to hide Tiles/Entities that are not visible."
   homepageUrl: "https://modrinth.com/mod/entityculling"
   sourcesUrl: "https://github.com/tr7zw/EntityCulling"
