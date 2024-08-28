@@ -93,7 +93,8 @@ public class CullTask implements Runnable {
                        // overhead probably than trying to sync stuff up for no really good reason
             }
             if (entity == null) {
-                // assume the iterator is broken, cancel the loop https://github.com/tr7zw/EntityCulling/issues/168
+                // assume the iterator is broken, cancel the loop
+                // https://github.com/tr7zw/EntityCulling/issues/168
                 break;
             }
             if (!(entity instanceof Cullable)) {
@@ -150,7 +151,8 @@ public class CullTask implements Runnable {
                                // overhead probably than trying to sync stuff up for no really good reason
                     }
                     if (entry == null) {
-                        // assume the iterator is broken, cancel the loop https://github.com/tr7zw/EntityCulling/issues/168
+                        // assume the iterator is broken, cancel the loop
+                        // https://github.com/tr7zw/EntityCulling/issues/168
                         break;
                     }
                     if (blockEntityWhitelist.contains(entry.getValue().getType())) {
