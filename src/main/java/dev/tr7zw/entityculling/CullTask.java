@@ -92,7 +92,11 @@ public class CullTask implements Runnable {
                        // less
                        // overhead probably than trying to sync stuff up for no really good reason
             }
-            if (entity == null || !(entity instanceof Cullable)) {
+            if (entity == null) {
+                // assume the iterator is broken, cancel the loop https://github.com/tr7zw/EntityCulling/issues/168
+                break;
+            }
+            if (!(entity instanceof Cullable)) {
                 continue; // Not sure how this could happen outside from mixin screwing up the inject into
                           // Entity
             }
@@ -144,6 +148,10 @@ public class CullTask implements Runnable {
                         break; // We are not synced to the main thread, so NPE's/CME are allowed here and way
                                // less
                                // overhead probably than trying to sync stuff up for no really good reason
+                    }
+                    if (entry == null) {
+                        // assume the iterator is broken, cancel the loop https://github.com/tr7zw/EntityCulling/issues/168
+                        break;
                     }
                     if (blockEntityWhitelist.contains(entry.getValue().getType())) {
                         continue;
