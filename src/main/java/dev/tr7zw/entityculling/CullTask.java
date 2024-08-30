@@ -186,7 +186,7 @@ public class CullTask implements Runnable {
     private boolean isSkippableArmorstand(Entity entity) {
         if (!EntityCullingModBase.instance.config.skipMarkerArmorStands)
             return false;
-        return entity instanceof ArmorStand && ((ArmorStand) entity).isMarker();
+        return entity instanceof ArmorStand && ((ArmorStand) entity).isInvisible();
     }
 
     // Vec3i forward compatibility functions
