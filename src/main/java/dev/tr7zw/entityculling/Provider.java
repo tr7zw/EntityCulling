@@ -20,7 +20,13 @@ public class Provider implements DataProvider {
     @Override
     public boolean isOpaqueFullCube(int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
-        return world.getBlockState(pos).isSolidRender(world, pos);
+        // spotless:off
+        //#if MC <= 12101
+        //$$ return world.getBlockState(pos).isSolidRender(world, pos);
+        //#else
+        return world.getBlockState(pos).isSolidRender();
+        //#endif
+        //spotless:on
     }
 
     @Override

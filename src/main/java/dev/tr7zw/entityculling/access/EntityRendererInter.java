@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.AABB;
 
 public interface EntityRendererInter<T extends Entity> {
 
@@ -12,5 +13,9 @@ public interface EntityRendererInter<T extends Entity> {
 
     void shadowRenderNameTag(T entity, Component component, PoseStack poseStack, MultiBufferSource multiBufferSource,
             int light, float f);
+
+    boolean ignoresCulling(T entity);
+
+    AABB getCullingBox(T entity);
 
 }

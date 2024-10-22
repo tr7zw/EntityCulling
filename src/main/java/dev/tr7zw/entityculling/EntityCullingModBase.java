@@ -11,12 +11,9 @@ import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
 import dev.tr7zw.util.NMSHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -84,15 +81,10 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
                 return;
             pressed = true;
             enabled = !enabled;
-            LocalPlayer player = Minecraft.getInstance().player;
             if (enabled) {
-                if (player != null) {
-                    player.sendSystemMessage(Component.literal("Culling on").withStyle(ChatFormatting.GREEN));
-                }
+                NMSCullingHelper.sendChatMessage(Component.literal("Culling on").withStyle(ChatFormatting.GREEN));
             } else {
-                if (player != null) {
-                    player.sendSystemMessage(Component.literal("Culling off").withStyle(ChatFormatting.RED));
-                }
+                NMSCullingHelper.sendChatMessage(Component.literal("Culling off").withStyle(ChatFormatting.RED));
             }
         } else {
             pressed = false;

@@ -18,11 +18,10 @@ public class Config {
     public int hitboxLimit = 50;
     public boolean skipMarkerArmorStands = true;
     public boolean tickCulling = true;
-    public Set<String> tickCullingWhitelist = new HashSet<>(
-            Arrays.asList("minecraft:firework_rocket", "minecraft:boat", "create:carriage_contraption",
-                    "create:contraption", "create:gantry_contraption", "create:stationary_contraption",
-                    "mts:builder_existing", "mts:builder_rendering", "mts:builder_seat",
-                    "drg_flares:drg_flares", "alexscaves:gum_worm", "alexscaves:gum_worm_segment"));
+    public Set<String> tickCullingWhitelist = new HashSet<>(Arrays.asList("minecraft:firework_rocket", "minecraft:boat",
+            "create:carriage_contraption", "create:contraption", "create:gantry_contraption",
+            "create:stationary_contraption", "mts:builder_existing", "mts:builder_rendering", "mts:builder_seat",
+            "drg_flares:drg_flares", "alexscaves:gum_worm", "alexscaves:gum_worm_segment"));
     public boolean disableF3 = false;
     public boolean skipEntityCulling = false;
     public boolean skipBlockEntityCulling = false;

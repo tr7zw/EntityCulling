@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import dev.tr7zw.entityculling.EntityCullingModBase;
+import dev.tr7zw.entityculling.NMSCullingHelper;
 import dev.tr7zw.entityculling.access.EntityRendererInter;
 import dev.tr7zw.entityculling.versionless.access.Cullable;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -32,9 +33,9 @@ public class WorldRendererMixin {
             return;
         }
         Cullable cullable = (Cullable) entity;
-        if (!cullable.isForcedVisible() && cullable.isCulled() && !entity.noCulling) {
+        if (!cullable.isForcedVisible() && cullable.isCulled() && !NMSCullingHelper.ignoresCulling(entity)) {
             @SuppressWarnings("unchecked")
-            EntityRenderer<Entity> entityRenderer = (EntityRenderer<Entity>) entityRenderDispatcher.getRenderer(entity);
+            EntityRenderer entityRenderer = (EntityRenderer) entityRenderDispatcher.getRenderer(entity);
             @SuppressWarnings("unchecked")
             EntityRendererInter<Entity> entityRendererInter = (EntityRendererInter<Entity>) entityRenderer;
             if (EntityCullingModBase.instance.config.renderNametagsThroughWalls && matrices != null
@@ -42,7 +43,7 @@ public class WorldRendererMixin {
                 double x = Mth.lerp((double) tickDelta, (double) entity.xOld, (double) entity.getX()) - cameraX;
                 double y = Mth.lerp((double) tickDelta, (double) entity.yOld, (double) entity.getY()) - cameraY;
                 double z = Mth.lerp((double) tickDelta, (double) entity.zOld, (double) entity.getZ()) - cameraZ;
-                Vec3 vec3d = entityRenderer.getRenderOffset(entity, tickDelta);
+                Vec3 vec3d = NMSCullingHelper.getRenderOffset(entityRenderer, entity, tickDelta);
                 double d = x + vec3d.x;
                 double e = y + vec3d.y;
                 double f = z + vec3d.z;
