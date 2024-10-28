@@ -27,7 +27,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     public Set<EntityType<?>> entityWhistelist = new HashSet<>();
     public Set<EntityType<?>> tickCullWhistelist = new HashSet<>();
     public CullTask cullTask;
-    protected KeyMapping keybind = new KeyMapping("key.entityculling.toggle", -1, "EntityCulling");
+    protected KeyMapping keybind = new KeyMapping("key.entityculling.toggle", -1, "text.entityculling.title");
     private Set<Function<BlockEntity, Boolean>> dynamicBlockEntityWhitelist = new HashSet<>();
     private Set<Function<Entity, Boolean>> dynamicEntityWhitelist = new HashSet<>();
 
