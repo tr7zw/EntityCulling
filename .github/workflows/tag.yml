@@ -423,6 +423,44 @@ jobs:
           name: ${{github.ref_name}}-1.21.3 - Fabric
           files: 'versions/1.21.3-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.21.3
+      - name: Publish-1.21.4-neoforge-Curseforge
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          curseforge-id: 448233
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          loaders: neoforge
+          name: ${{github.ref_name}}-1.21.4 - NeoForge
+          version-type: beta
+          files: 'versions/1.21.4-neoforge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.21.4
+      - name: Publish-1.21.4-neoforge-Modrinth
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          modrinth-id: NNAgCjsB
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          loaders: neoforge
+          name: ${{github.ref_name}}-1.21.4 - NeoForge
+          files: 'versions/1.21.4-neoforge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.21.4
+      - name: Publish-1.21.4-forge-Curseforge
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          curseforge-id: 448233
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          loaders: forge
+          name: ${{github.ref_name}}-1.21.4 - Forge
+          version-type: beta
+          files: 'versions/1.21.4-forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.21.4
+      - name: Publish-1.21.4-forge-Modrinth
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          modrinth-id: NNAgCjsB
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          loaders: forge
+          name: ${{github.ref_name}}-1.21.4 - Forge
+          files: 'versions/1.21.4-forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.21.4
       - name: Publish-1.21.4-fabric-Curseforge
         uses: Kir-Antipov/mc-publish@v3.3.0
         with:
