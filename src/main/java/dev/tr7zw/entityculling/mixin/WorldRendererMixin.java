@@ -1,30 +1,45 @@
 package dev.tr7zw.entityculling.mixin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.logisticscraft.occlusionculling.util.MathUtilities;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import dev.tr7zw.entityculling.EntityCullingModBase;
 import dev.tr7zw.entityculling.NMSCullingHelper;
 import dev.tr7zw.entityculling.access.EntityRendererInter;
 import dev.tr7zw.entityculling.versionless.access.Cullable;
+import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+//#if MC > 12104
+import net.minecraft.client.DeltaTracker;
+//#endif
 
 @Mixin(LevelRenderer.class)
 public class WorldRendererMixin {
 
     @Shadow
     private EntityRenderDispatcher entityRenderDispatcher;
+    private List<Runnable> lateRenders = new ArrayList<Runnable>();
+
+    private double aabbExpansion = 0.5;
 
     @Inject(at = @At("HEAD"), method = "renderEntity", cancellable = true)
     private void renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta,
@@ -53,12 +68,57 @@ public class WorldRendererMixin {
                         this.entityRenderDispatcher.getPackedLightCoords(entity, tickDelta), tickDelta);
                 matrices.popPose();
             }
+            //#if MC > 12104
+            if (EntityCullingModBase.instance.debugHitboxes) {
+                lateRenders.add(() -> {
+                    renderDebugBox(entity, cameraX, cameraY, cameraZ, tickDelta, matrices, vertexConsumers, false);
+                });
+            }
+            //#endif
             EntityCullingModBase.instance.skippedEntities++;
             info.cancel();
             return;
         }
         EntityCullingModBase.instance.renderedEntities++;
         cullable.setOutOfCamera(false);
+        //#if MC > 12104
+        if (EntityCullingModBase.instance.debugHitboxes) {
+            lateRenders.add(() -> {
+                renderDebugBox(entity, cameraX, cameraY, cameraZ, tickDelta, matrices, vertexConsumers, true);
+            });
+        }
+        //#endif
     }
+
+    //#if MC > 12104
+
+    @Inject(at = @At("RETURN"), method = "renderEntities")
+    private void renderEntities(PoseStack poseStack, BufferSource bufferSource, Camera camera,
+            DeltaTracker deltaTracker, List<Entity> list, CallbackInfo info) {
+        if (!lateRenders.isEmpty()) {
+            RenderSystem.disableDepthTest();
+            for (Runnable r : lateRenders) {
+                r.run();
+            }
+            RenderSystem.enableDepthTest();
+            lateRenders.clear();
+        }
+    }
+
+    private void renderDebugBox(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta,
+            PoseStack matrices, MultiBufferSource vertexConsumers, boolean visible) {
+        AABB boundingBox = NMSCullingHelper.getCullingBox(entity);
+        double maxX = MathUtilities.ceil(boundingBox.maxX + aabbExpansion) - cameraX;
+        double maxY = MathUtilities.ceil(boundingBox.maxY + aabbExpansion) - cameraY;
+        double maxZ = MathUtilities.ceil(boundingBox.maxZ + aabbExpansion) - cameraZ;
+        double minX = MathUtilities.floor(boundingBox.minX - aabbExpansion) - cameraX;
+        double minY = MathUtilities.floor(boundingBox.minY - aabbExpansion) - cameraY;
+        double minZ = MathUtilities.floor(boundingBox.minZ - aabbExpansion) - cameraZ;
+
+        DebugRenderer.renderFilledBox(matrices, vertexConsumers, new AABB(maxX, maxY, maxZ, minX, minY, minZ),
+                visible ? 0f : 1f, visible ? 1f : 0f, 0f, 0.25f);
+    }
+
+    //#endif
 
 }

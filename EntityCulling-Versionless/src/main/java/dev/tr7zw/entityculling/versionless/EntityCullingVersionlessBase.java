@@ -20,6 +20,7 @@ public abstract class EntityCullingVersionlessBase {
     public static boolean enabled = true;
     protected Thread cullThread;
     protected boolean pressed = false;
+    protected boolean pressedBox = false;
     protected boolean lateInit = false;
     public Config config;
     protected final File settingsFile = new File("config", "entityculling.json");

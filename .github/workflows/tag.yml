@@ -16,14 +16,119 @@ jobs:
         run: chmod +x ./gradlecw
       - name: build
         run: ./gradlecw build -Pbuild.release=true
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: 'versions/**/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+      - name: Publish-1.19.3-forge-Curseforge
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          curseforge-id: 448233
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          loaders: forge
+          name: ${{github.ref_name}}-1.19.3 - Forge
+          version-type: beta
+          files: 'versions/1.19.3-forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.19.3
+      - name: Publish-1.19.3-forge-Modrinth
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          modrinth-id: NNAgCjsB
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          loaders: forge
+          name: ${{github.ref_name}}-1.19.3 - Forge
+          files: 'versions/1.19.3-forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.19.3
+      - name: Publish-1.19.3-fabric-Curseforge
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          curseforge-id: 448233
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          loaders: fabric
+          name: ${{github.ref_name}}-1.19.3 - Fabric
+          files: 'versions/1.19.3-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.19.3
+      - name: Publish-1.19.3-fabric-Modrinth
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          modrinth-id: NNAgCjsB
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          loaders: fabric
+          name: ${{github.ref_name}}-1.19.3 - Fabric
+          files: 'versions/1.19.3-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.19.3
+      - name: Publish-1.19.4-forge-Curseforge
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          curseforge-id: 448233
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          loaders: forge
+          name: ${{github.ref_name}}-1.19.4 - Forge
+          version-type: beta
+          files: 'versions/1.19.4-forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.19.4
+      - name: Publish-1.19.4-forge-Modrinth
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          modrinth-id: NNAgCjsB
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          loaders: forge
+          name: ${{github.ref_name}}-1.19.4 - Forge
+          files: 'versions/1.19.4-forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.19.4
+      - name: Publish-1.19.4-fabric-Curseforge
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          curseforge-id: 448233
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          loaders: fabric
+          name: ${{github.ref_name}}-1.19.4 - Fabric
+          files: 'versions/1.19.4-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.19.4
+      - name: Publish-1.19.4-fabric-Modrinth
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          modrinth-id: NNAgCjsB
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          loaders: fabric
+          name: ${{github.ref_name}}-1.19.4 - Fabric
+          files: 'versions/1.19.4-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.19.4
+      - name: Publish-1.20.1-forge-Curseforge
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          curseforge-id: 448233
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          loaders: forge
+          name: ${{github.ref_name}}-1.20.1 - Forge
+          version-type: beta
+          files: 'versions/1.20.1-forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.20.1
+      - name: Publish-1.20.1-forge-Modrinth
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          modrinth-id: NNAgCjsB
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          loaders: forge
+          name: ${{github.ref_name}}-1.20.1 - Forge
+          files: 'versions/1.20.1-forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.20.1
+      - name: Publish-1.20.1-fabric-Curseforge
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          curseforge-id: 448233
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          loaders: fabric
+          name: ${{github.ref_name}}-1.20.1 - Fabric
+          files: 'versions/1.20.1-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
+          game-versions: 1.20.1
       - name: Publish-1.20.1-fabric-Modrinth
         uses: Kir-Antipov/mc-publish@v3.3.0
         with:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: fabric
-          version: 1.7.2
-          name: 1.7.2-1.20.1 - Fabric
+          name: ${{github.ref_name}}-1.20.1 - Fabric
           files: 'versions/1.20.1-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.1
       - name: Publish-1.20.2-forge-Curseforge
@@ -32,8 +137,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: forge
-          version: 1.7.2
-          name: 1.7.2-1.20.2 - Forge
+          name: ${{github.ref_name}}-1.20.2 - Forge
           version-type: beta
           files: 'versions/1.20.2-forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.2
@@ -43,8 +147,7 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: forge
-          version: 1.7.2
-          name: 1.7.2-1.20.2 - Forge
+          name: ${{github.ref_name}}-1.20.2 - Forge
           files: 'versions/1.20.2-forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.2
       - name: Publish-1.20.2-neoforge-Curseforge
@@ -53,8 +156,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: neoforge
-          version: 1.7.2
-          name: 1.7.2-1.20.2 - NeoForge
+          name: ${{github.ref_name}}-1.20.2 - NeoForge
           version-type: beta
           files: 'versions/1.20.2-neoforge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.2
@@ -64,8 +166,7 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: neoforge
-          version: 1.7.2
-          name: 1.7.2-1.20.2 - NeoForge
+          name: ${{github.ref_name}}-1.20.2 - NeoForge
           files: 'versions/1.20.2-neoforge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.2
       - name: Publish-1.20.2-fabric-Curseforge
@@ -74,8 +175,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: fabric
-          version: 1.7.2
-          name: 1.7.2-1.20.2 - Fabric
+          name: ${{github.ref_name}}-1.20.2 - Fabric
           files: 'versions/1.20.2-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.2
       - name: Publish-1.20.2-fabric-Modrinth
@@ -84,8 +184,7 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: fabric
-          version: 1.7.2
-          name: 1.7.2-1.20.2 - Fabric
+          name: ${{github.ref_name}}-1.20.2 - Fabric
           files: 'versions/1.20.2-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.2
       - name: Publish-1.20.4-forge-Curseforge
@@ -94,8 +193,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: forge
-          version: 1.7.2
-          name: 1.7.2-1.20.4 - Forge
+          name: ${{github.ref_name}}-1.20.4 - Forge
           version-type: beta
           files: 'versions/1.20.4-forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.4
@@ -105,8 +203,7 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: forge
-          version: 1.7.2
-          name: 1.7.2-1.20.4 - Forge
+          name: ${{github.ref_name}}-1.20.4 - Forge
           files: 'versions/1.20.4-forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.4
       - name: Publish-1.20.4-neoforge-Curseforge
@@ -115,8 +212,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: neoforge
-          version: 1.7.2
-          name: 1.7.2-1.20.4 - NeoForge
+          name: ${{github.ref_name}}-1.20.4 - NeoForge
           version-type: beta
           files: 'versions/1.20.4-neoforge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.4
@@ -126,8 +222,7 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: neoforge
-          version: 1.7.2
-          name: 1.7.2-1.20.4 - NeoForge
+          name: ${{github.ref_name}}-1.20.4 - NeoForge
           files: 'versions/1.20.4-neoforge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.4
       - name: Publish-1.20.4-fabric-Curseforge
@@ -136,8 +231,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: fabric
-          version: 1.7.2
-          name: 1.7.2-1.20.4 - Fabric
+          name: ${{github.ref_name}}-1.20.4 - Fabric
           files: 'versions/1.20.4-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.4
       - name: Publish-1.20.4-fabric-Modrinth
@@ -146,8 +240,7 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: fabric
-          version: 1.7.2
-          name: 1.7.2-1.20.4 - Fabric
+          name: ${{github.ref_name}}-1.20.4 - Fabric
           files: 'versions/1.20.4-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.4
       - name: Publish-1.20.6-forge-Curseforge
@@ -156,8 +249,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: forge
-          version: 1.7.2
-          name: 1.7.2-1.20.6 - Forge
+          name: ${{github.ref_name}}-1.20.6 - Forge
           version-type: beta
           files: 'versions/1.20.6-forge/build/libs/!(*-@(dev|sources|javadoc)).jar'
           game-versions: 1.20.6
@@ -167,8 +259,7 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: forge
-          version: 1.7.2
-          name: 1.7.2-1.20.6 - Forge
+          name: ${{github.ref_name}}-1.20.6 - Forge
           files: 'versions/1.20.6-forge/build/libs/!(*-@(dev|sources|javadoc)).jar'
           game-versions: 1.20.6
       - name: Publish-1.20.6-neoforge-Curseforge
@@ -177,8 +268,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: neoforge
-          version: 1.7.2
-          name: 1.7.2-1.20.6 - NeoForge
+          name: ${{github.ref_name}}-1.20.6 - NeoForge
           version-type: beta
           files: 'versions/1.20.6-neoforge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.6
@@ -188,8 +278,7 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: neoforge
-          version: 1.7.2
-          name: 1.7.2-1.20.6 - NeoForge
+          name: ${{github.ref_name}}-1.20.6 - NeoForge
           files: 'versions/1.20.6-neoforge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.6
       - name: Publish-1.20.6-fabric-Curseforge
@@ -198,8 +287,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: fabric
-          version: 1.7.2
-          name: 1.7.2-1.20.6 - Fabric
+          name: ${{github.ref_name}}-1.20.6 - Fabric
           files: 'versions/1.20.6-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.6
       - name: Publish-1.20.6-fabric-Modrinth
@@ -208,8 +296,7 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: fabric
-          version: 1.7.2
-          name: 1.7.2-1.20.6 - Fabric
+          name: ${{github.ref_name}}-1.20.6 - Fabric
           files: 'versions/1.20.6-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.20.6
       - name: Publish-1.21-forge-Curseforge
@@ -218,8 +305,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: forge
-          version: 1.7.2
-          name: 1.7.2-1.21(.1) - Forge
+          name: ${{github.ref_name}}-1.21(.1) - Forge
           version-type: beta
           files: 'versions/1.21-forge/build/libs/!(*-@(dev|sources|javadoc)).jar'
           game-versions: |
@@ -231,8 +317,7 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: forge
-          version: 1.7.2
-          name: 1.7.2-1.21(.1) - Forge
+          name: ${{github.ref_name}}-1.21(.1) - Forge
           files: 'versions/1.21-forge/build/libs/!(*-@(dev|sources|javadoc)).jar'
           game-versions: |
               1.21
@@ -243,8 +328,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: neoforge
-          version: 1.7.2
-          name: 1.7.2-1.21(.1) - NeoForge
+          name: ${{github.ref_name}}-1.21(.1) - NeoForge
           version-type: beta
           files: 'versions/1.21-neoforge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: |
@@ -256,8 +340,7 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: neoforge
-          version: 1.7.2
-          name: 1.7.2-1.21(.1) - NeoForge
+          name: ${{github.ref_name}}-1.21(.1) - NeoForge
           files: 'versions/1.21-neoforge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: |
               1.21
@@ -268,8 +351,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: fabric
-          version: 1.7.2
-          name: 1.7.2-1.21(.1) - Fabric
+          name: ${{github.ref_name}}-1.21(.1) - Fabric
           files: 'versions/1.21-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: |
               1.21
@@ -280,8 +362,7 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: fabric
-          version: 1.7.2
-          name: 1.7.2-1.21(.1) - Fabric
+          name: ${{github.ref_name}}-1.21(.1) - Fabric
           files: 'versions/1.21-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: |
               1.21
@@ -292,8 +373,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: neoforge
-          version: 1.7.2
-          name: 1.7.2-1.21.3 - NeoForge
+          name: ${{github.ref_name}}-1.21.3 - NeoForge
           version-type: beta
           files: 'versions/1.21.3-neoforge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.21.3
@@ -303,8 +383,7 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: neoforge
-          version: 1.7.2
-          name: 1.7.2-1.21.3 - NeoForge
+          name: ${{github.ref_name}}-1.21.3 - NeoForge
           files: 'versions/1.21.3-neoforge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.21.3
       - name: Publish-1.21.3-forge-Curseforge
@@ -313,8 +392,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: forge
-          version: 1.7.2
-          name: 1.7.2-1.21.3 - Forge
+          name: ${{github.ref_name}}-1.21.3 - Forge
           version-type: beta
           files: 'versions/1.21.3-forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.21.3
@@ -324,8 +402,7 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: forge
-          version: 1.7.2
-          name: 1.7.2-1.21.3 - Forge
+          name: ${{github.ref_name}}-1.21.3 - Forge
           files: 'versions/1.21.3-forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.21.3
       - name: Publish-1.21.3-fabric-Curseforge
@@ -334,8 +411,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: fabric
-          version: 1.7.2
-          name: 1.7.2-1.21.3 - Fabric
+          name: ${{github.ref_name}}-1.21.3 - Fabric
           files: 'versions/1.21.3-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.21.3
       - name: Publish-1.21.3-fabric-Modrinth
@@ -344,8 +420,7 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: fabric
-          version: 1.7.2
-          name: 1.7.2-1.21.3 - Fabric
+          name: ${{github.ref_name}}-1.21.3 - Fabric
           files: 'versions/1.21.3-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.21.3
       - name: Publish-1.21.4-neoforge-Curseforge
@@ -354,8 +429,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: neoforge
-          version: 1.7.2
-          name: 1.7.2-1.21.4 - NeoForge
+          name: ${{github.ref_name}}-1.21.4 - NeoForge
           version-type: beta
           files: 'versions/1.21.4-neoforge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.21.4
@@ -365,8 +439,7 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: neoforge
-          version: 1.7.2
-          name: 1.7.2-1.21.4 - NeoForge
+          name: ${{github.ref_name}}-1.21.4 - NeoForge
           files: 'versions/1.21.4-neoforge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.21.4
       - name: Publish-1.21.4-forge-Curseforge
@@ -375,8 +448,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: forge
-          version: 1.7.2
-          name: 1.7.2-1.21.4 - Forge
+          name: ${{github.ref_name}}-1.21.4 - Forge
           version-type: beta
           files: 'versions/1.21.4-forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.21.4
@@ -386,8 +458,7 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: forge
-          version: 1.7.2
-          name: 1.7.2-1.21.4 - Forge
+          name: ${{github.ref_name}}-1.21.4 - Forge
           files: 'versions/1.21.4-forge/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.21.4
       - name: Publish-1.21.4-fabric-Curseforge
@@ -396,8 +467,7 @@ jobs:
           curseforge-id: 448233
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           loaders: fabric
-          version: 1.7.2
-          name: 1.7.2-1.21.4 - Fabric
+          name: ${{github.ref_name}}-1.21.4 - Fabric
           files: 'versions/1.21.4-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.21.4
       - name: Publish-1.21.4-fabric-Modrinth
@@ -406,7 +476,6 @@ jobs:
           modrinth-id: NNAgCjsB
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           loaders: fabric
-          version: 1.7.2
-          name: 1.7.2-1.21.4 - Fabric
+          name: ${{github.ref_name}}-1.21.4 - Fabric
           files: 'versions/1.21.4-fabric/build/libs/!(*-@(dev|sources|javadoc|all)).jar'
           game-versions: 1.21.4

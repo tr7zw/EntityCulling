@@ -50,6 +50,9 @@ public class EntityCullingMod extends EntityCullingModBase implements ClientModI
             this.clientTick();
         });
         ModLoaderUtil.registerKeybind(keybind);
+        //#if MC > 12104
+        ModLoaderUtil.registerKeybind(keybindBoxes);
+        //#endif
     }
 
     //#else

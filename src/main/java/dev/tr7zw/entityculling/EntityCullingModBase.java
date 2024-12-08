@@ -28,6 +28,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     public Set<EntityType<?>> tickCullWhistelist = new HashSet<>();
     public CullTask cullTask;
     protected KeyMapping keybind = new KeyMapping("key.entityculling.toggle", -1, "text.entityculling.title");
+    protected KeyMapping keybindBoxes = new KeyMapping("key.entityculling.toggleBoxes", -1, "text.entityculling.title");
     private Set<Function<BlockEntity, Boolean>> dynamicBlockEntityWhitelist = new HashSet<>();
     private Set<Function<Entity, Boolean>> dynamicEntityWhitelist = new HashSet<>();
 
@@ -88,6 +89,20 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
             }
         } else {
             pressed = false;
+        }
+        if (keybindBoxes.isDown()) {
+            if (pressedBox)
+                return;
+            pressedBox = true;
+            debugHitboxes = !debugHitboxes;
+            if (debugHitboxes) {
+                NMSCullingHelper
+                        .sendChatMessage(Component.literal("Debug Cullboxes on").withStyle(ChatFormatting.GREEN));
+            } else {
+                NMSCullingHelper.sendChatMessage(Component.literal("Debug Cullboxes off").withStyle(ChatFormatting.RED));
+            }
+        } else {
+            pressedBox = false;
         }
         cullTask.requestCull = true;
     }
