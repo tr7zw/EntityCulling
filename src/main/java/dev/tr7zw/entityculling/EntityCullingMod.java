@@ -40,6 +40,7 @@ public class EntityCullingMod extends EntityCullingModBase {
         ClientRegistry.registerKeyBinding(keybind);
         MinecraftForge.EVENT_BUS.register(this);
         FMLCommonHandler.instance().bus().register(this);
+        cullTask.populateWhitelist(config.blockEntityWhitelist);
     }
 
     @SubscribeEvent
