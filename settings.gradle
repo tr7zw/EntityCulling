@@ -17,11 +17,7 @@ pluginManagement {
 }
 
 plugins {
-    id 'com.gtnewhorizons.gtnhsettingsconvention' version '1.0.15'
+    id 'com.gtnewhorizons.gtnhsettingsconvention' version '1.0.30'
 }
 
-//blowdryerSetup {
-//    repoSubfolder 'gtnhShared'
-//    github('GTNewHorizons/ExampleMod1.7.10', 'tag', '0.2.2')
-    //devLocal '.' // Use this when testing config updates locally
-//}
+//
