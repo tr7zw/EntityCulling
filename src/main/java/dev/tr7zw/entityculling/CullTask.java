@@ -1,14 +1,15 @@
 package dev.tr7zw.entityculling;
 
 import java.util.ConcurrentModificationException;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 import com.logisticscraft.occlusionculling.util.Vec3d;
 
 import dev.tr7zw.entityculling.access.Cullable;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
@@ -23,7 +24,7 @@ public class CullTask implements Runnable {
     private final Minecraft client = Minecraft.getMinecraft();
 	private final int sleepDelay = EntityCullingModBase.instance.config.sleepDelay;
 	private final int hitboxLimit = EntityCullingModBase.instance.config.hitboxLimit;
-	private final Set<String> unCullable;
+	private final Set<Block> unCullable = new HashSet<>();
 	public long lastTime = 0;
 
 	// reused preallocated vars
@@ -31,9 +32,8 @@ public class CullTask implements Runnable {
 	private Vec3d aabbMin = new Vec3d(0, 0, 0);
 	private Vec3d aabbMax = new Vec3d(0, 0, 0);
 
-	public CullTask(OcclusionCullingInstance culling, Set<String> unCullable) {
+	public CullTask(OcclusionCullingInstance culling) {
 		this.culling = culling;
-		this.unCullable = unCullable;
 	}
 
 	@Override
@@ -65,10 +65,11 @@ public class CullTask implements Runnable {
 								break; // We are not synced to the main thread, so NPE's/CME are allowed here and way less
 								// overhead probably than trying to sync stuff up for no really good reason
 							}
-							if(unCullable.contains(entry.getBlockType().getUnlocalizedName())) {
+							Cullable cullable = (Cullable) entry;
+							if(unCullable.contains(entry.getBlockType())) {
+								cullable.setCulled(false);
 								continue;
 							}
-							Cullable cullable = (Cullable) entry;
 							if (!cullable.isForcedVisible()) {
 								if (noCulling) {
 									cullable.setCulled(false);
@@ -124,6 +125,13 @@ public class CullTask implements Runnable {
 			}
 		}
 		System.out.println("Shutting down culling task!");
+	}
+
+	public void populateWhitelist(Set<String> unCullableStrings) {
+		unCullable.clear();
+		for (String block : unCullableStrings) {
+			unCullable.add(Block.getBlockFromName(block));
+		}
 	}
 
 	// 1.8 doesnt know where the heck the camera is... what?!?

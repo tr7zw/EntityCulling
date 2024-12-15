@@ -8,7 +8,7 @@ public class Config {
 
     public int configVersion = 4;
     public boolean renderNametagsThroughWalls = true;
-    public Set<String> blockEntityWhitelist = new HashSet<>(Arrays.asList("tile.beacon"));
+    public Set<String> blockEntityWhitelist = new HashSet<>(Arrays.asList("beacon"));
     public int tracingDistance = 128;
     public boolean debugMode = false;
     public int sleepDelay = 10;

@@ -60,7 +60,7 @@ public abstract class EntityCullingModBase {
             }
         }
         culling = new OcclusionCullingInstance(config.tracingDistance, new Provider());
-        cullTask = new CullTask(culling, config.blockEntityWhitelist);
+        cullTask = new CullTask(culling);
 
 		cullThread = new Thread(cullTask, "CullThread");
 		cullThread.setUncaughtExceptionHandler((thread, ex) -> {
