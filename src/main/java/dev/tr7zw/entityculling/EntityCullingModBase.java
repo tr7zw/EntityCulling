@@ -8,12 +8,12 @@ import java.util.function.Function;
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 
 import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
+import dev.tr7zw.util.ComponentProvider;
 import dev.tr7zw.util.NMSHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -50,7 +50,6 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
         cullTask.requestCull = true;
     }
 
-    @SuppressWarnings("resource")
     public void clientTick() {
         if (!lateInit) {
             lateInit = true;
@@ -83,9 +82,9 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
             pressed = true;
             enabled = !enabled;
             if (enabled) {
-                NMSCullingHelper.sendChatMessage(Component.literal("Culling on").withStyle(ChatFormatting.GREEN));
+                NMSHelper.sendChatMessage(ComponentProvider.literal("Culling on").withStyle(ChatFormatting.GREEN));
             } else {
-                NMSCullingHelper.sendChatMessage(Component.literal("Culling off").withStyle(ChatFormatting.RED));
+                NMSHelper.sendChatMessage(ComponentProvider.literal("Culling off").withStyle(ChatFormatting.RED));
             }
         } else {
             pressed = false;
@@ -96,10 +95,10 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
             pressedBox = true;
             debugHitboxes = !debugHitboxes;
             if (debugHitboxes) {
-                NMSCullingHelper
-                        .sendChatMessage(Component.literal("Debug Cullboxes on").withStyle(ChatFormatting.GREEN));
+                NMSHelper
+                        .sendChatMessage(ComponentProvider.literal("Debug Cullboxes on").withStyle(ChatFormatting.GREEN));
             } else {
-                NMSCullingHelper.sendChatMessage(Component.literal("Debug Cullboxes off").withStyle(ChatFormatting.RED));
+                NMSHelper.sendChatMessage(ComponentProvider.literal("Debug Cullboxes off").withStyle(ChatFormatting.RED));
             }
         } else {
             pressedBox = false;

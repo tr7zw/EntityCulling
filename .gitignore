@@ -50,3 +50,4 @@ src/main/resources/pack.mcmeta
 src/main/java/dev/tr7zw/util/ModLoaderUtil.java
 src/main/java/dev/tr7zw/util/NMSHelper.java
 src/main/neoforge-resources/META-INF/neoforge.mods.toml
+/src/main/java/dev/tr7zw/util

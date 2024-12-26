@@ -4,7 +4,6 @@ import dev.tr7zw.util.ModLoaderUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
-//spotless:off 
 //#if FABRIC
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -30,9 +29,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 //$$ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 //$$ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 //#endif
-//spotless:on
 
-//spotless:off 
 //#if FABRIC
 public class EntityCullingMod extends EntityCullingModBase implements ClientModInitializer {
 
@@ -101,5 +98,4 @@ public class EntityCullingMod extends EntityCullingModBase implements ClientModI
     //$$       return entity.getRenderBoundingBox();
     //#endif
     }
-    //spotless:on
 }

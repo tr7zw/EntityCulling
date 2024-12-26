@@ -17,19 +17,16 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
 
     @Override
     public boolean shadowShouldShowName(T entity) {
-        // spotless:off
         //#if MC <= 12101
         //$$ return shouldShowName(entity);
         //#else
         return ((EntityRenderer)(Object)this).createRenderState(entity, 0).nameTag != null;
         //#endif
-        //spotless:on
     }
 
     @Override
     public void shadowRenderNameTag(T entity, Component component, PoseStack poseStack,
             MultiBufferSource multiBufferSource, int light, float delta) {
-        // spotless:off
         //#if MC >= 12102
         renderNameTag(((EntityRenderer)(Object)this).createRenderState(entity, delta), component, poseStack, multiBufferSource, light);
         //#elseif MC >= 12005
@@ -37,18 +34,14 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
         //#else
         //$$ renderNameTag(entity, component, poseStack, multiBufferSource, light);
         //#endif
-        //spotless:on
     }
 
-    // spotless:off
     //#if MC <= 12101
     //$$ @Shadow
     //$$ public abstract boolean shouldShowName(T entity);
     //#endif
-    //spotless:on
 
     @Shadow
-    // spotless:off
     //#if MC >= 12102
     public abstract void renderNameTag(net.minecraft.client.renderer.entity.state.EntityRenderState entityRenderState, Component component, PoseStack poseStack,
             MultiBufferSource multiBufferSource, int i);
@@ -59,37 +52,30 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
     //$$    public abstract void renderNameTag(T entity, Component component, PoseStack poseStack,
     //$$ MultiBufferSource multiBufferSource, int i);
     //#endif
-    //spotless:on
 
     @Override
     public boolean ignoresCulling(T entity) {
-        // spotless:off
         //#if MC <= 12101
         //$$ return entity.noCulling;
         //#else
         return !affectedByCulling(entity);
         //#endif
-        //spotless:on
     }
 
     @Override
     public AABB getCullingBox(T entity) {
-        // spotless:off
         //#if MC <= 12101
         //$$ return entity.getBoundingBoxForCulling();
         //#else
         return getBoundingBoxForCulling(entity);
         //#endif
-        //spotless:on
     }
 
-    // spotless:off
     //#if MC >= 12102
     @Shadow
     abstract boolean affectedByCulling(T entity);
     @Shadow 
     abstract AABB getBoundingBoxForCulling(T entity);
     //#endif
-    //spotless:on
 
 }
