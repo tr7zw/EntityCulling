@@ -31,6 +31,17 @@ public class ConfigUpgrader {
             config.tickCullingWhitelist
                     .addAll(Arrays.asList("mts:builder_existing", "mts:builder_rendering", "mts:builder_seat"));
         }
+        if (config.configVersion < 7) {
+            config.configVersion = 7;
+            changed = true;
+            config.tickCullingWhitelist.addAll(Arrays.asList("minecraft:acacia_boat", "minecraft:acacia_chest_boat",
+                    "minecraft:birch_boat", "minecraft:birch_chest_boat", "minecraft:cherry_boat",
+                    "minecraft:cherry_chest_boat", "minecraft:dark_oak_boat", "minecraft:dark_oak_chest_boat",
+                    "minecraft:jungle_boat", "minecraft:jungle_chest_boat", "minecraft:mangrove_boat",
+                    "minecraft:mangrove_chest_boat", "minecraft:oak_boat", "minecraft:oak_chest_boat",
+                    "minecraft:pale_oak_boat", "minecraft:pale_oak_chest_boat", "minecraft:spruce_boat",
+                    "minecraft:spruce_chest_boat", "minecraft:bamboo_raft", "minecraft:bamboo_chest_raft"));
+        }
         // check for more changes here
 
         return changed;
