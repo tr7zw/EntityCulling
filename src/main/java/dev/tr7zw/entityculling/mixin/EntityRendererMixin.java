@@ -20,7 +20,7 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
         //#if MC <= 12101
         //$$ return shouldShowName(entity);
         //#else
-        return ((EntityRenderer)(Object)this).createRenderState(entity, 0).nameTag != null;
+        return ((EntityRenderer) (Object) this).createRenderState(entity, 0).nameTag != null;
         //#endif
     }
 
@@ -28,7 +28,8 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
     public void shadowRenderNameTag(T entity, Component component, PoseStack poseStack,
             MultiBufferSource multiBufferSource, int light, float delta) {
         //#if MC >= 12102
-        renderNameTag(((EntityRenderer)(Object)this).createRenderState(entity, delta), component, poseStack, multiBufferSource, light);
+        renderNameTag(((EntityRenderer) (Object) this).createRenderState(entity, delta), component, poseStack,
+                multiBufferSource, light);
         //#elseif MC >= 12005
         //$$ renderNameTag(entity, component, poseStack, multiBufferSource, light, delta);
         //#else
@@ -43,8 +44,8 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
 
     @Shadow
     //#if MC >= 12102
-    public abstract void renderNameTag(net.minecraft.client.renderer.entity.state.EntityRenderState entityRenderState, Component component, PoseStack poseStack,
-            MultiBufferSource multiBufferSource, int i);
+    public abstract void renderNameTag(net.minecraft.client.renderer.entity.state.EntityRenderState entityRenderState,
+            Component component, PoseStack poseStack, MultiBufferSource multiBufferSource, int i);
     //#elseif MC >= 12005
     //$$ public abstract void renderNameTag(T entity, Component component, PoseStack poseStack,
     //$$ MultiBufferSource multiBufferSource, int i, float f);
@@ -74,7 +75,8 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
     //#if MC >= 12102
     @Shadow
     abstract boolean affectedByCulling(T entity);
-    @Shadow 
+
+    @Shadow
     abstract AABB getBoundingBoxForCulling(T entity);
     //#endif
 

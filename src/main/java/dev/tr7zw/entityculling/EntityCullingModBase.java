@@ -95,10 +95,11 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
             pressedBox = true;
             debugHitboxes = !debugHitboxes;
             if (debugHitboxes) {
-                NMSHelper
-                        .sendChatMessage(ComponentProvider.literal("Debug Cullboxes on").withStyle(ChatFormatting.GREEN));
+                NMSHelper.sendChatMessage(
+                        ComponentProvider.literal("Debug Cullboxes on").withStyle(ChatFormatting.GREEN));
             } else {
-                NMSHelper.sendChatMessage(ComponentProvider.literal("Debug Cullboxes off").withStyle(ChatFormatting.RED));
+                NMSHelper.sendChatMessage(
+                        ComponentProvider.literal("Debug Cullboxes off").withStyle(ChatFormatting.RED));
             }
         } else {
             pressedBox = false;

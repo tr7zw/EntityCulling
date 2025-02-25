@@ -53,49 +53,49 @@ public class EntityCullingMod extends EntityCullingModBase implements ClientModI
     }
 
     //#else
-  //$$  public class EntityCullingMod extends EntityCullingModBase {
-  //$$
-  //$$        public EntityCullingMod() {
-  //$$           ModLoaderUtil.registerClientSetupListener(this::onInitialize);
-  //$$       }
-  //$$
-  //$$      @Override
-  //$$      public void initModloader() {
-  //$$         ModLoaderUtil.registerKeybind(keybind);
-  //$$         ModLoaderUtil.registerForgeEvent(this::doClientTick);
-  //$$         ModLoaderUtil.registerForgeEvent(this::doWorldTick);
+    //$$  public class EntityCullingMod extends EntityCullingModBase {
+    //$$
+    //$$        public EntityCullingMod() {
+    //$$           ModLoaderUtil.registerClientSetupListener(this::onInitialize);
+    //$$       }
+    //$$
+    //$$      @Override
+    //$$      public void initModloader() {
+    //$$         ModLoaderUtil.registerKeybind(keybind);
+    //$$         ModLoaderUtil.registerForgeEvent(this::doClientTick);
+    //$$         ModLoaderUtil.registerForgeEvent(this::doWorldTick);
     //#if FORGE
-  //$$         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
-  //$$                 () -> new IExtensionPoint.DisplayTest(
-  //$$                        () -> ModLoadingContext.get().getActiveContainer().getModInfo().getVersion().toString(),
-  //$$                         (remote, isServer) -> true));
+    //$$         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
+    //$$                 () -> new IExtensionPoint.DisplayTest(
+    //$$                        () -> ModLoadingContext.get().getActiveContainer().getModInfo().getVersion().toString(),
+    //$$                         (remote, isServer) -> true));
     //#endif
-  //$$    }
-  //$$
+    //$$    }
+    //$$
     //#if NEOFORGE && MC >= 12005
-  //$$    private void doClientTick(ClientTickEvent.Pre event) {
+    //$$    private void doClientTick(ClientTickEvent.Pre event) {
     //#else
-  //$$    private void doClientTick(ClientTickEvent event) {
+    //$$    private void doClientTick(ClientTickEvent event) {
     //#endif
-  //$$       this.clientTick();
-  //$$    }
-  //$$
-  //#if NEOFORGE && MC >= 12005
-  //$$   private void doWorldTick(LevelTickEvent.Pre event) {
-  //#else
-  //$$   private void doWorldTick(LevelTickEvent event) {
-  //#endif
-  //$$       this.worldTick();
-  //$$   }
-  //$$
+    //$$       this.clientTick();
+    //$$    }
+    //$$
+    //#if NEOFORGE && MC >= 12005
+    //$$   private void doWorldTick(LevelTickEvent.Pre event) {
+    //#else
+    //$$   private void doWorldTick(LevelTickEvent event) {
     //#endif
-    
+    //$$       this.worldTick();
+    //$$   }
+    //$$
+    //#endif
+
     @Override
     public AABB setupAABB(BlockEntity entity, BlockPos pos) {
-    //#if FABRIC || NEOFORGE
+        //#if FABRIC || NEOFORGE
         return new AABB(pos);
-    //#else
-    //$$       return entity.getRenderBoundingBox();
-    //#endif
+        //#else
+        //$$       return entity.getRenderBoundingBox();
+        //#endif
     }
 }
