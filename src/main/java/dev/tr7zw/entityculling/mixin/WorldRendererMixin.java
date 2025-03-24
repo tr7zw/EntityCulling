@@ -10,7 +10,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.logisticscraft.occlusionculling.util.MathUtilities;
-import com.mojang.blaze3d.systems.RenderSystem;
+//#if MC < 12105
+//$$ import com.mojang.blaze3d.systems.RenderSystem;
+//#endif
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import dev.tr7zw.entityculling.EntityCullingModBase;
@@ -96,11 +98,15 @@ public class WorldRendererMixin {
     private void renderEntities(PoseStack poseStack, BufferSource bufferSource, Camera camera,
             DeltaTracker deltaTracker, List<Entity> list, CallbackInfo info) {
         if (!lateRenders.isEmpty()) {
-            RenderSystem.disableDepthTest();
+            //#if MC < 12105
+            //$$ RenderSystem.disableDepthTest();
+            //#endif
             for (Runnable r : lateRenders) {
                 r.run();
             }
-            RenderSystem.enableDepthTest();
+            //#if MC < 12105
+            //$$ RenderSystem.enableDepthTest();
+            //#endif
             lateRenders.clear();
         }
     }

@@ -21,17 +21,14 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
           dependency-graph: generate-and-submit
-# Already needs to be executable, so the dirty check is correct
-#      - name: make gradle wrapper executable
-#        if: ${{ runner.os != 'Windows' }}
-#        run: chmod +x ./gradlecw
       - name: build
-        run: ./gradlecw build
+        run: ./gradlecw build --stacktrace
       - name: capture build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Artifacts
           path: 'versions/**/build/libs/*.jar'
+      
 #      - name: Test Report
 #        uses: dorny/test-reporter@v1
 #        if: success() || failure()
