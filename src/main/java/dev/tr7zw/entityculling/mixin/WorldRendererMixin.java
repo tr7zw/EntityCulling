@@ -70,7 +70,7 @@ public class WorldRendererMixin {
                         this.entityRenderDispatcher.getPackedLightCoords(entity, tickDelta), tickDelta);
                 matrices.popPose();
             }
-            //#if MC > 12104
+            //#if MC >= 12104
             if (EntityCullingModBase.instance.debugHitboxes) {
                 lateRenders.add(() -> {
                     renderDebugBox(entity, cameraX, cameraY, cameraZ, tickDelta, matrices, vertexConsumers, false);
@@ -83,7 +83,7 @@ public class WorldRendererMixin {
         }
         EntityCullingModBase.instance.renderedEntities++;
         cullable.setOutOfCamera(false);
-        //#if MC > 12104
+        //#if MC >= 12104
         if (EntityCullingModBase.instance.debugHitboxes) {
             lateRenders.add(() -> {
                 renderDebugBox(entity, cameraX, cameraY, cameraZ, tickDelta, matrices, vertexConsumers, true);
@@ -92,7 +92,7 @@ public class WorldRendererMixin {
         //#endif
     }
 
-    //#if MC > 12104
+    //#if MC >= 12104
 
     @Inject(at = @At("RETURN"), method = "renderEntities")
     private void renderEntities(PoseStack poseStack, BufferSource bufferSource, Camera camera,
