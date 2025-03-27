@@ -30,7 +30,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-//#if MC > 12104
+//#if MC >= 12104
 import net.minecraft.client.DeltaTracker;
 //#endif
 

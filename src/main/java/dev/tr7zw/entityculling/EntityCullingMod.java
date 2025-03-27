@@ -47,7 +47,7 @@ public class EntityCullingMod extends EntityCullingModBase implements ClientModI
             this.clientTick();
         });
         ModLoaderUtil.registerKeybind(keybind);
-        //#if MC > 12104
+        //#if MC >= 12104
         ModLoaderUtil.registerKeybind(keybindBoxes);
         //#endif
     }
@@ -62,6 +62,9 @@ public class EntityCullingMod extends EntityCullingModBase implements ClientModI
     //$$      @Override
     //$$      public void initModloader() {
     //$$         ModLoaderUtil.registerKeybind(keybind);
+    //#if MC >= 12104
+    //$$         ModLoaderUtil.registerKeybind(keybindBoxes);
+    //#endif
     //$$         ModLoaderUtil.registerForgeEvent(this::doClientTick);
     //$$         ModLoaderUtil.registerForgeEvent(this::doWorldTick);
     //#if FORGE
