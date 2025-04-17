@@ -30,9 +30,9 @@ public class CullTask implements Runnable {
     public long lastTime = 0;
 
     // reused preallocated vars
-    private Vec3d lastPos = new Vec3d(0, 0, 0);
-    private Vec3d aabbMin = new Vec3d(0, 0, 0);
-    private Vec3d aabbMax = new Vec3d(0, 0, 0);
+    private final Vec3d lastPos = new Vec3d(0, 0, 0);
+    private final Vec3d aabbMin = new Vec3d(0, 0, 0);
+    private final Vec3d aabbMax = new Vec3d(0, 0, 0);
 
     public CullTask(OcclusionCullingInstance culling, Set<String> unCullable) {
         this.culling = culling;
@@ -46,7 +46,7 @@ public class CullTask implements Runnable {
                 Thread.sleep(sleepDelay);
 
                 if (EntityCullingModBase.enabled && client.theWorld != null && client.thePlayer != null && client.thePlayer.ticksExisted > 10 && client.getRenderViewEntity() != null) {
-                    Vec3 cameraMC = null;
+                    Vec3 cameraMC;
                     if(EntityCullingModBase.instance.config.debugMode) {
                         cameraMC = client.thePlayer.getPositionEyes(0);
                     } else {
@@ -87,7 +87,7 @@ public class CullTask implements Runnable {
 
                             }
                         }
-                        Entity entity = null;
+                        Entity entity;
                         Iterator<Entity> iterable = client.theWorld.getLoadedEntityList().iterator();
                         while (iterable.hasNext()) {
                             try {
@@ -96,7 +96,7 @@ public class CullTask implements Runnable {
                                 break; // We are not synced to the main thread, so NPE's/CME are allowed here and way less
                                 // overhead probably than trying to sync stuff up for no really good reason
                             }
-                            if(entity == null || !(entity instanceof Cullable)) {
+                            if(!(entity instanceof Cullable)) {
                                 continue; // Not sure how this could happen outside from mixin screwing up the inject into Entity
                             }
                             Cullable cullable = (Cullable) entity;
@@ -111,7 +111,7 @@ public class CullTask implements Runnable {
                                 }
                                 AxisAlignedBB boundingBox = entity.getEntityBoundingBox();
                                 if(boundingBox.maxX - boundingBox.minX > hitboxLimit || boundingBox.maxY - boundingBox.minY > hitboxLimit || boundingBox.maxZ - boundingBox.minZ > hitboxLimit) {
-                                    cullable.setCulled(false); // To big to bother to cull
+                                    cullable.setCulled(false); // Too big to bother to cull
                                     continue;
                                 }
                                 aabbMin.set(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
@@ -130,13 +130,13 @@ public class CullTask implements Runnable {
         System.out.println("Shutting down culling task!");
     }
 
-    // 1.8 doesnt know where the heck the camera is... what?!?
+    // 1.8 doesn't know where the heck the camera is... what?!?
     private Vec3 getCameraPos() {
         if (client.gameSettings.thirdPersonView == 0) {
             return client.getRenderViewEntity().getPositionEyes(0);
         }
         return client.getRenderViewEntity().getPositionEyes(0);
-        // doesnt work correctly
+        // doesn't work correctly
 //        Entity entity = client.getRenderViewEntity();
 //        float f = entity.getEyeHeight();
 //        double d0 = entity.posX;
