@@ -78,7 +78,11 @@ dependencies {
 //    annotationProcessor 'org.spongepowered:mixin:0.7.11-SNAPSHOT'
     include "com.logisticscraft:occlusionculling:${project.occlusionculling_version}"
 
-    include 'org.spongepowered:mixin:0.7.11-SNAPSHOT'
+    include ('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
+        exclude module: 'guava'
+        exclude module: 'gson'
+        exclude module: 'commons-io'
+    }
 
     sourceSets.main.java.srcDirs += new File(project.rootDir, "EntityCulling-Shared/src/main/java");//(project(':EntityCulling-Shared').sourceSets.main.java.srcDirs)
     sourceSets.main.resources.srcDirs += new File(project.rootDir, "EntityCulling-Shared/src/main/resources");//sourceSets.main.resources.srcDirs += (project(':EntityCulling-Shared').sourceSets.main.resources.srcDirs)
