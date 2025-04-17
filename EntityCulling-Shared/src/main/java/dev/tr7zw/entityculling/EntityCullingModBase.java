@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -15,7 +13,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.EnumChatFormatting;
+import org.lwjgl.input.Keyboard;
 
 public abstract class EntityCullingModBase {
 
@@ -25,8 +24,7 @@ public abstract class EntityCullingModBase {
     public static boolean enabled = true; // public static to make it faster for the jvm
     public CullTask cullTask;
     private Thread cullThread;
-    protected KeyBinding keybind = new KeyBinding("key.entityculling.toggle", -1, "EntityCulling");
-    protected boolean pressed = false;
+    protected KeyBinding keybind = new KeyBinding("key.entityculling.toggle", Keyboard.KEY_NONE, "text.entityculling.title");
 
     public Config config;
     private final File settingsFile = new File("config", "entityculling.json");
@@ -86,25 +84,23 @@ public abstract class EntityCullingModBase {
     }
     
     public void clientTick() {
-        if (keybind.isKeyDown()) {
-            if (pressed)
-                return;
-            pressed = true;
+        cullTask.requestCull = true;
+    }
+
+    public void keyBindPressed() {
+        if (keybind.isPressed()) {
             enabled = !enabled;
             EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
-            if(enabled) {
+            if (enabled) {
                 if (player != null) {
-                    player.addChatMessage(new ChatComponentText("Culling on"));
+                    player.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "Culling on"));
                 }
             } else {
                 if (player != null) {
-                    player.addChatMessage(new ChatComponentText("Culling off"));
+                    player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Culling off"));
                 }
             }
-        } else {
-            pressed = false;
         }
-        cullTask.requestCull = true;
     }
 
     public abstract void initModloader();
