@@ -10,33 +10,33 @@ import net.minecraft.tileentity.TileEntity;
 @Mixin(value = { Entity.class, TileEntity.class })
 public class CullableMixin implements Cullable {
 
-	private long lasttime = 0;
-	private boolean culled = false;
-	private boolean outOfCamera = false;
-	
-	@Override
-	public void setTimeout() {
-		lasttime = System.currentTimeMillis() + 1000;
-	}
+    private long lasttime = 0;
+    private boolean culled = false;
+    private boolean outOfCamera = false;
 
-	@Override
-	public boolean isForcedVisible() {
-		return lasttime > System.currentTimeMillis();
-	}
+    @Override
+    public void setTimeout() {
+        lasttime = System.currentTimeMillis() + 1000;
+    }
 
-	@Override
-	public void setCulled(boolean value) {
-		this.culled = value;
-		if(!value) {
-			setTimeout();
-		}
-	}
+    @Override
+    public boolean isForcedVisible() {
+        return lasttime > System.currentTimeMillis();
+    }
 
-	@Override
-	public boolean isCulled() {
-		if(!EntityCullingModBase.enabled)return false;
-		return culled;
-	}
+    @Override
+    public void setCulled(boolean value) {
+        this.culled = value;
+        if(!value) {
+            setTimeout();
+        }
+    }
+
+    @Override
+    public boolean isCulled() {
+        if(!EntityCullingModBase.enabled)return false;
+        return culled;
+    }
 
     @Override
     public void setOutOfCamera(boolean value) {

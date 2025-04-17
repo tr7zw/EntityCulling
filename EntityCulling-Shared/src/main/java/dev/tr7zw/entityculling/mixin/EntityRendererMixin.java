@@ -22,8 +22,8 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
 
     @Shadow
     protected abstract void renderName(T p_renderName_1_, double p_renderName_2_, double d1, double d2);
-    
+
     @Shadow
     protected abstract boolean canRenderName(T p_canRenderName_1_);
-    
+
 }

@@ -16,7 +16,7 @@ public class DebugHudMixin {
     public DebugHudMixin() {
         EntityCullingModBase.instance.clientTick();
     }
-    
+
     @Inject(method = "call", at = @At("RETURN"))
     public List<String> getLeftText(CallbackInfoReturnable<List<String>> callback) {
         List<String> list = callback.getReturnValue();
@@ -24,7 +24,7 @@ public class DebugHudMixin {
         list.add("[Culling] Rendered Block Entities: " + EntityCullingModBase.instance.renderedBlockEntities + " Skipped: " + EntityCullingModBase.instance.skippedBlockEntities);
         list.add("[Culling] Rendered Entities: " + EntityCullingModBase.instance.renderedEntities + " Skipped: " + EntityCullingModBase.instance.skippedEntities);
         //list.add("[Culling] Ticked Entities: " + lastTickedEntities + " Skipped: " + lastSkippedEntityTicks);
-        
+
         EntityCullingModBase.instance.renderedBlockEntities = 0;
         EntityCullingModBase.instance.skippedBlockEntities = 0;
         EntityCullingModBase.instance.renderedEntities = 0;
@@ -32,5 +32,5 @@ public class DebugHudMixin {
 
         return list;
     }
-    
+
 }
