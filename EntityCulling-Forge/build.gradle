@@ -70,7 +70,7 @@ repositories {
     maven {
         url "https://repo.codemc.io/repository/maven-public/"
     }
-	maven { url "https://maven.legacyfabric.net"}
+    maven { url "https://maven.legacyfabric.net"}
     maven { url 'https://maven.minecraftforge.net/'}
 }
 
@@ -81,7 +81,7 @@ dependencies {
     include 'org.spongepowered:mixin:0.7.11-SNAPSHOT'
 
     sourceSets.main.java.srcDirs += new File(project.rootDir, "EntityCulling-Shared/src/main/java");//(project(':EntityCulling-Shared').sourceSets.main.java.srcDirs)
-	sourceSets.main.resources.srcDirs += new File(project.rootDir, "EntityCulling-Shared/src/main/resources");//sourceSets.main.resources.srcDirs += (project(':EntityCulling-Shared').sourceSets.main.resources.srcDirs)
+    sourceSets.main.resources.srcDirs += new File(project.rootDir, "EntityCulling-Shared/src/main/resources");//sourceSets.main.resources.srcDirs += (project(':EntityCulling-Shared').sourceSets.main.resources.srcDirs)
 }
 
 

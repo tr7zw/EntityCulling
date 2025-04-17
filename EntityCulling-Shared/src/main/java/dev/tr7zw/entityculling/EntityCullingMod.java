@@ -1,6 +1,5 @@
 package dev.tr7zw.entityculling;
 
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -29,23 +28,22 @@ public class EntityCullingMod extends EntityCullingModBase {
 
     @Override
     public void initModloader() {
-        
-   }
-    
+    }
+
     @EventHandler
     public void onPostInit(FMLPostInitializationEvent event) {
         ClientRegistry.registerKeyBinding(keybind);
         MinecraftForge.EVENT_BUS.register(this);
     }
-    
+
     @SubscribeEvent
     public void doClientTick(ClientTickEvent event) {
         this.clientTick();
     }
-    
+
     @SubscribeEvent
     public void doWorldTick(WorldTickEvent event) {
         this.worldTick();
     }
-    
+
 }

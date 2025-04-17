@@ -27,21 +27,21 @@ public abstract class EntityCullingModBase {
     private Thread cullThread;
     protected KeyBinding keybind = new KeyBinding("key.entityculling.toggle", -1, "EntityCulling");
     protected boolean pressed = false;
-	
+
     public Config config;
     private final File settingsFile = new File("config", "entityculling.json");
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-	
-	//stats
-	public int renderedBlockEntities = 0;
-	public int skippedBlockEntities = 0;
-	public int renderedEntities = 0;
-	public int skippedEntities = 0;
-	//public int tickedEntities = 0;
-	//public int skippedEntityTicks = 0;
 
-	public void onInitialize() {
-		instance = this;
+    //stats
+    public int renderedBlockEntities = 0;
+    public int skippedBlockEntities = 0;
+    public int renderedEntities = 0;
+    public int skippedEntities = 0;
+    //public int tickedEntities = 0;
+    //public int skippedEntityTicks = 0;
+
+    public void onInitialize() {
+        instance = this;
         if (settingsFile.exists()) {
             try {
                 config = gson.fromJson(new String(Files.readAllBytes(settingsFile.toPath()), StandardCharsets.UTF_8),
@@ -62,15 +62,15 @@ public abstract class EntityCullingModBase {
         culling = new OcclusionCullingInstance(config.tracingDistance, new Provider());
         cullTask = new CullTask(culling, config.blockEntityWhitelist);
 
-		cullThread = new Thread(cullTask, "CullThread");
-		cullThread.setUncaughtExceptionHandler((thread, ex) -> {
-			System.out.println("The CullingThread has crashed! Please report the following stacktrace!");
-			ex.printStackTrace();
-		});
-		cullThread.start();
-		initModloader();
-	}
-	
+        cullThread = new Thread(cullTask, "CullThread");
+        cullThread.setUncaughtExceptionHandler((thread, ex) -> {
+            System.out.println("The CullingThread has crashed! Please report the following stacktrace!");
+            ex.printStackTrace();
+        });
+        cullThread.start();
+        initModloader();
+    }
+
     public void writeConfig() {
         if (settingsFile.exists())
             settingsFile.delete();
@@ -108,5 +108,5 @@ public abstract class EntityCullingModBase {
     }
 
     public abstract void initModloader();
-	
+
 }
