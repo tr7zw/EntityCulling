@@ -32,4 +32,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            EntityCulling-Forge/build/libs/*
+            build/libs/*

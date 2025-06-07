@@ -37,4 +37,4 @@ jobs:
         with:
           name: Artifacts
           path: |
-            EntityCulling-Forge/build/libs/
+            build/libs/

@@ -78,11 +78,11 @@ public abstract class EntityCullingModBase {
             e1.printStackTrace();
         }
     }
-    
+
     public void worldTick() {
         cullTask.requestCull = true;
     }
-    
+
     public void clientTick() {
         cullTask.requestCull = true;
     }
