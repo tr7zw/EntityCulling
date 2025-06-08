@@ -14,11 +14,19 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 
-public abstract class EntityCullingModBase {
+@Mod(modid = "entityculling", name = "EntityCulling", version = "@VER@", clientSideOnly = true)
+public class EntityCullingModBase {
 
-    public static EntityCullingModBase instance = new EntityCullingMod();
+    public static EntityCullingModBase instance = new EntityCullingModBase();
     public OcclusionCullingInstance culling;
     public boolean debugHitboxes = false;
     public static boolean enabled = true; // public static to make it faster for the jvm
@@ -38,7 +46,8 @@ public abstract class EntityCullingModBase {
     //public int tickedEntities = 0;
     //public int skippedEntityTicks = 0;
 
-    public void onInitialize() {
+    // TODO: Should probably be using FMLPreInitializationEvent
+    public EntityCullingModBase() {
         instance = this;
         if (settingsFile.exists()) {
             try {
@@ -53,7 +62,7 @@ public abstract class EntityCullingModBase {
             config = new Config();
             writeConfig();
         } else {
-            if(ConfigUpgrader.upgradeConfig(config)) {
+            if (ConfigUpgrader.upgradeConfig(config)) {
                 writeConfig(); // Config got modified
             }
         }
@@ -66,12 +75,18 @@ public abstract class EntityCullingModBase {
             ex.printStackTrace();
         });
         cullThread.start();
-        initModloader();
+    }
+
+    @Mod.EventHandler
+    public void onPostInit(FMLPostInitializationEvent event) {
+        ClientRegistry.registerKeyBinding(keybind);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void writeConfig() {
-        if (settingsFile.exists())
+        if (settingsFile.exists()) {
             settingsFile.delete();
+        }
         try {
             Files.write(settingsFile.toPath(), gson.toJson(config).getBytes(StandardCharsets.UTF_8));
         } catch (IOException e1) {
@@ -79,12 +94,24 @@ public abstract class EntityCullingModBase {
         }
     }
 
-    public void worldTick() {
+    @SubscribeEvent
+    public void onWorldTick(TickEvent.WorldTickEvent event) {
         cullTask.requestCull = true;
     }
 
-    public void clientTick() {
+    @SubscribeEvent
+    public void onClientTick(TickEvent.ClientTickEvent event) {
         cullTask.requestCull = true;
+    }
+
+    @SubscribeEvent
+    public void onKeyInput(InputEvent.KeyInputEvent event) {
+        keyBindPressed();
+    }
+
+    @SubscribeEvent
+    public void onMouseInput(InputEvent.MouseInputEvent event) {
+        keyBindPressed();
     }
 
     public void keyBindPressed() {
@@ -102,7 +129,4 @@ public abstract class EntityCullingModBase {
             }
         }
     }
-
-    public abstract void initModloader();
-
 }

@@ -14,7 +14,8 @@ import net.minecraft.client.gui.GuiOverlayDebug;
 public class DebugHudMixin {
 
     public DebugHudMixin() {
-        EntityCullingModBase.instance.clientTick();
+        // This is an ugly hack, but it's fine for now
+        EntityCullingModBase.instance.onClientTick(null);
     }
 
     @Inject(method = "call", at = @At("RETURN"))
