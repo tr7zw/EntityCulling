@@ -24,9 +24,9 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 
 @Mod(modid = "entityculling", name = "EntityCulling", version = "@VER@", clientSideOnly = true)
-public class EntityCullingModBase {
+public class EntityCullingMod {
 
-    public static EntityCullingModBase instance = new EntityCullingModBase();
+    public static EntityCullingMod instance = new EntityCullingMod();
     public OcclusionCullingInstance culling;
     public boolean debugHitboxes = false;
     public static boolean enabled = true; // public static to make it faster for the jvm
@@ -47,7 +47,7 @@ public class EntityCullingModBase {
     //public int skippedEntityTicks = 0;
 
     // TODO: Should probably be using FMLPreInitializationEvent
-    public EntityCullingModBase() {
+    public EntityCullingMod() {
         instance = this;
         if (settingsFile.exists()) {
             try {
