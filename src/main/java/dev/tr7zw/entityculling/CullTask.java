@@ -158,6 +158,9 @@ public class CullTask implements Runnable {
                     if (blockEntityWhitelist.contains(entry.getValue().getType())) {
                         continue;
                     }
+                    if (client.getBlockEntityRenderDispatcher().getRenderer(entry.getValue()) == null) {
+                        continue; // No renderer, so no culling
+                    }
                     if (EntityCullingModBase.instance.isDynamicWhitelisted(entry.getValue())) {
                         continue;
                     }
