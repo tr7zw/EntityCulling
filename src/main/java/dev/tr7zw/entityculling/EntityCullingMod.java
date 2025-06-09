@@ -1,9 +1,9 @@
 package dev.tr7zw.entityculling;
 
-import dev.tr7zw.util.ModLoaderUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
+import dev.tr7zw.transition.loader.ModLoaderUtil;
 //#if FABRIC
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;

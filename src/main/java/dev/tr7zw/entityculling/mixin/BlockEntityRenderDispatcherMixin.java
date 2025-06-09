@@ -26,7 +26,12 @@ public abstract class BlockEntityRenderDispatcherMixin {
         }
         BlockEntityRenderer<E> blockEntityRenderer = getRenderer(blockEntity);
         // respect the "shouldRenderOffScreen" method
-        if (blockEntityRenderer != null && blockEntityRenderer.shouldRenderOffScreen(blockEntity)) {
+        if (blockEntityRenderer != null &&
+        //#if MC >= 12106
+                blockEntityRenderer.shouldRenderOffScreen()) {
+            //#else
+            //$$blockEntityRenderer.shouldRenderOffScreen(blockEntity)) {
+            //#endif
             EntityCullingModBase.instance.renderedBlockEntities++;
             return;
         }

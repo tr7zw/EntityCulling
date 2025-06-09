@@ -1,5 +1,5 @@
 {
-  "text.entityculling.title": "EntityCulling",
-  "key.entityculling.toggle": "Alternar depuración de ocultamiento",
-  "key.entityculling.toggleBoxes": "Mostrar cajas de ocultamiento"
+    "text.entityculling.title": "EntityCulling",
+    "key.entityculling.toggle": "Alternar depuración de ocultamiento",
+    "key.entityculling.toggleBoxes": "Mostrar cajas de ocultamiento"
 }

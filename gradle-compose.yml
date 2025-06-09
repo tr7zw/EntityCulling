@@ -26,6 +26,9 @@ enabledFlags:
   - modrinth
   - curseforge
   - versionless
+  - includeLibs
+  - addTRenderLib
+  - addTRansitionLib
 rootProject:
   template: "."
 subProjects:

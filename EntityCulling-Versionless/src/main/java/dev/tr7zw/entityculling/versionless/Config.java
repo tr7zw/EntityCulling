@@ -11,7 +11,8 @@ public class Config {
     public Set<String> blockEntityWhitelist = new HashSet<>(
             Arrays.asList("minecraft:beacon", "create:rope_pulley", "create:hose_pulley", "betterend:eternal_pedestal",
                     "botania:magic_missile", "botania:flame_ring", "botania:falling_star"));
-    public Set<String> entityWhitelist = new HashSet<>(Arrays.asList("botania:mana_burst", "drg_flares:drg_flares", "quark:soul_bead"));
+    public Set<String> entityWhitelist = new HashSet<>(
+            Arrays.asList("botania:mana_burst", "drg_flares:drg_flares", "quark:soul_bead"));
     public int tracingDistance = 128;
     public boolean debugMode = false;
     public int sleepDelay = 10;

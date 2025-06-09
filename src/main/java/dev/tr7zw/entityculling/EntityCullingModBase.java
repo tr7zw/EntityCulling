@@ -8,8 +8,9 @@ import java.util.function.Function;
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 
 import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
-import dev.tr7zw.util.ComponentProvider;
-import dev.tr7zw.util.NMSHelper;
+import dev.tr7zw.transition.mc.ClientUtil;
+import dev.tr7zw.transition.mc.ComponentProvider;
+import dev.tr7zw.transition.mc.GeneralUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.BlockPos;
@@ -56,21 +57,21 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
             cullThread.start();
             for (String blockId : config.blockEntityWhitelist) {
                 Optional<BlockEntityType<?>> block = BuiltInRegistries.BLOCK_ENTITY_TYPE
-                        .getOptional(NMSHelper.getResourceLocation(blockId));
+                        .getOptional(GeneralUtil.getResourceLocation(blockId));
                 block.ifPresent(b -> {
                     blockEntityWhitelist.add(b);
                 });
             }
             for (String entityType : config.tickCullingWhitelist) {
                 Optional<EntityType<?>> entity = BuiltInRegistries.ENTITY_TYPE
-                        .getOptional(NMSHelper.getResourceLocation(entityType));
+                        .getOptional(GeneralUtil.getResourceLocation(entityType));
                 entity.ifPresent(e -> {
                     entityWhistelist.add(e);
                 });
             }
             for (String entityType : config.entityWhitelist) {
                 Optional<EntityType<?>> entity = BuiltInRegistries.ENTITY_TYPE
-                        .getOptional(NMSHelper.getResourceLocation(entityType));
+                        .getOptional(GeneralUtil.getResourceLocation(entityType));
                 entity.ifPresent(e -> {
                     entityWhistelist.add(e);
                 });
@@ -82,9 +83,9 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
             pressed = true;
             enabled = !enabled;
             if (enabled) {
-                NMSHelper.sendChatMessage(ComponentProvider.literal("Culling on").withStyle(ChatFormatting.GREEN));
+                ClientUtil.sendChatMessage(ComponentProvider.literal("Culling on").withStyle(ChatFormatting.GREEN));
             } else {
-                NMSHelper.sendChatMessage(ComponentProvider.literal("Culling off").withStyle(ChatFormatting.RED));
+                ClientUtil.sendChatMessage(ComponentProvider.literal("Culling off").withStyle(ChatFormatting.RED));
             }
         } else {
             pressed = false;
@@ -95,10 +96,10 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
             pressedBox = true;
             debugHitboxes = !debugHitboxes;
             if (debugHitboxes) {
-                NMSHelper.sendChatMessage(
+                ClientUtil.sendChatMessage(
                         ComponentProvider.literal("Debug Cullboxes on").withStyle(ChatFormatting.GREEN));
             } else {
-                NMSHelper.sendChatMessage(
+                ClientUtil.sendChatMessage(
                         ComponentProvider.literal("Debug Cullboxes off").withStyle(ChatFormatting.RED));
             }
         } else {
