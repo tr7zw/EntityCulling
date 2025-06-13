@@ -1,4 +1,5 @@
 {
     "text.entityculling.title": "EntityCulling",
-    "key.entityculling.toggle": "Alternância da depuração do Culling"
+    "key.entityculling.toggle": "Alternância da depuração do culling",
+    "key.entityculling.toggleBoxes": "Mostrar caixas de culling"
 }
