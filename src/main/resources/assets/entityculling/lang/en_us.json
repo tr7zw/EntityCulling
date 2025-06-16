@@ -1,5 +1,22 @@
 {
     "text.entityculling.title": "EntityCulling",
     "key.entityculling.toggle": "Debug toggle culling",
-    "key.entityculling.toggleBoxes": "Show culling boxes"
+    "key.entityculling.toggleBoxes": "Show culling boxes",
+    "text.entityculling.tab.general_options": "General",
+    "text.entityculling.tab.tick_culling": "Skip Tick Culling",
+    "text.entityculling.tab.tick_culling.tooltip": "Entities selected in this tab will not have their tick method optimized when culled. This can be useful for entities that need to tick for certain functionality, such as Boats.",
+    "text.entityculling.tab.entity_culling": "Skip Entities",
+    "text.entityculling.tab.entity_culling.tooltip": "Entities selected in this tab will not be culled at all. This is mainly needed for client-side entities or entities that need to be rendered regardless of their visibility.",
+    "text.entityculling.tab.block_entity_culling": "Skip Blockent.",
+    "text.entityculling.tab.block_entity_culling.tooltip": "Block entities selected in this tab will not be culled at all. This is mainly needed for block entities that need to be rendered regardless of their visibility.",
+    "text.entityculling.renderNametagsThroughWalls": "Render nametags through walls",
+    "text.entityculling.renderNametagsThroughWalls.tooltip": "When turned off, culled entities will not have their nametags rendered through walls.",
+    "text.entityculling.tickCulling": "Tick culling",
+    "text.entityculling.tickCulling.tooltip": "When turned on, entities that are culled will not tick. This can improve performance in some cases, but may cause issues with certain mods. Consider the finer control options in the other tab.",
+    "text.entityculling.disableF3": "Disable F3 debug info",
+    "text.entityculling.disableF3.tooltip": "When turned on, the F3 debug info will not show culling information.",
+    "text.entityculling.skipEntityCulling": "Skip entity culling",
+    "text.entityculling.skipEntityCulling.tooltip": "When turned on, culling of entities will be skipped entirely. This can be useful for debugging or when you want to disable culling temporarily.",
+    "text.entityculling.skipBlockEntityCulling": "Skip block entity culling",
+    "text.entityculling.skipBlockEntityCulling.tooltip": "When turned on, culling of block entities will be skipped entirely. This can be useful for debugging or when you want to disable culling temporarily."
 }

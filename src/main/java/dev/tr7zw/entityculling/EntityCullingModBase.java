@@ -25,7 +25,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
 
     public static EntityCullingModBase instance;
     public Set<BlockEntityType<?>> blockEntityWhitelist = new HashSet<>();
-    public Set<EntityType<?>> entityWhistelist = new HashSet<>();
+    public Set<EntityType<?>> entityWhitelist = new HashSet<>();
     public Set<EntityType<?>> tickCullWhistelist = new HashSet<>();
     public CullTask cullTask;
     protected KeyMapping keybind = new KeyMapping("key.entityculling.toggle", -1, "text.entityculling.title");
@@ -37,7 +37,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
         instance = this;
         super.onInitialize();
         culling = new OcclusionCullingInstance(config.tracingDistance, new Provider());
-        cullTask = new CullTask(culling, blockEntityWhitelist, entityWhistelist);
+        cullTask = new CullTask(culling, blockEntityWhitelist, entityWhitelist);
 
         cullThread = new Thread(cullTask, "CullThread");
         cullThread.setUncaughtExceptionHandler((thread, ex) -> {
@@ -66,14 +66,14 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
                 Optional<EntityType<?>> entity = BuiltInRegistries.ENTITY_TYPE
                         .getOptional(GeneralUtil.getResourceLocation(entityType));
                 entity.ifPresent(e -> {
-                    entityWhistelist.add(e);
+                    entityWhitelist.add(e);
                 });
             }
             for (String entityType : config.entityWhitelist) {
                 Optional<EntityType<?>> entity = BuiltInRegistries.ENTITY_TYPE
                         .getOptional(GeneralUtil.getResourceLocation(entityType));
                 entity.ifPresent(e -> {
-                    entityWhistelist.add(e);
+                    entityWhitelist.add(e);
                 });
             }
         }

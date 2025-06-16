@@ -3,6 +3,7 @@ package dev.tr7zw.entityculling;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
+import dev.tr7zw.entityculling.config.ConfigScreenProvider;
 import dev.tr7zw.transition.loader.ModLoaderUtil;
 //#if FABRIC
 import net.fabricmc.api.ClientModInitializer;
@@ -50,6 +51,7 @@ public class EntityCullingMod extends EntityCullingModBase implements ClientModI
         //#if MC >= 12104
         ModLoaderUtil.registerKeybind(keybindBoxes);
         //#endif
+        ModLoaderUtil.registerConfigScreen(ConfigScreenProvider::createConfigScreen);
     }
 
     //#else
@@ -67,6 +69,7 @@ public class EntityCullingMod extends EntityCullingModBase implements ClientModI
     //#endif
     //$$         ModLoaderUtil.registerForgeEvent(this::doClientTick);
     //$$         ModLoaderUtil.registerForgeEvent(this::doWorldTick);
+    //$$         ModLoaderUtil.registerConfigScreen(ConfigScreenProvider::createConfigScreen);
     //#if FORGE
     //$$         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
     //$$                 () -> new IExtensionPoint.DisplayTest(

@@ -9,7 +9,7 @@ replacements:
   sourcesUrl: "https://github.com/tr7zw/EntityCulling"
   issuesUrl: "https://github.com/tr7zw/EntityCulling/issues"
   fabric_entrypoint: "dev.tr7zw.entityculling.EntityCullingMod"
-  fabric_modmenu_entrypoint: "none"
+  fabric_modmenu_entrypoint: "dev.tr7zw.entityculling.config.EntityCullingModMenu"
   relocationpackage: "dev.tr7zw.entityculling"
   dependencies: '
   	inc "com.logisticscraft:occlusionculling:0.0.8-SNAPSHOT"
