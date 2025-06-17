@@ -1,5 +1,22 @@
 {
     "text.entityculling.title": "EntityCulling",
     "key.entityculling.toggle": "Alternância da depuração do culling",
-    "key.entityculling.toggleBoxes": "Mostrar caixas de culling"
+    "key.entityculling.toggleBoxes": "Mostrar caixas de culling",
+    "text.entityculling.tab.general_options": "Geral",
+    "text.entityculling.tab.tick_culling": "Ignorar Culling de Ticks",
+    "text.entityculling.tab.tick_culling.tooltip": "As entidades selecionadas nesta aba não terão seu método de tick otimizado quando eliminadas. Isso pode ser útil para entidades que precisam de tick para determinadas funcionalidades, como barcos.",
+    "text.entityculling.tab.entity_culling": "Ignorar Entidades",
+    "text.entityculling.tab.entity_culling.tooltip": "As entidades selecionadas nesta aba não serão eliminadas. Isso é necessário principalmente para entidades do lado do cliente ou entidades que precisam ser renderizadas independentemente de sua visibilidade.",
+    "text.entityculling.tab.block_entity_culling": "Ignorar Bloco-entidades",
+    "text.entityculling.tab.block_entity_culling.tooltip": "As bloco-entidades selecionadas nesta aba não serão eliminadas. Isso é necessário principalmente para bloco-entidades que precisam ser renderizadas independentemente de sua visibilidade.",
+    "text.entityculling.renderNametagsThroughWalls": "Renderizar Etiquetas Através das Paredes",
+    "text.entityculling.renderNametagsThroughWalls.tooltip": "Quando desativado, as entidades eliminadas não terão suas etiquetas renderizadas através das paredes.",
+    "text.entityculling.tickCulling": "Culling de Tick",
+    "text.entityculling.tickCulling.tooltip": "Quando ativado, as entidades que são eliminadas não terão ticks. Isso pode melhorar o desempenho em alguns casos, mas pode causar problemas com certos mods. Considere as opções de controle mais precisas na outra aba.",
+    "text.entityculling.disableF3": "Desativar a Informação de Depuração no F3",
+    "text.entityculling.disableF3.tooltip": "Quando ativada, a informação de depuração no F3 não mostrará informações de culling.",
+    "text.entityculling.skipEntityCulling": "Ignorar Culling de Entidades",
+    "text.entityculling.skipEntityCulling.tooltip": "Quando ativado, o culling de entidades será totalmente ignorada. Isso pode ser útil para depuração ou quando você deseja desativar o culling temporariamente.",
+    "text.entityculling.skipBlockEntityCulling": "Ignorar Culling de Bloco-entidades",
+    "text.entityculling.skipBlockEntityCulling.tooltip": "Quando ativado, o culling de Bloco-entidades será totalmente ignorada. Isso pode ser útil para depuração ou quando você deseja desativar o culling temporariamente."
 }
