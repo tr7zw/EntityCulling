@@ -66,7 +66,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
                 Optional<EntityType<?>> entity = BuiltInRegistries.ENTITY_TYPE
                         .getOptional(GeneralUtil.getResourceLocation(entityType));
                 entity.ifPresent(e -> {
-                    entityWhitelist.add(e);
+                    tickCullWhistelist.add(e);
                 });
             }
             for (String entityType : config.entityWhitelist) {
