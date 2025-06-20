@@ -55,7 +55,7 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
     //#endif
 
     @Override
-    public boolean ignoresCulling(T entity) {
+    public boolean entityCullingIgnoresCulling(T entity) {
         //#if MC <= 12101
         //$$ return entity.noCulling;
         //#else
@@ -64,7 +64,7 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
     }
 
     @Override
-    public AABB getCullingBox(T entity) {
+    public AABB entityCullingGetCullingBox(T entity) {
         //#if MC <= 12101
         //$$ return entity.getBoundingBoxForCulling();
         //#else

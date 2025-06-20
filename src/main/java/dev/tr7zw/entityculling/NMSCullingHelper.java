@@ -17,7 +17,7 @@ public class NMSCullingHelper {
         //$$ return entity.noCulling;
         //#else
         return ((EntityRendererInter<Entity>) MC.getEntityRenderDispatcher().getRenderer(entity))
-                .ignoresCulling(entity);
+                .entityCullingIgnoresCulling(entity);
         //#endif
     }
 
@@ -26,7 +26,7 @@ public class NMSCullingHelper {
         //#if MC <= 12101
         //$$ return entity.getBoundingBoxForCulling();
         //#else
-        return ((EntityRendererInter<Entity>) MC.getEntityRenderDispatcher().getRenderer(entity)).getCullingBox(entity);
+        return ((EntityRendererInter<Entity>) MC.getEntityRenderDispatcher().getRenderer(entity)).entityCullingGetCullingBox(entity);
         //#endif
     }
 

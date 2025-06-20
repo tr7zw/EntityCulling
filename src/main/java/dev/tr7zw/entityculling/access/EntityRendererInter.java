@@ -14,8 +14,8 @@ public interface EntityRendererInter<T extends Entity> {
     void shadowRenderNameTag(T entity, Component component, PoseStack poseStack, MultiBufferSource multiBufferSource,
             int light, float f);
 
-    boolean ignoresCulling(T entity);
+    boolean entityCullingIgnoresCulling(T entity);
 
-    AABB getCullingBox(T entity);
+    AABB entityCullingGetCullingBox(T entity);
 
 }
