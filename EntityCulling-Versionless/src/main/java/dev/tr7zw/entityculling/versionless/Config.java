@@ -29,7 +29,8 @@ public class Config {
             "minecraft:bamboo_raft", "minecraft:bamboo_chest_raft", "create:carriage_contraption", "create:contraption",
             "create:gantry_contraption", "create:stationary_contraption", "mts:builder_existing",
             "mts:builder_rendering", "mts:builder_seat", "drg_flares:drg_flares", "drg_flares:drg_flare",
-            "alexscaves:gum_worm", "alexscaves:gum_worm_segment", "avm_staff:campfire_flame"));
+            "alexscaves:gum_worm", "alexscaves:gum_worm_segment", "avm_staff:campfire_flame", "minecraft:block_display",
+            "minecraft:item_display", "minecraft:text_display"));
     public boolean disableF3 = false;
     public boolean skipEntityCulling = false;
     public boolean skipBlockEntityCulling = false;
