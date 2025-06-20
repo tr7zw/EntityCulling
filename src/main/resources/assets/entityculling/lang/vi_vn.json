@@ -1,4 +1,22 @@
 {
-    "text.entityculling.title": "EntityCulling",
-    "key.entityculling.toggle": "Gỡ lỗi đổi loại bỏ"
+ "text.entityculling.title": "EntityCulling",
+ "key.entityculling.toggle": "Bật/tắt gỡ lỗi loại bỏ",
+ "key.entityculling.toggleBoxes": "Hiện hộp loại bỏ",
+ "text.entityculling.tab.general_options": "Chung",
+ "text.entityculling.tab.tick_culling": "Bỏ qua loại bỏ tick",
+ "text.entityculling.tab.tick_culling.tooltip": "Các thực thể được chọn trong tab này sẽ không được tối ưu hóa phương thức tick khi bị loại bỏ. Điều này có thể hữu ích cho các thực thể cần tick để có chức năng nhất định, chẳng hạn như Thuyền.",
+ "text.entityculling.tab.entity_culling": "Bỏ qua thực thể",
+ "text.entityculling.tab.entity_culling.tooltip": "Các thực thể được chọn trong tab này sẽ không bị loại bỏ hoàn toàn. Điều này chủ yếu cần thiết cho các thực thể phía máy khách hoặc các thực thể cần được hiển thị bất kể khả năng hiển thị của chúng.",
+ "text.entityculling.tab.block_entity_culling": "Bỏ qua thực thể khối",
+ "text.entityculling.tab.block_entity_culling.tooltip": "Các thực thể khối được chọn trong tab này sẽ không bị loại bỏ hoàn toàn. Điều này chủ yếu cần thiết cho các thực thể khối cần được hiển thị bất kể khả năng hiển thị của chúng.",
+ "text.entityculling.renderNametagsThroughWalls": "Kết xuất thẻ tên xuyên tường",
+ "text.entityculling.renderNametagsThroughWalls.tooltip": "Khi tắt, các thực thể bị loại bỏ sẽ không có thẻ tên được kết xuất xuyên tường.",
+ "text.entityculling.tickCulling": "Loại bỏ tick",
+ "text.entityculling.tickCulling.tooltip": "Khi bật, các thực thể bị loại bỏ sẽ không tick. Điều này có thể cải thiện hiệu suất trong một số trường hợp, nhưng có thể gây ra sự cố với một số mod. Hãy xem xét các tùy chọn kiểm soát tốt hơn trong tab khác.",
+ "text.entityculling.disableF3": "Tắt thông tin gỡ lỗi F3",
+ "text.entityculling.disableF3.tooltip": "Khi bật, thông tin gỡ lỗi F3 sẽ không hiển thị thông tin loại bỏ.",
+ "text.entityculling.skipEntityCulling": "Bỏ qua loại bỏ thực thể",
+ "text.entityculling.skipEntityCulling.tooltip": "Khi bật, việc loại bỏ thực thể sẽ bị bỏ qua hoàn toàn. Điều này có thể hữu ích cho việc gỡ lỗi hoặc khi bạn muốn tắt loại bỏ tạm thời.",
+ "text.entityculling.skipBlockEntityCulling": "Bỏ qua loại bỏ thực thể khối",
+ "text.entityculling.skipBlockEntityCulling.tooltip": "Khi bật, việc loại bỏ thực thể khối sẽ bị bỏ qua hoàn toàn. Điều này có thể hữu ích cho việc gỡ lỗi hoặc khi bạn muốn tắt loại bỏ tạm thời."
 }
