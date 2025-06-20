@@ -26,7 +26,8 @@ public class NMSCullingHelper {
         //#if MC <= 12101
         //$$ return entity.getBoundingBoxForCulling();
         //#else
-        return ((EntityRendererInter<Entity>) MC.getEntityRenderDispatcher().getRenderer(entity)).entityCullingGetCullingBox(entity);
+        return ((EntityRendererInter<Entity>) MC.getEntityRenderDispatcher().getRenderer(entity))
+                .entityCullingGetCullingBox(entity);
         //#endif
     }
 

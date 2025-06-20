@@ -23,12 +23,15 @@
 //$$
 //$$import net.neoforged.fml.common.Mod;
 //$$import net.neoforged.fml.loading.FMLEnvironment;
+//$$import dev.tr7zw.transition.loader.ModLoaderEventUtil;
 //$$
 //$$@Mod("entityculling")
 //$$public class EntityCullingBootstrap {
 //$$
 //$$    public EntityCullingBootstrap() {
-//$$            if (FMLEnvironment.dist.isClient()) new EntityCullingMod().onInitialize();
+//$$            if (FMLEnvironment.dist.isClient()){
+//$$                    ModLoaderEventUtil.registerClientSetupListener(() -> new EntityCullingMod().onInitialize());
+//$$            }
 //$$    }
 //$$	
 //$$}

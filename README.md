@@ -19,25 +19,26 @@ This mod introduces **asynchronous path-tracing** to efficiently determine what'
 The result?  
 Smarter rendering. Less overhead. More performance.
 
-
 <br>![Divider](https://tr7zw.github.io/uikit/divider_faded/Divider_01.png)
 
 <br>![Features](https://tr7zw.github.io/uikit/headlines/large/Features.png)
 
-
 Unlock performance by only rendering what matters. This mod goes beyond the basics to bring next-level visibility optimization to your game.
 
 ### Multithreaded Path-Tracing
+
 - Uses spare CPU threads to calculate visibility fast
 - Runs alongside the main game thread without blocking
 - Updates visibility data in real-time
 
 ### Smart Occlusion Culling
+
 - Skips block entities and mobs hidden behind terrain or structures
 - Works like Minecraft's back-face culling, but smarter
 - Reduces GPU load without sacrificing visual fidelity
 
 ### Entity Tick Optimization
+
 - Reduces client impact from unseen entities
 - Keeps maintenance to a minimum
 - Fully configurable and compatible with most mods
@@ -52,19 +53,17 @@ Unlock performance by only rendering what matters. This mod goes beyond the basi
 
 <br>![Compatibility & Dependancys](https://tr7zw.github.io/uikit/headlines/medium/Compatibility%20&%20Dependancys.png)
 
-| Minecraft     | Loader                | Status           | Version  | Note                                  |
-| ------------- | --------------------- | ---------------- | -------- | ------------------------------------- |
-| 1.19.4+       | Fabric/Forge/NeoForge | ✅ Supported      | Latest   |                                       |
+|   Minecraft   |        Loader         |      Status       | Version  |                 Note                  |
+|---------------|-----------------------|-------------------|----------|---------------------------------------|
+| 1.19.4+       | Fabric/Forge/NeoForge | ✅ Supported       | Latest   |                                       |
 | 1.16.5-1.19.2 | Fabric/Forge          | ⚠️ planned update | Outdated | Will be moved into supported later on |
-| 1.12.2/1.8.9  | Forge                 | ❌ Not supported  | Outdated | Might get new updates at some point   |
-| 1.7.10        | Forge                 | ❌ Not supported  | Outdated | No updates planned                    |
-| b1.7.3        | Babric                | ❌ Not supported  | Outdated | No updates planned                    |
-
+| 1.12.2/1.8.9  | Forge                 | ❌ Not supported   | Outdated | Might get new updates at some point   |
+| 1.7.10        | Forge                 | ❌ Not supported   | Outdated | No updates planned                    |
+| b1.7.3        | Babric                | ❌ Not supported   | Outdated | No updates planned                    |
 
 <br>![Divider](https://tr7zw.github.io/uikit/divider_faded/Divider_01.png)
 
 <br>![Screenshots / Media](https://tr7zw.github.io/uikit/headlines/medium/Screenshots%20Media.png)
-
 
 ![Stage View](https://tr7zw.github.io/uikit/screens/entityculling_compare.png)  
 *Direct compare with/without EntityCulling active. Place: Scarland Hermitcraft9, Mods: Sodium, Iris, ImmediatleyFast, 16 Render distance*
@@ -100,9 +99,9 @@ Yes. Sodium performs a basic visibility check based on loaded chunks. This mod g
 👤 Thanks to RoboTricker for his Transport-Pipes plugin, which created the foundation for this mod. <br><br>
 👤 Thanks to vicisacat for the Babric Beta1.7.3 backport. <br><br>
 👤 Thanks to Pelotrio for the Forge 1.7.10 backport. <br><br>
-👤 Thanks to the awesome translators and contributors on Github! 
+👤 Thanks to the awesome translators and contributors on Github!
 <a href="https://github.com/tr7zw/EntityCulling/graphs/contributors">
-  <img src="https://tr7zw.github.io/uikit/links/underlined/more_details.png" style="vertical-align: middle;" alt="Link">
+<img src="https://tr7zw.github.io/uikit/links/underlined/more_details.png" style="vertical-align: middle;" alt="Link">
 </a> <br><br>
 📄 License: tr7zw Protective License <br>
 Feel free to use this mod in your Modrinth/Curseforge hosted modpacks without asking for permission. Do not redistribute the jar files anywhere else!
