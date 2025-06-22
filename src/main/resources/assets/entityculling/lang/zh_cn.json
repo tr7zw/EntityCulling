@@ -1,6 +1,22 @@
 {
-    "modmenu.descriptionTranslation.entityculling": "此模块使用异步路径跟踪来隐藏不可见的方块/实体。",
     "text.entityculling.title": "EntityCulling",
     "key.entityculling.toggle": "调试切换剔除",
-    "key.entityculling.toggleBoxes": "显示筛选框"
+    "key.entityculling.toggleBoxes": "显示筛选框",
+    "text.entityculling.tab.general_options": "常规",
+    "text.entityculling.tab.tick_culling": "跳过被剔除实体的 Tick 更新",
+    "text.entityculling.tab.tick_culling.tooltip": "此选项卡内的实体不参与 Tick 更新。这适用于需要刻更新来实现某些功能的实体，例如实体船。",
+    "text.entityculling.tab.entity_culling": "跳过实体剔除",
+    "text.entityculling.tab.entity_culling.tooltip": "在这个选项卡中选中的实体根本不会被剔除。这主要用于客户端实体，或者那些无论是否可见都需要被渲染的实体。",
+    "text.entityculling.tab.block_entity_culling": "跳过方块实体剔除",
+    "text.entityculling.tab.block_entity_culling.tooltip": "在这个选项卡中选中的方块实体根本不会被剔除。这主要用于那些无论是否可见都需要被渲染的方块实体。",
+    "text.entityculling.renderNametagsThroughWalls": "透过墙壁渲染名字标签",
+    "text.entityculling.renderNametagsThroughWalls.tooltip": "关闭后，被剔除的实体的名字标签将不会透过墙壁渲染。",
+    "text.entityculling.tickCulling": "Tick 剔除",
+    "text.entityculling.tickCulling.tooltip": "开启后，被剔除的实体将不会进行 Tick 更新。这在某些情况下可以提高性能，但可能会导致某些模组出现问题。可以考虑在其他选项卡中使用更精细的控制选项。",
+    "text.entityculling.disableF3": "禁用 F3 信息",
+    "text.entityculling.disableF3.tooltip": "开启后，F3 调试信息将不会显示剔除信息。",
+    "text.entityculling.skipEntityCulling": "跳过实体剔除",
+    "text.entityculling.skipEntityCulling.tooltip": "开启后，将完全跳过实体的剔除。这在你调试时很有用，或者当你想要临时禁用剔除实体功能时也很方便。",
+    "text.entityculling.skipBlockEntityCulling": "跳过方块实体剔除",
+    "text.entityculling.skipBlockEntityCulling.tooltip": "开启后，将完全跳过方块实体的剔除。这在你调试时很有用，或者当你想要临时禁用剔除功能时也很方便。"
 }
