@@ -3,7 +3,7 @@
     "key.entityculling.toggle": "调试切换剔除",
     "key.entityculling.toggleBoxes": "显示筛选框",
     "text.entityculling.tab.general_options": "常规",
-    "text.entityculling.tab.tick_culling": "跳过被剔除实体的 Tick 更新",
+    "text.entityculling.tab.tick_culling": "跳过被剔除的 Tick 更新",
     "text.entityculling.tab.tick_culling.tooltip": "此选项卡内的实体不参与 Tick 更新。这适用于需要刻更新来实现某些功能的实体，例如实体船。",
     "text.entityculling.tab.entity_culling": "跳过实体剔除",
     "text.entityculling.tab.entity_culling.tooltip": "在这个选项卡中选中的实体根本不会被剔除。这主要用于客户端实体，或者那些无论是否可见都需要被渲染的实体。",
