@@ -1,0 +1,22 @@
+{
+  "text.entityculling.title": "EntityCulling",
+  "key.entityculling.toggle": "Debug toggle culling",
+  "key.entityculling.toggleBoxes": "Tampilkan kotak culling",
+  "text.entityculling.tab.general_options": "Umum",
+  "text.entityculling.tab.tick_culling": "Skip Tick Culling",
+  "text.entityculling.tab.tick_culling.tooltip": "Entity yang dipilih di tab ini tidak akan dioptimasi proses tick-nya saat diculling. Ini berguna untuk entity yang tetap perlu melakukan tick agar fungsinya berjalan, seperti perahu.",
+  "text.entityculling.tab.entity_culling": "Skip Entity",
+  "text.entityculling.tab.entity_culling.tooltip": "Entity yang dipilih di tab ini tidak akan diculling sama sekali. Biasanya digunakan untuk entity sisi klien atau entity yang harus tetap dirender walaupun tidak terlihat.",
+  "text.entityculling.tab.block_entity_culling": "Skip Block Entity",
+  "text.entityculling.tab.block_entity_culling.tooltip": "Block entity yang dipilih di tab ini tidak akan diculling sama sekali. Cocok untuk block entity yang tetap perlu dirender meskipun tidak terlihat langsung.",
+  "text.entityculling.renderNametagsThroughWalls": "Tampilkan nametag di balik tembok",
+  "text.entityculling.renderNametagsThroughWalls.tooltip": "Kalau opsi ini dimatikan, entity yang diculling tidak akan menampilkan nametag-nya di balik tembok.",
+  "text.entityculling.tickCulling": "Menculling Tick",
+  "text.entityculling.tickCulling.tooltip": "Kalau diaktifkan, entity yang diculling tidak akan melakukan tick. Ini bisa membantu meningkatkan performa, tapi bisa juga bikin beberapa mod bermasalah. Untuk pengaturan lebih detail, cek tab lainnya.",
+  "text.entityculling.disableF3": "Nonaktifkan info debug F3",
+  "text.entityculling.disableF3.tooltip": "Saat diaktifkan, informasi culling tidak akan ditampilkan di layar debug F3.",
+  "text.entityculling.skipEntityCulling": "Skip culling untuk entity",
+  "text.entityculling.skipEntityCulling.tooltip": "Kalau diaktifkan, proses culling untuk entity akan diskip sepenuhnya. Cocok untuk keperluan debugging atau kalau ingin mematikan culling sementara.",
+  "text.entityculling.skipBlockEntityCulling": "Skip culling untuk block entity",
+  "text.entityculling.skipBlockEntityCulling.tooltip": "Kalau diaktifkan, proses culling untuk block entity akan diskip sepenuhnya. Cocok untuk keperluan debugging atau kalau ingin mematikan culling sementara."
+}
