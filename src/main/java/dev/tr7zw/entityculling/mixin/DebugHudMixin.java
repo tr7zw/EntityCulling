@@ -1,5 +1,6 @@
 package dev.tr7zw.entityculling.mixin;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,6 +16,7 @@ public class DebugHudMixin {
 
     private int lastTickedEntities = 0;
     private int lastSkippedEntityTicks = 0;
+    private final DecimalFormat entityCullingFormatter = new DecimalFormat("###.##");
 
     @Inject(method = "getGameInformation", at = @At("RETURN"))
     public List<String> getLeftText(CallbackInfoReturnable<List<String>> callback) {
@@ -29,7 +31,9 @@ public class DebugHudMixin {
             return callback.getReturnValue();
         }
         List<String> list = callback.getReturnValue();
-        list.add("[Culling] Last pass: " + EntityCullingModBase.instance.cullTask.lastTime + "ms");
+        list.add(
+                "[Culling] Last pass: " + entityCullingFormatter.format(EntityCullingModBase.instance.cullTask.lastTime)
+                        + "ms/" + entityCullingFormatter.format(EntityCullingModBase.instance.lastTickTime) + "ms");
         if (!EntityCullingModBase.instance.config.skipBlockEntityCulling) {
             list.add("[Culling] Rendered Block Entities: " + EntityCullingModBase.instance.renderedBlockEntities
                     + " Skipped: " + EntityCullingModBase.instance.skippedBlockEntities);

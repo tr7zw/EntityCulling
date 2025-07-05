@@ -1,9 +1,15 @@
 package dev.tr7zw.entityculling;
 
+import java.time.Instant;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.StreamSupport;
 
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 
@@ -13,12 +19,14 @@ import dev.tr7zw.transition.mc.ComponentProvider;
 import dev.tr7zw.transition.mc.GeneralUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 
 public abstract class EntityCullingModBase extends EntityCullingVersionlessBase {
@@ -32,6 +40,8 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     protected KeyMapping keybindBoxes = new KeyMapping("key.entityculling.toggleBoxes", -1, "text.entityculling.title");
     private Set<Function<BlockEntity, Boolean>> dynamicBlockEntityWhitelist = new HashSet<>();
     private Set<Function<Entity, Boolean>> dynamicEntityWhitelist = new HashSet<>();
+    private int tickCounter = 0;
+    public double lastTickTime = 0;
 
     public void onInitialize() {
         instance = this;
@@ -52,6 +62,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     }
 
     public void clientTick() {
+        // late init
         if (!lateInit) {
             lateInit = true;
             cullThread.start();
@@ -77,6 +88,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
                 });
             }
         }
+        // Handle keybinds
         if (keybind.isDown()) {
             if (pressed)
                 return;
@@ -105,7 +117,39 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
         } else {
             pressedBox = false;
         }
-        cullTask.requestCull = true;
+        // Cull logic preparation
+        long start = System.nanoTime();
+        Minecraft client = Minecraft.getInstance();
+        boolean ingame = client.level != null && client.player != null && client.player.tickCount > 10;
+        if (ingame && enabled) {
+            if (tickCounter++ % config.captureRate == 0) {
+                if (!config.skipEntityCulling) {
+                    cullTask.setEntitiesForRendering(
+                            StreamSupport.stream(client.level.entitiesForRendering().spliterator(), false).toList());
+                }
+                if (!config.skipBlockEntityCulling) {
+                    Map<BlockPos, BlockEntity> blockEntities = new HashMap<>();
+                    for (int x = -8; x <= 8; x++) {
+                        for (int z = -8; z <= 8; z++) {
+                            LevelChunk chunk = client.level.getChunk(client.player.chunkPosition().x + x,
+                                    client.player.chunkPosition().z + z);
+                            blockEntities.putAll(chunk.getBlockEntities());
+                        }
+                    }
+                    cullTask.setBlockEntities(blockEntities);
+                }
+            }
+
+            cullTask.setIngame(true);
+            cullTask.setCameraMC(EntityCullingModBase.instance.config.debugMode ? client.player.getEyePosition(0)
+                    : client.gameRenderer.getMainCamera().getPosition());
+            cullTask.requestCull = true;
+        } else {
+            cullTask.setIngame(false);
+            cullTask.setEntitiesForRendering(Collections.emptyList());
+            cullTask.setBlockEntities(Collections.emptyMap());
+        }
+        lastTickTime = (System.nanoTime() - start) / 1_000_000.0;
     }
 
     public abstract AABB setupAABB(BlockEntity entity, BlockPos pos);
