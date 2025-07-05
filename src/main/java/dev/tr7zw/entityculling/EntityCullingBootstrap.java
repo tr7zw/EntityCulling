@@ -16,6 +16,9 @@
 //$$         new EntityCullingMod().onInitialize();
 //$$        });
 //$$	}
+//$$    public EntityCullingBootstrap() {
+//$$        this(FMLJavaModLoadingContext.get());
+//$$    }
 //$$	
 //$$}
 //#elseif NEOFORGE
