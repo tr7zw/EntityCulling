@@ -1,0 +1,22 @@
+{
+    "text.entityculling.title": "EntityCulling",
+    "key.entityculling.toggle": "Hibakeresés selejtezés váltása",
+    "key.entityculling.toggleBoxes": "Mutatja a selejtezési határokat",
+    "text.entityculling.tab.general_options": "Ált.",
+    "text.entityculling.tab.tick_culling": "Tick kihagy.",
+    "text.entityculling.tab.tick_culling.tooltip": "A kiválasztott entitások ebben a fülben nem lesznek optimalizálva a tick metódusukban, amikor selejtezik őket. Ez hasznos lehet olyan entitások számára, amelyeknek tickelniük kell bizonyos funkciókhoz, például csónakok esetében.",
+    "text.entityculling.tab.entity_culling": "Ent. kihagy.",
+    "text.entityculling.tab.entity_culling.tooltip": "A kiválasztott entitások ebben a fülben nem lesznek selejtezve. Ez főleg kliensoldali entitásokhoz vagy olyan entitásokhoz szükséges, amelyeknek láthatóságuktól függetlenül meg kell jelenniük.",
+    "text.entityculling.tab.block_entity_culling": "Blokk ent. kihagy.",
+    "text.entityculling.tab.block_entity_culling.tooltip": "Blokk entitások ebben a fülben nem lesznek selejtezve. Ez főleg olyan blokk entitásokhoz szükséges, amelyeknek láthatóságuktól függetlenül meg kell jelenniük.",
+    "text.entityculling.renderNametagsThroughWalls": "Névcímkék megjelenítése falakon keresztül",
+    "text.entityculling.renderNametagsThroughWalls.tooltip": "Ha ki van kapcsolva, a selejtezett entitások névcímkéi nem lesznek megjelenítve a falakon keresztül.",
+    "text.entityculling.tickCulling": "Tick selejtezés",
+    "text.entityculling.tickCulling.tooltip": "Ha be van kapcsolva, a selejtezett entitások nem fognak tickelni. Ez bizonyos esetekben javíthatja a teljesítményt, de problémákat okozhat bizonyos modokkal. Fontold meg a finomabb vezérlési lehetőségeket a másik fülön.",
+    "text.entityculling.disableF3": "F3 hibakeresési információk letiltása",
+    "text.entityculling.disableF3.tooltip": "Ha be van kapcsolva, a F3 hibakeresési információk nem fogják megjeleníteni a selejtezési információkat.",
+    "text.entityculling.skipEntityCulling": "Entitás selejtezés kihagyása",
+    "text.entityculling.skipEntityCulling.tooltip": "Ha be van kapcsolva, az entitások selejtezése teljesen ki lesz hagyva. Ez hasznos lehet hibakereséshez vagy amikor ideiglenesen szeretnéd letiltani a selejtezést.",
+    "text.entityculling.skipBlockEntityCulling": "Blokk entitás selejtezés kihagyása",
+    "text.entityculling.skipBlockEntityCulling.tooltip": "Ha be van kapcsolva, a blokk entitások selejtezése teljesen ki lesz hagyva. Ez hasznos lehet hibakereséshez vagy amikor ideiglenesen szeretnéd letiltani a selejtezést."
+}
