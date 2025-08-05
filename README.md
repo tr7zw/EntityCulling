@@ -97,11 +97,11 @@ Yes! While Sodium performs basic visibility checks based on loaded chunks, this 
 <br>![Credits & license](https://tr7zw.github.io/uikit/headlines/medium/Credits%20&%20License.png)
 
 👤 Thanks to RoboTricker for his Transport-Pipes plugin, which created the foundation for this mod. <br><br>
-👤 Thanks to vicisacat for the Babric Beta1.7.3 backport. <br><br>
+👤 Thanks to vicisacat for the Babric Beta 1.7.3 backport. <br><br>
 👤 Thanks to Pelotrio for the Forge 1.7.10 backport. <br><br>
 👤 Thanks to the awesome translators and contributors on GitHub!
 <a href="https://github.com/tr7zw/EntityCulling/graphs/contributors">
 <img src="https://tr7zw.github.io/uikit/links/underlined/more_details.png" style="vertical-align: middle;" alt="Link">
 </a> <br><br>
 📄 License: tr7zw Protective License <br>
-Feel free to use this mod in your Modrinth/Curseforge hosted modpacks without asking for permission. Do not redistribute the jar files anywhere else!
+Feel free to use this mod in your Modrinth and CurseForge-hosted modpacks without asking for permission. Do not redistribute the JAR files anywhere else!
