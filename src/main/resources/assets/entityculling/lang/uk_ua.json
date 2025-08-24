@@ -1,6 +1,6 @@
 {
     "text.entityculling.title": "EntityCulling",
-    "key.entityculling.toggle": "Перемикнути налаг. вибракування",
+    "key.entityculling.toggle": "Перемкнути налаг. вибракування",
     "key.entityculling.toggleBoxes": "Показати вибраковані куби",
     "text.entityculling.tab.general_options": "Загал.",
     "text.entityculling.tab.tick_culling": "Проп. вибр. тактів",
