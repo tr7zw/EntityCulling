@@ -1,0 +1,22 @@
+{
+    "text.entityculling.title": "کالینگ موجودات",
+    "key.entityculling.toggle": "حذف ضامن اشکال زدایی",
+    "key.entityculling.toggleBoxes": "نمایش جعبه های کالینگ",
+    "text.entityculling.tab.general_options": "تنظیمات عمومی",
+    "text.entityculling.tab.tick_culling": "رد کردن کالینگ تیک",
+    "text.entityculling.tab.tick_culling.tooltip": "موجود های انتخاب شده در این صفحه هنگام حذف روش تیک خود را بهینه نخواهند کرد. این می تواند برای موجود هایی که نیاز به تیک دارند عملکردهای خاصی دارند، مانند قایق ها، مفید باشد.", 
+    "text.entityculling.tab.entity_culling": "رد کردن موجود ها",
+    "text.entityculling.tab.entity_culling.tooltip": "موجود های انتخاب شده در این صفحه به هیچ وجه حذف نمی شوند. این عمدتا برای موجود ها یا نهادهای سمت کلاینت که بدون توجه به دیده شدن آنها باید رندر شوند، مورد نیاز است.",
+    "text.entityculling.tab.block_entity_culling": "رد کردن بلاکانت ها",
+    "text.entityculling.tab.block_entity_culling.tooltip": "موجود های مسدود شده در این صفحه به هیچ وجه حذف نمی شوند. این عمدتا برای موجود های بلوکی که بدون توجه به قابلیت مشاهده آنها باید رندر شوند، مورد نیاز است.",
+    "text.entityculling.renderNametagsThroughWalls": "نمایش برچسب نام از پشت دیوار",
+    "text.entityculling.renderNametagsThroughWalls.tooltip": "هنگامی که خاموش است، موجود های حذف شده برچسب نام خود را از طریق دیوارها رندر نمی کنند.",
+    "text.entityculling.tickCulling": "حذف تیک",
+    "text.entityculling.tickCulling.tooltip": "هنگامی که روشن است، موجود هایی که حذف می شوند تیک نمی زنند. این می تواند عملکرد را در برخی موارد بهبود بخشد، اما ممکن است باعث ایجاد مشکلاتی در حالت های خاص شود. گزینه های کنترل دقیق تر را در صفحه دیگر در نظر بگیرید.",
+    "text.entityculling.disableF3": "غیرفعال کردن دیباگ F3",
+    "text.entityculling.disableF3.tooltip": "هنگامی که روشن است، اطلاعات دیباگ F3 اطلاعات کالینگ را نشان نمی دهد.",
+    "text.entityculling.skipEntityCulling": "رد کردن کالینگ موج",
+    "text.entityculling.skipEntityCulling.tooltip": "هنگامی که روشن می شود، حذف موجود ها به طور کامل نادیده گرفته می شود. این می تواند برای اشکال زدایی یا زمانی که می خواهید کالینگ را به طور موقت غیرفعال کنید، مفید باشد.",
+    "text.entityculling.skipBlockEntityCulling": "رد کردن کالینگ بلوک موجود",
+    "text.entityculling.skipBlockEntityCulling.tooltip": "هنگامی که روشن است، حذف موجود های مسدود شده به طور کامل نادیده گرفته می شود. این می تواند برای اشکال زدایی یا زمانی که می خواهید کالینگ را به طور موقت غیرفعال کنید، مفید باشد."
+}
