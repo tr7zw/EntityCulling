@@ -15,8 +15,8 @@
     "text.entityculling.tickCulling.tooltip": "هنگامی که روشن است، موجود هایی که حذف می شوند تیک نمی زنند. این می تواند عملکرد را در برخی موارد بهبود بخشد، اما ممکن است باعث ایجاد مشکلاتی در حالت های خاص شود. گزینه های کنترل دقیق تر را در صفحه دیگر در نظر بگیرید.",
     "text.entityculling.disableF3": "غیرفعال کردن دیباگ F3",
     "text.entityculling.disableF3.tooltip": "هنگامی که روشن است، اطلاعات دیباگ F3 اطلاعات کالینگ را نشان نمی دهد.",
-    "text.entityculling.skipEntityCulling": "رد کردن کالینگ موج",
+    "text.entityculling.skipEntityCulling": "رد کردن کالینگ موجودات",
     "text.entityculling.skipEntityCulling.tooltip": "هنگامی که روشن می شود، حذف موجود ها به طور کامل نادیده گرفته می شود. این می تواند برای اشکال زدایی یا زمانی که می خواهید کالینگ را به طور موقت غیرفعال کنید، مفید باشد.",
-    "text.entityculling.skipBlockEntityCulling": "رد کردن کالینگ بلوک موجود",
+    "text.entityculling.skipBlockEntityCulling": "رد کردن کالینگ بلاک موجود",
     "text.entityculling.skipBlockEntityCulling.tooltip": "هنگامی که روشن است، حذف موجود های مسدود شده به طور کامل نادیده گرفته می شود. این می تواند برای اشکال زدایی یا زمانی که می خواهید کالینگ را به طور موقت غیرفعال کنید، مفید باشد."
 }
