@@ -27,9 +27,11 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
     @Override
     public void shadowRenderNameTag(T entity, Component component, PoseStack poseStack,
             MultiBufferSource multiBufferSource, int light, float delta) {
-        //#if MC >= 12102
-        renderNameTag(((EntityRenderer) (Object) this).createRenderState(entity, delta), component, poseStack,
-                multiBufferSource, light);
+        //#if MC >= 12109
+        //nothing
+        //#elseif MC >= 12102
+        //$$renderNameTag(((EntityRenderer) (Object) this).createRenderState(entity, delta), component, poseStack,
+        //$$        multiBufferSource, light);
         //#elseif MC >= 12005
         //$$ renderNameTag(entity, component, poseStack, multiBufferSource, light, delta);
         //#else
@@ -42,14 +44,16 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
     //$$ public abstract boolean shouldShowName(T entity);
     //#endif
 
-    @Shadow
-    //#if MC >= 12102
-    public abstract void renderNameTag(net.minecraft.client.renderer.entity.state.EntityRenderState entityRenderState,
-            Component component, PoseStack poseStack, MultiBufferSource multiBufferSource, int i);
+    //#if MC >= 12102 && MC < 12109
+    //$$    @Shadow
+    //$$    public abstract void renderNameTag(net.minecraft.client.renderer.entity.state.EntityRenderState entityRenderState,
+    //$$            Component component, PoseStack poseStack, MultiBufferSource multiBufferSource, int i);
     //#elseif MC >= 12005
+    //$$    @Shadow
     //$$ public abstract void renderNameTag(T entity, Component component, PoseStack poseStack,
     //$$ MultiBufferSource multiBufferSource, int i, float f);
     //#else
+    //$$    @Shadow
     //$$    public abstract void renderNameTag(T entity, Component component, PoseStack poseStack,
     //$$ MultiBufferSource multiBufferSource, int i);
     //#endif

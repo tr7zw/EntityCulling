@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import dev.tr7zw.entityculling.EntityCullingModBase;
 import dev.tr7zw.entityculling.NMSCullingHelper;
 import dev.tr7zw.entityculling.versionless.access.Cullable;
+import dev.tr7zw.transition.mc.GeneralUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -31,8 +32,9 @@ public class ClientWorldMixin {
             return; // disabled
         }
         // Use abstract minecart instead of whitelist to also catch modded Minecarts
-        if (NMSCullingHelper.ignoresCulling(entity) || entity == mc.player || entity == mc.cameraEntity
-                || entity.isPassenger() || entity.isVehicle() || (entity instanceof AbstractMinecart)) {
+        if (NMSCullingHelper.ignoresCulling(entity) || entity == GeneralUtil.getPlayer()
+                || entity == GeneralUtil.getCameraEntity() || entity.isPassenger() || entity.isVehicle()
+                || (entity instanceof AbstractMinecart)) {
             EntityCullingModBase.instance.tickedEntities++;
             return; // never skip the client tick for the player or entities in vehicles/with
                     // passengers. Also respect the "noCulling" flag

@@ -1,7 +1,5 @@
 package dev.tr7zw.entityculling;
 
-import java.time.Instant;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,8 +34,10 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     public Set<EntityType<?>> entityWhitelist = new HashSet<>();
     public Set<EntityType<?>> tickCullWhistelist = new HashSet<>();
     public CullTask cullTask;
-    protected KeyMapping keybind = new KeyMapping("key.entityculling.toggle", -1, "text.entityculling.title");
-    protected KeyMapping keybindBoxes = new KeyMapping("key.entityculling.toggleBoxes", -1, "text.entityculling.title");
+    protected KeyMapping keybind = GeneralUtil.createKeyMapping("key.entityculling.toggle", -1,
+            "text.entityculling.title");
+    protected KeyMapping keybindBoxes = GeneralUtil.createKeyMapping("key.entityculling.toggleBoxes", -1,
+            "text.entityculling.title");
     private Set<Function<BlockEntity, Boolean>> dynamicBlockEntityWhitelist = new HashSet<>();
     private Set<Function<Entity, Boolean>> dynamicEntityWhitelist = new HashSet<>();
     private int tickCounter = 0;
@@ -122,6 +122,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
         Minecraft client = Minecraft.getInstance();
         boolean ingame = client.level != null && client.player != null && client.player.tickCount > 10;
         if (ingame && enabled) {
+            boolean changed = false;
             if (tickCounter++ % config.captureRate == 0) {
                 if (!config.skipEntityCulling) {
                     cullTask.setEntitiesForRendering(
@@ -138,18 +139,22 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
                     }
                     cullTask.setBlockEntities(blockEntities);
                 }
+                changed = true;
             }
 
             cullTask.setIngame(true);
             cullTask.setCameraMC(EntityCullingModBase.instance.config.debugMode ? client.player.getEyePosition(0)
                     : client.gameRenderer.getMainCamera().getPosition());
             cullTask.requestCull = true;
+            if (changed) {
+                lastTickTime = (System.nanoTime() - start) / 1_000_000.0;
+            }
         } else {
             cullTask.setIngame(false);
             cullTask.setEntitiesForRendering(Collections.emptyList());
             cullTask.setBlockEntities(Collections.emptyMap());
+            lastTickTime = (System.nanoTime() - start) / 1_000_000.0;
         }
-        lastTickTime = (System.nanoTime() - start) / 1_000_000.0;
     }
 
     public abstract AABB setupAABB(BlockEntity entity, BlockPos pos);
