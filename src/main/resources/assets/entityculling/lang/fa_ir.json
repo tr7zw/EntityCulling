@@ -18,5 +18,5 @@
     "text.entityculling.skipEntityCulling": "رد کردن کالینگ موجودات",
     "text.entityculling.skipEntityCulling.tooltip": "هنگامی که روشن می شود، حذف موجود ها به طور کامل نادیده گرفته می شود. این می تواند برای اشکال زدایی یا زمانی که می خواهید کالینگ را به طور موقت غیرفعال کنید، مفید باشد.",
     "text.entityculling.skipBlockEntityCulling": "نادیده‌گرفتن کالینگ موجودات",
-    "text.entityculling.skipBlockEntityCulling.tooltip": "وقتی روشن باشد، کالینگِ موجودات به‌طور کامل نادیده گرفته می‌شود. برای اشکال‌زدایی یا غیرفعال‌سازی موقت کالینگ مفید است.",
+    "text.entityculling.skipBlockEntityCulling.tooltip": "وقتی روشن باشد، کالینگِ موجودات به‌طور کامل نادیده گرفته می‌شود. برای اشکال‌زدایی یا غیرفعال‌سازی موقت کالینگ مفید است."
 }
