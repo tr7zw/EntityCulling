@@ -32,7 +32,11 @@
 //$$public class EntityCullingBootstrap {
 //$$
 //$$    public EntityCullingBootstrap() {
-//$$            if (FMLEnvironment.dist.isClient()){
+//#if MC < 12109
+//$$        if(FMLEnvironment.dist == Dist.CLIENT) {
+//#else
+//$$        if(FMLEnvironment.getDist() == Dist.CLIENT) {
+//#endif
 //$$                    ModLoaderEventUtil.registerClientSetupListener(() -> new EntityCullingMod().onInitialize());
 //$$            }
 //$$    }

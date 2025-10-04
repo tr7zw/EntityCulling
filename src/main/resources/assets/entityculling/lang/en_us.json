@@ -1,5 +1,6 @@
 {
     "text.entityculling.title": "EntityCulling",
+    "key.category.minecraft.text.entityculling.title": "EntityCulling",
     "key.entityculling.toggle": "Debug toggle culling",
     "key.entityculling.toggleBoxes": "Show culling boxes",
     "text.entityculling.tab.general_options": "General",
