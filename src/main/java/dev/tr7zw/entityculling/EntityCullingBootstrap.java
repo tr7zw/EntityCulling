@@ -24,6 +24,7 @@
 //#elseif NEOFORGE
 //$$package dev.tr7zw.entityculling;
 //$$
+//$$import net.neoforged.api.distmarker.Dist;
 //$$import net.neoforged.fml.common.Mod;
 //$$import net.neoforged.fml.loading.FMLEnvironment;
 //$$import dev.tr7zw.transition.loader.ModLoaderEventUtil;
