@@ -60,8 +60,8 @@ public class EntityCullingMod extends EntityCullingModBase
     public static final ResourceLocation DEBUG_CATEGORY_ID = GeneralUtil.getResourceLocation("entityculling", "debug");
 
     private static void registerDebugLine(String id, net.minecraft.client.gui.components.debug.DebugScreenEntry entry) {
-        net.minecraft.client.gui.components.debug.DebugScreenEntries
-                .register(GeneralUtil.getResourceLocation("entityculling", id), entry);
+        dev.tr7zw.entityculling.mixin.DebugScreenEntriesAccessor
+                .invokeRegister(GeneralUtil.getResourceLocation("entityculling", id), entry);
     }
     //#endif
 }

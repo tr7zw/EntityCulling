@@ -44,7 +44,8 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
     //$$ public abstract boolean shouldShowName(T entity);
     //#endif
 
-    //#if MC >= 12102 && MC < 12109
+    //#if MC < 12109
+    //#if MC >= 12102
     //$$    @Shadow
     //$$    public abstract void renderNameTag(net.minecraft.client.renderer.entity.state.EntityRenderState entityRenderState,
     //$$            Component component, PoseStack poseStack, MultiBufferSource multiBufferSource, int i);
@@ -56,6 +57,7 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
     //$$    @Shadow
     //$$    public abstract void renderNameTag(T entity, Component component, PoseStack poseStack,
     //$$ MultiBufferSource multiBufferSource, int i);
+    //#endif
     //#endif
 
     @Override

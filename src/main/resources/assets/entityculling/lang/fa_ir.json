@@ -4,7 +4,7 @@
     "key.entityculling.toggleBoxes": "نمایش جعبه های کالینگ",
     "text.entityculling.tab.general_options": "تنظیمات عمومی",
     "text.entityculling.tab.tick_culling": "رد کردن کالینگ تیک",
-    "text.entityculling.tab.tick_culling.tooltip": "موجود های انتخاب شده در این صفحه هنگام حذف روش تیک خود را بهینه نخواهند کرد. این می تواند برای موجود هایی که نیاز به تیک دارند عملکردهای خاصی دارند، مانند قایق ها، مفید باشد.", 
+    "text.entityculling.tab.tick_culling.tooltip": "موجود های انتخاب شده در این صفحه هنگام حذف روش تیک خود را بهینه نخواهند کرد. این می تواند برای موجود هایی که نیاز به تیک دارند عملکردهای خاصی دارند، مانند قایق ها، مفید باشد.",
     "text.entityculling.tab.entity_culling": "رد کردن موجود ها",
     "text.entityculling.tab.entity_culling.tooltip": "موجود های انتخاب شده در این صفحه به هیچ وجه حذف نمی شوند. این عمدتا برای موجود ها یا نهادهای سمت کلاینت که بدون توجه به دیده شدن آنها باید رندر شوند، مورد نیاز است.",
     "text.entityculling.tab.block_entity_culling": "رد کردن بلاکانت ها",

@@ -11,7 +11,8 @@
         "EntityRendererMixin",
         "CullableMixin",
         "DebugHudMixin",
-        "ClientWorldMixin"
+        "ClientWorldMixin",
+        "DebugScreenEntriesAccessor"
     ],
     "injectors": {
         "defaultRequire": 1
