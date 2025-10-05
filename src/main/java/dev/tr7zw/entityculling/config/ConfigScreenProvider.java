@@ -61,6 +61,10 @@ public class ConfigScreenProvider {
                     () -> inst.config.skipEntityCulling, b -> inst.config.skipEntityCulling = b));
             generalOptions.add(getOnOffOption("text.entityculling.skipBlockEntityCulling",
                     () -> inst.config.skipBlockEntityCulling, b -> inst.config.skipBlockEntityCulling = b));
+            //#if MC >= 12109
+            generalOptions.add(getOnOffOption("text.entityculling.blockEntityFrustumCulling",
+                    () -> inst.config.blockEntityFrustumCulling, b -> inst.config.blockEntityFrustumCulling = b));
+            //#endif
 
             var generalOptionList = createOptionList(generalOptions);
             generalOptionList.setGap(-1);

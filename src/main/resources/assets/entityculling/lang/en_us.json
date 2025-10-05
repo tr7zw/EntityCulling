@@ -19,5 +19,7 @@
     "text.entityculling.skipEntityCulling": "Skip entity culling",
     "text.entityculling.skipEntityCulling.tooltip": "When turned on, culling of entities will be skipped entirely. This can be useful for debugging or when you want to disable culling temporarily.",
     "text.entityculling.skipBlockEntityCulling": "Skip block entity culling",
-    "text.entityculling.skipBlockEntityCulling.tooltip": "When turned on, culling of block entities will be skipped entirely. This can be useful for debugging or when you want to disable culling temporarily."
+    "text.entityculling.skipBlockEntityCulling.tooltip": "When turned on, culling of block entities will be skipped entirely. This can be useful for debugging or when you want to disable culling temporarily.",
+    "text.entityculling.blockEntityFrustumCulling": "Block entity frustum culling",
+    "text.entityculling.blockEntityFrustumCulling.tooltip": "When turned on, block entity state extraction will be culled based on the camera's view frustum. This can improve performance in case your modloader/another mod doesn't do this already."
 }

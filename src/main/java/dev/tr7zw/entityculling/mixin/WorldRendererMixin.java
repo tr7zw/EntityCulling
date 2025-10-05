@@ -6,6 +6,7 @@ import java.util.List;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.logisticscraft.occlusionculling.util.MathUtilities;
@@ -62,6 +63,14 @@ public class WorldRendererMixin {
         EntityCullingModBase.instance.renderedEntities++;
         cullable.setOutOfCamera(false);
     }
+
+    @Inject(at = @At("HEAD"), method = "extractVisibleEntities")
+    private void extractVisibleEntities(net.minecraft.client.Camera camera,
+            net.minecraft.client.renderer.culling.Frustum frustum, net.minecraft.client.DeltaTracker deltaTracker,
+            net.minecraft.client.renderer.state.LevelRenderState levelRenderState, CallbackInfo ci) {
+        EntityCullingModBase.instance.frustum = frustum;
+    }
+
     //#endif
 
     //#if MC < 12109

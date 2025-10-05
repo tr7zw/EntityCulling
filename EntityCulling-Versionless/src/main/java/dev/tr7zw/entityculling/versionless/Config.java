@@ -35,5 +35,6 @@ public class Config {
     public boolean disableF3 = false;
     public boolean skipEntityCulling = false;
     public boolean skipBlockEntityCulling = false;
+    public boolean blockEntityFrustumCulling = true;
 
 }

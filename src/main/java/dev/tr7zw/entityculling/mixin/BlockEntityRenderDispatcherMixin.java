@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import dev.tr7zw.entityculling.EntityCullingModBase;
 import dev.tr7zw.entityculling.versionless.access.Cullable;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -27,8 +28,15 @@ public abstract class BlockEntityRenderDispatcherMixin {
         if (blockEntityRenderer == null) {
             return; // Not a block entity that has a renderer, skip all logic
         }
+        var frustum = EntityCullingModBase.instance.frustum;
         if (blockEntityRenderer.shouldRenderOffScreen()) {
             EntityCullingModBase.instance.renderedBlockEntities++;
+            return;
+        } else if (EntityCullingModBase.instance.config.blockEntityFrustumCulling && frustum != null && !frustum
+                .isVisible(EntityCullingModBase.instance.setupAABB(blockEntity, blockEntity.getBlockPos()))) {
+            // Implement frustum culling like with entities
+            EntityCullingModBase.instance.skippedBlockEntities++;
+            info.setReturnValue(null);
             return;
         }
         if (blockEntity instanceof Cullable cullable) {
