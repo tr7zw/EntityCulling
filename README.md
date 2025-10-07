@@ -40,7 +40,7 @@ Unlock untapped performance by only rendering entities that truly matter. This m
 ### Entity Tick Optimization
 
 - Reduces client impact from entities that are not visible
-- Requires minimal maintenance
+- Only updated the essentials
 - Fully configurable and compatible with most mods
 
 <br>
@@ -56,7 +56,7 @@ Unlock untapped performance by only rendering entities that truly matter. This m
 |   Minecraft   |        Loader         |      Status       | Version  |                 Note                  |
 |---------------|-----------------------|-------------------|----------|---------------------------------------|
 | 1.19.4+       | Fabric/Forge/NeoForge | ✅ Supported       | Latest   |                                       |
-| 1.16.5-1.19.2 | Fabric/Forge          | ⚠️ Planned update | Outdated | Will be moved into supported later on |
+| 1.16.5-1.19.2 | Fabric/Forge          | ❌ Not supported | Outdated | Might get new updates at some point |
 | 1.12.2/1.8.9  | Forge                 | ❌ Not supported   | Outdated | Might get new updates at some point   |
 | 1.7.10        | Forge                 | ❌ Not supported   | Outdated | No updates planned                    |
 | b1.7.3        | Babric                | ❌ Not supported   | Outdated | No updates planned                    |
@@ -72,7 +72,7 @@ Unlock untapped performance by only rendering entities that truly matter. This m
 
 <br>![Known Issues](https://tr7zw.github.io/uikit/headlines/medium/Known%20Issues.png)
 
-Client-side entities—commonly used by magic mods for animations—may not behave as expected. Whitelist the relevant entities via the config screen for tick culling and/or entity culling.
+Client-side entities, commonly used by magic mods for animations, may not behave as expected. Whitelist the relevant entities via the config screen for tick culling and/or entity culling.
 
 You’ll also need to whitelist block entities that render well beyond their normal bounds. Examples include the vanilla beacon, pulleys from Create, and certain Botania blocks.
 
@@ -104,4 +104,4 @@ Yes! While Sodium performs basic visibility checks based on loaded chunks, this 
 <img src="https://tr7zw.github.io/uikit/links/underlined/more_details.png" style="vertical-align: middle;" alt="Link">
 </a> <br><br>
 📄 License: tr7zw Protective License <br>
-Feel free to use this mod in your Modrinth and CurseForge-hosted modpacks without asking for permission. Do not redistribute the JAR files anywhere else!
+Feel free to use this mod in your Modrinth and CurseForge-hosted modpacks or YouTube videos without asking for permission. Do not redistribute the JAR files anywhere else!
