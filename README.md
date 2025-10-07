@@ -45,9 +45,7 @@ Unlock untapped performance by only rendering entities that truly matter. This m
 
 <br>
 
-[![Essential](https://tr7zw.github.io/uikit/banner/essential_1.png)](http://essential.gg)<br><br>
-![Need a 24/7 Server? Check this out!](https://tr7zw.github.io/uikit/banner/shockbyte_divider.png)
-[![Shockbyte](https://tr7zw.github.io/uikit/banner/shockbyte_small.png)](http://bit.ly/4bczSJY)
+[![Essential](https://tr7zw.github.io/uikit/banner/essential_1.png)](http://essential.gg)<br>
 
 <br>![Divider](https://tr7zw.github.io/uikit/divider_faded/Divider_01.png)
 
