@@ -51,13 +51,13 @@ Unlock untapped performance by only rendering entities that truly matter. This m
 
 <br>![Compatibility & Dependencies](https://tr7zw.github.io/uikit/headlines/medium/Compatibility%20&%20Dependancys.png)
 
-|   Minecraft   |        Loader         |      Status       | Version  |                 Note                  |
-|---------------|-----------------------|-------------------|----------|---------------------------------------|
-| 1.19.4+       | Fabric/Forge/NeoForge | ✅ Supported       | Latest   |                                       |
+|   Minecraft   |        Loader         |     Status      | Version  |                Note                 |
+|---------------|-----------------------|-----------------|----------|-------------------------------------|
+| 1.19.4+       | Fabric/Forge/NeoForge | ✅ Supported     | Latest   |                                     |
 | 1.16.5-1.19.2 | Fabric/Forge          | ❌ Not supported | Outdated | Might get new updates at some point |
-| 1.12.2/1.8.9  | Forge                 | ❌ Not supported   | Outdated | Might get new updates at some point   |
-| 1.7.10        | Forge                 | ❌ Not supported   | Outdated | No updates planned                    |
-| b1.7.3        | Babric                | ❌ Not supported   | Outdated | No updates planned                    |
+| 1.12.2/1.8.9  | Forge                 | ❌ Not supported | Outdated | Might get new updates at some point |
+| 1.7.10        | Forge                 | ❌ Not supported | Outdated | No updates planned                  |
+| b1.7.3        | Babric                | ❌ Not supported | Outdated | No updates planned                  |
 
 <br>![Divider](https://tr7zw.github.io/uikit/divider_faded/Divider_01.png)
 

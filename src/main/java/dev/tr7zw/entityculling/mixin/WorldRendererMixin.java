@@ -52,6 +52,7 @@ public class WorldRendererMixin {
             state.y = entity.getY();
             state.z = entity.getZ();
             state.isInvisible = true;
+            state.isInvisibleToPlayer = true;
             if (entity.shouldShowName()) {
                 state.nameTag = entity.getDisplayName();
                 state.nameTagAttachment = entity.getAttachments().getNullable(
