@@ -1,4 +1,25 @@
 {
     "text.entityculling.title": "EntityCulling",
-    "key.entityculling.toggle": "開關剔除除錯"
+    "key.category.minecraft.text.entityculling.title": "EntityCulling",
+    "key.entityculling.toggle": "除錯切換剔除",
+    "key.entityculling.toggleBoxes": "顯示剔除箱",
+    "text.entityculling.tab.general_options": "一般",
+    "text.entityculling.tab.tick_culling": "忽略刻剔除",
+    "text.entityculling.tab.tick_culling.tooltip": "這個頁籤中選擇的實體在被剔除時其刻的方法將不會被最佳化。這對於需要刻來維持特定功能的實體（例如：船）很有用。",
+    "text.entityculling.tab.entity_culling": "忽略實體剔除",
+    "text.entityculling.tab.entity_culling.tooltip": "這個頁籤中選擇的實體完全不會被剔除。這主要用於用戶端實體，或者那些無論是否可見都需要被繪製的實體。",
+    "text.entityculling.tab.block_entity_culling": "忽略方塊實體剔除",
+    "text.entityculling.tab.block_entity_culling.tooltip": "這個頁籤選擇的方塊實體將完全不會被剔除。這主要用於那些無論是否可見都需要被繪製的方塊實體。",
+    "text.entityculling.renderNametagsThroughWalls": "穿牆繪製名稱標籤",
+    "text.entityculling.renderNametagsThroughWalls.tooltip": "關閉後，被剔除實體的名稱標籤將不會穿牆繪製。",
+    "text.entityculling.tickCulling": "刻剔除",
+    "text.entityculling.tickCulling.tooltip": "開啟後，被剔除的實體將不會進行刻更新。這在某些情況下可以提升效能，但可能會與某些模組產生問題。請考慮在其他頁籤中使用更精細的控制選項。",
+    "text.entityculling.disableF3": "停用 F3 除錯資訊",
+    "text.entityculling.disableF3.tooltip": "開啟後，F3 除錯資訊將不會顯示剔除相關資訊。",
+    "text.entityculling.skipEntityCulling": "忽略實體剔除",
+    "text.entityculling.skipEntityCulling.tooltip": "開啟後，將完全忽略實體的剔除。這在除錯或想要暫時停用剔除功能時很有用。",
+    "text.entityculling.skipBlockEntityCulling": "忽略方塊實體剔除",
+    "text.entityculling.skipBlockEntityCulling.tooltip": "開啟後，將完全忽略方塊實體的剔除。這在除錯或想要暫時停用剔除功能時很有用。",
+    "text.entityculling.blockEntityFrustumCulling": "方塊實體視錐剔除",
+    "text.entityculling.blockEntityFrustumCulling.tooltip": "開啟後，方塊實體的狀態擷取將會根據攝影機的視錐進行剔除。如果你的模組載入器或其他模組尚未執行此功能，這可以提升效能。"
 }
