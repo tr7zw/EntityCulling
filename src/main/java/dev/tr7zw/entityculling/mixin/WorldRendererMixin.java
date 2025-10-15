@@ -18,6 +18,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.tr7zw.entityculling.EntityCullingModBase;
 import dev.tr7zw.entityculling.NMSCullingHelper;
 import dev.tr7zw.entityculling.versionless.access.Cullable;
+import dev.tr7zw.transition.mc.GeneralUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -25,6 +26,7 @@ import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
 
 @Mixin(LevelRenderer.class)
@@ -53,10 +55,20 @@ public class WorldRendererMixin {
             state.z = entity.getZ();
             state.isInvisible = true;
             state.isInvisibleToPlayer = true;
-            if (entity.shouldShowName()) {
-                state.nameTag = entity.getDisplayName();
-                state.nameTagAttachment = entity.getAttachments().getNullable(
-                        net.minecraft.world.entity.EntityAttachment.NAME_TAG, 0, entity.getYRot(partialTick));
+            if (EntityCullingModBase.instance.config.renderNametagsThroughWalls && entity.shouldShowName()) {
+                if (entity instanceof LivingEntity living) {
+                    var renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
+                    if (renderer instanceof LivingEntityRendererAccessor accessor && accessor
+                            .invokeShouldShowName(living, GeneralUtil.getCameraEntity().distanceToSqr(entity))) {
+                        state.nameTag = entity.getDisplayName();
+                        state.nameTagAttachment = entity.getAttachments().getNullable(
+                                net.minecraft.world.entity.EntityAttachment.NAME_TAG, 0, entity.getYRot(partialTick));
+                    }
+                } else {
+                    state.nameTag = entity.getDisplayName();
+                    state.nameTagAttachment = entity.getAttachments().getNullable(
+                            net.minecraft.world.entity.EntityAttachment.NAME_TAG, 0, entity.getYRot(partialTick));
+                }
             }
             ci.setReturnValue(state);
             return;
