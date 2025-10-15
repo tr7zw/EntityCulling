@@ -46,7 +46,7 @@ public class WorldRendererMixin {
             return;
         }
         Cullable cullable = (Cullable) entity;
-        if (!cullable.isForcedVisible() && cullable.isCulled() /* && !NMSCullingHelper.ignoresCulling(entity) */) {
+        if (!cullable.isForcedVisible() && cullable.isCulled() && !NMSCullingHelper.ignoresCulling(entity)) {
             EntityCullingModBase.instance.skippedEntities++;
             var state = new net.minecraft.client.renderer.entity.state.ArmorStandRenderState();
             state.entityType = EntityType.ARMOR_STAND;
