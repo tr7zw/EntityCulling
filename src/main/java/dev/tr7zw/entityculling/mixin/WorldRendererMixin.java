@@ -48,18 +48,22 @@ public class WorldRendererMixin {
         Cullable cullable = (Cullable) entity;
         if (!cullable.isForcedVisible() && cullable.isCulled() && !NMSCullingHelper.ignoresCulling(entity)) {
             EntityCullingModBase.instance.skippedEntities++;
-            var state = new net.minecraft.client.renderer.entity.state.ArmorStandRenderState();
-            state.entityType = EntityType.ARMOR_STAND;
-            state.x = entity.getX();
-            state.y = entity.getY();
-            state.z = entity.getZ();
-            state.isInvisible = true;
-            state.isInvisibleToPlayer = true;
+            var state = new net.minecraft.client.renderer.entity.state.EntityRenderState();
+            state.entityType = EntityType.INTERACTION;
             if (EntityCullingModBase.instance.config.renderNametagsThroughWalls && entity.shouldShowName()) {
                 if (entity instanceof LivingEntity living) {
                     var renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
+                    double d = GeneralUtil.getCameraEntity().distanceToSqr(entity);
                     if (renderer instanceof LivingEntityRendererAccessor accessor && accessor
-                            .invokeShouldShowName(living, GeneralUtil.getCameraEntity().distanceToSqr(entity))) {
+                            .invokeShouldShowName(living, d)) {
+                        net.minecraft.network.chat.Component display;
+                        if (entity instanceof net.minecraft.client.entity.ClientAvatarEntity avatar && d < 100 && (display = avatar.belowNameDisplay()) != null) {
+                            var avatarState = new net.minecraft.client.renderer.entity.state.AvatarRenderState();
+                            avatarState.entityType = EntityType.PLAYER;
+                            avatarState.scoreText = display;
+                            avatarState.isInvisibleToPlayer = true;
+                            state = avatarState;
+                        }
                         state.nameTag = entity.getDisplayName();
                         state.nameTagAttachment = entity.getAttachments().getNullable(
                                 net.minecraft.world.entity.EntityAttachment.NAME_TAG, 0, entity.getYRot(partialTick));
@@ -70,6 +74,10 @@ public class WorldRendererMixin {
                             net.minecraft.world.entity.EntityAttachment.NAME_TAG, 0, entity.getYRot(partialTick));
                 }
             }
+            state.x = entity.getX();
+            state.y = entity.getY();
+            state.z = entity.getZ();
+            state.isInvisible = true;
             ci.setReturnValue(state);
             return;
         }
