@@ -115,7 +115,7 @@ public class CullTask implements Runnable {
             }
             Cullable cullable = (Cullable) entity;
             if (!cullable.isForcedVisible()) {
-                if (Minecraft.getInstance().shouldEntityAppearGlowing(entity) || isSkippableArmorstand(entity)) {
+                if (Minecraft.getInstance().shouldEntityAppearGlowing(entity)) {
                     cullable.setCulled(false);
                     continue;
                 }
@@ -184,12 +184,6 @@ public class CullTask implements Runnable {
 
             }
         }
-    }
-
-    private boolean isSkippableArmorstand(Entity entity) {
-        if (!EntityCullingModBase.instance.config.skipMarkerArmorStands)
-            return false;
-        return entity instanceof ArmorStand && ((ArmorStand) entity).isInvisible();
     }
 
     // Vec3i forward compatibility functions

@@ -17,7 +17,6 @@ public class ConfigUpgrader {
         }
         if (config.configVersion < 4) {
             config.configVersion = 4;
-            config.skipMarkerArmorStands = true;
             config.tickCullingWhitelist.add("minecraft:boat");
             changed = true;
         }

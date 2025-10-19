@@ -18,7 +18,6 @@ public class Config {
     public int sleepDelay = 10;
     public int hitboxLimit = 50;
     public int captureRate = 5;
-    public boolean skipMarkerArmorStands = true;
     public boolean tickCulling = true;
     public Set<String> tickCullingWhitelist = new HashSet<>(Arrays.asList("minecraft:firework_rocket", "minecraft:boat",
             "minecraft:acacia_boat", "minecraft:acacia_chest_boat", "minecraft:birch_boat",
