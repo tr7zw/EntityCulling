@@ -54,10 +54,11 @@ public class WorldRendererMixin {
                 if (entity instanceof LivingEntity living) {
                     var renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
                     double d = GeneralUtil.getCameraEntity().distanceToSqr(entity);
-                    if (renderer instanceof LivingEntityRendererAccessor accessor && accessor
-                            .invokeShouldShowName(living, d)) {
+                    if (renderer instanceof LivingEntityRendererAccessor accessor
+                            && accessor.invokeShouldShowName(living, d)) {
                         net.minecraft.network.chat.Component display;
-                        if (entity instanceof net.minecraft.client.entity.ClientAvatarEntity avatar && d < 100 && (display = avatar.belowNameDisplay()) != null) {
+                        if (entity instanceof net.minecraft.client.entity.ClientAvatarEntity avatar && d < 100
+                                && (display = avatar.belowNameDisplay()) != null) {
                             var avatarState = new net.minecraft.client.renderer.entity.state.AvatarRenderState();
                             avatarState.entityType = EntityType.PLAYER;
                             avatarState.scoreText = display;
