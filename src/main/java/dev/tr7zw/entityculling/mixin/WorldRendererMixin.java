@@ -74,9 +74,9 @@ public class WorldRendererMixin {
                             net.minecraft.world.entity.EntityAttachment.NAME_TAG, 0, entity.getYRot(partialTick));
                 }
             }
-            state.x = entity.getX();
-            state.y = entity.getY();
-            state.z = entity.getZ();
+            state.x = net.minecraft.util.Mth.lerp(partialTick, entity.xOld, entity.getX());
+            state.y = net.minecraft.util.Mth.lerp(partialTick, entity.yOld, entity.getY());
+            state.z = net.minecraft.util.Mth.lerp(partialTick, entity.zOld, entity.getZ());
             state.isInvisible = true;
             ci.setReturnValue(state);
             return;
