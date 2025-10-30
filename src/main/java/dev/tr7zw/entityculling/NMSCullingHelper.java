@@ -4,6 +4,8 @@ import dev.tr7zw.entityculling.access.EntityRendererInter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -23,6 +25,10 @@ public class NMSCullingHelper {
 
     @SuppressWarnings("unchecked")
     public static AABB getCullingBox(Entity entity) {
+        if (entity instanceof ArmorStand armorStand && armorStand.isMarker()) {
+            // Marker armor stands have no bounding box by default, so we create the default one here
+            return EntityType.ARMOR_STAND.getDimensions().makeBoundingBox(entity.position());
+        }
         //#if MC <= 12101
         //$$ return entity.getBoundingBoxForCulling();
         //#else
