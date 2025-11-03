@@ -20,123 +20,123 @@ import net.minecraft.world.chunk.Chunk;
 
 public class CullTask implements Runnable {
 
-	public boolean requestCull = false;
+    public boolean requestCull = false;
 
-	private final OcclusionCullingInstance culling;
+    private final OcclusionCullingInstance culling;
     private final Minecraft client = Minecraft.getMinecraft();
-	private final int sleepDelay = EntityCullingModBase.instance.config.sleepDelay;
-	private final int hitboxLimit = EntityCullingModBase.instance.config.hitboxLimit;
-	private final Set<String> unCullable;
-	public long lastTime = 0;
-	
-	// reused preallocated vars
-	private Vec3d lastPos = new Vec3d(0, 0, 0);
-	private Vec3d aabbMin = new Vec3d(0, 0, 0);
-	private Vec3d aabbMax = new Vec3d(0, 0, 0);
+    private final int sleepDelay = EntityCullingModBase.instance.config.sleepDelay;
+    private final int hitboxLimit = EntityCullingModBase.instance.config.hitboxLimit;
+    private final Set<String> unCullable;
+    public long lastTime = 0;
 
-	public CullTask(OcclusionCullingInstance culling, Set<String> unCullable) {
-		this.culling = culling;
-		this.unCullable = unCullable;
-	}
-	
-	@Override
-	public void run() {
-		while (client != null) { // not correct, but the running field is hidden
-			try {
-				Thread.sleep(sleepDelay);
+    // reused preallocated vars
+    private final Vec3d lastPos = new Vec3d(0, 0, 0);
+    private final Vec3d aabbMin = new Vec3d(0, 0, 0);
+    private final Vec3d aabbMax = new Vec3d(0, 0, 0);
 
-				if (EntityCullingModBase.enabled && client.theWorld != null && client.thePlayer != null && client.thePlayer.ticksExisted > 10 && client.getRenderViewEntity() != null) {
-				    Vec3 cameraMC = null;
-				    if(EntityCullingModBase.instance.config.debugMode) {
-				        cameraMC = client.thePlayer.getPositionEyes(0);
-				    } else {
-			            cameraMC = getCameraPos();
-				    }
-					if (requestCull || !(cameraMC.xCoord == lastPos.x && cameraMC.yCoord == lastPos.y && cameraMC.zCoord == lastPos.z)) {
-						long start = System.currentTimeMillis();
-						requestCull = false;
-						lastPos.set(cameraMC.xCoord, cameraMC.yCoord, cameraMC.zCoord);
-						Vec3d camera = lastPos;
-						culling.resetCache();
-						boolean noCulling = client.thePlayer.isSpectator() || client.gameSettings.thirdPersonView != 0;
-						Iterator<TileEntity> iterator = client.theWorld.loadedTileEntityList.iterator();
-						TileEntity entry;
-						while(iterator.hasNext()) {
-							try {
-								entry = iterator.next();
-							}catch(NullPointerException | ConcurrentModificationException ex) {
-								break; // We are not synced to the main thread, so NPE's/CME are allowed here and way less
-								// overhead probably than trying to sync stuff up for no really good reason
-							}
-							if(unCullable.contains(entry.getBlockType().getUnlocalizedName())) {
-								continue;
-							}
-							Cullable cullable = (Cullable) entry;
-							if (!cullable.isForcedVisible()) {
-								if (noCulling) {
-									cullable.setCulled(false);
-									continue;
-								}
-								BlockPos pos = entry.getPos();
-								if(pos.distanceSq(cameraMC.xCoord, cameraMC.yCoord, cameraMC.zCoord) < 64*64) { // 64 is the fixed max tile view distance
-								    aabbMin.set(pos.getX(), pos.getY(), pos.getZ());
-								    aabbMax.set(pos.getX()+1d, pos.getY()+1d, pos.getZ()+1d);
-									boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
-									cullable.setCulled(!visible);
-								}
+    public CullTask(OcclusionCullingInstance culling, Set<String> unCullable) {
+        this.culling = culling;
+        this.unCullable = unCullable;
+    }
 
-							}
-						}
-						Entity entity = null;
-						Iterator<Entity> iterable = client.theWorld.getLoadedEntityList().iterator();
-						while (iterable.hasNext()) {
-							try {
-								entity = iterable.next();
-							} catch (NullPointerException | ConcurrentModificationException ex) {
-								break; // We are not synced to the main thread, so NPE's/CME are allowed here and way less
-										// overhead probably than trying to sync stuff up for no really good reason
-							}
-							if(entity == null || !(entity instanceof Cullable)) {
-							    continue; // Not sure how this could happen outside from mixin screwing up the inject into Entity
-							}
-							Cullable cullable = (Cullable) entity;
-							if (!cullable.isForcedVisible()) {
-								if (noCulling || isSkippableArmorstand(entity)) {
-									cullable.setCulled(false);
-									continue;
-								}
-							    if(entity.getPositionVector().squareDistanceTo(cameraMC) > EntityCullingModBase.instance.config.tracingDistance * EntityCullingModBase.instance.config.tracingDistance) {
-							        cullable.setCulled(false); // If your entity view distance is larger than tracingDistance just render it
-							        continue;
-							    }
-							    AxisAlignedBB boundingBox = entity.getEntityBoundingBox();
-							    if(boundingBox.maxX - boundingBox.minX > hitboxLimit || boundingBox.maxY - boundingBox.minY > hitboxLimit || boundingBox.maxZ - boundingBox.minZ > hitboxLimit) {
-								    cullable.setCulled(false); // To big to bother to cull
-								    continue;
-								}
-							    aabbMin.set(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
-							    aabbMax.set(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ);
-								boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
-								cullable.setCulled(!visible);
-							}
-						}
-						lastTime = (System.currentTimeMillis()-start);
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		System.out.println("Shutting down culling task!");
-	}
-	
-	// 1.8 doesnt know where the heck the camera is... what?!?
-	private Vec3 getCameraPos() {
-	    if (client.gameSettings.thirdPersonView == 0) {
-	        return client.getRenderViewEntity().getPositionEyes(0);
-	    }
-	    return client.getRenderViewEntity().getPositionEyes(0);
-	    // doesnt work correctly
+    @Override
+    public void run() {
+        while (client != null) { // not correct, but the running field is hidden
+            try {
+                Thread.sleep(sleepDelay);
+
+                if (EntityCullingModBase.enabled && client.theWorld != null && client.thePlayer != null && client.thePlayer.ticksExisted > 10 && client.getRenderViewEntity() != null) {
+                    Vec3 cameraMC;
+                    if(EntityCullingModBase.instance.config.debugMode) {
+                        cameraMC = client.thePlayer.getPositionEyes(0);
+                    } else {
+                        cameraMC = getCameraPos();
+                    }
+                    if (requestCull || !(cameraMC.xCoord == lastPos.x && cameraMC.yCoord == lastPos.y && cameraMC.zCoord == lastPos.z)) {
+                        long start = System.currentTimeMillis();
+                        requestCull = false;
+                        lastPos.set(cameraMC.xCoord, cameraMC.yCoord, cameraMC.zCoord);
+                        Vec3d camera = lastPos;
+                        culling.resetCache();
+                        boolean noCulling = client.gameSettings.thirdPersonView != 0;
+                        Iterator<TileEntity> iterator = client.theWorld.loadedTileEntityList.iterator();
+                        TileEntity entry;
+                        while(iterator.hasNext()) {
+                            try {
+                                entry = iterator.next();
+                            }catch(NullPointerException | ConcurrentModificationException ex) {
+                                break; // We are not synced to the main thread, so NPE's/CME are allowed here and way less
+                                // overhead probably than trying to sync stuff up for no really good reason
+                            }
+                            if(unCullable.contains(entry.getBlockType().getUnlocalizedName())) {
+                                continue;
+                            }
+                            Cullable cullable = (Cullable) entry;
+                            if (!cullable.isForcedVisible()) {
+                                if (noCulling) {
+                                    cullable.setCulled(false);
+                                    continue;
+                                }
+                                BlockPos pos = entry.getPos();
+                                if(pos.distanceSq(cameraMC.xCoord, cameraMC.yCoord, cameraMC.zCoord) < 64*64) { // 64 is the fixed max tile view distance
+                                    aabbMin.set(pos.getX(), pos.getY(), pos.getZ());
+                                    aabbMax.set(pos.getX()+1d, pos.getY()+1d, pos.getZ()+1d);
+                                    boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
+                                    cullable.setCulled(!visible);
+                                }
+
+                            }
+                        }
+                        Entity entity;
+                        Iterator<Entity> iterable = client.theWorld.getLoadedEntityList().iterator();
+                        while (iterable.hasNext()) {
+                            try {
+                                entity = iterable.next();
+                            } catch (NullPointerException | ConcurrentModificationException ex) {
+                                break; // We are not synced to the main thread, so NPE's/CME are allowed here and way less
+                                // overhead probably than trying to sync stuff up for no really good reason
+                            }
+                            if(!(entity instanceof Cullable)) {
+                                continue; // Not sure how this could happen outside from mixin screwing up the inject into Entity
+                            }
+                            Cullable cullable = (Cullable) entity;
+                            if (!cullable.isForcedVisible()) {
+                                if (noCulling || isSkippableArmorstand(entity)) {
+                                    cullable.setCulled(false);
+                                    continue;
+                                }
+                                if(entity.getPositionVector().squareDistanceTo(cameraMC) > EntityCullingModBase.instance.config.tracingDistance * EntityCullingModBase.instance.config.tracingDistance) {
+                                    cullable.setCulled(false); // If your entity view distance is larger than tracingDistance just render it
+                                    continue;
+                                }
+                                AxisAlignedBB boundingBox = entity.getEntityBoundingBox();
+                                if(boundingBox.maxX - boundingBox.minX > hitboxLimit || boundingBox.maxY - boundingBox.minY > hitboxLimit || boundingBox.maxZ - boundingBox.minZ > hitboxLimit) {
+                                    cullable.setCulled(false); // Too big to bother to cull
+                                    continue;
+                                }
+                                aabbMin.set(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
+                                aabbMax.set(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ);
+                                boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
+                                cullable.setCulled(!visible);
+                            }
+                        }
+                        lastTime = (System.currentTimeMillis()-start);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Shutting down culling task!");
+    }
+
+    // 1.8 doesn't know where the heck the camera is... what?!?
+    private Vec3 getCameraPos() {
+        if (client.gameSettings.thirdPersonView == 0) {
+            return client.getRenderViewEntity().getPositionEyes(0);
+        }
+        return client.getRenderViewEntity().getPositionEyes(0);
+        // doesn't work correctly
 //        Entity entity = client.getRenderViewEntity();
 //        float f = entity.getEyeHeight();
 //        double d0 = entity.posX;
@@ -174,10 +174,10 @@ public class CullTask implements Runnable {
 //        Vec3 vec = new Vec3(newPosX, newPosY, newPosZ);
 //        System.out.println(newPosX + " " + newPosY + " " + newPosZ);
 //        return vec;
-	}
-	
-	private boolean isSkippableArmorstand(Entity entity) {
-	    if(!EntityCullingModBase.instance.config.skipMarkerArmorStands)return false;
-	    return entity instanceof EntityArmorStand && ((EntityArmorStand) entity).hasMarker();
-	}
+    }
+
+    private boolean isSkippableArmorstand(Entity entity) {
+        if(!EntityCullingModBase.instance.config.skipMarkerArmorStands)return false;
+        return entity instanceof EntityArmorStand && ((EntityArmorStand) entity).hasMarker();
+    }
 }

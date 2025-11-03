@@ -2,13 +2,13 @@ package dev.tr7zw.entityculling.access;
 
 public interface Cullable {
 
-	public void setTimeout();
-	public boolean isForcedVisible();
-	
-	public void setCulled(boolean value);
-	public boolean isCulled();
-	
-	public void setOutOfCamera(boolean value);
-	public boolean isOutOfCamera();
-	
+    void setTimeout();
+    boolean isForcedVisible();
+
+    void setCulled(boolean value);
+    boolean isCulled();
+
+    void setOutOfCamera(boolean value);
+    boolean isOutOfCamera();
+
 }

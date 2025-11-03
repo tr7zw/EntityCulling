@@ -12,7 +12,7 @@ buildscript {
 
 plugins {
     id "java"
-    id "com.github.johnrengelman.shadow" version "2.0.4"
+    id "com.github.johnrengelman.shadow" version "4.0.4"
     //id "forge" version "ddb1eb0" //ddb1eb0
     //id 'org.spongepowered.mixin' version "d5f9873"
 }
@@ -24,7 +24,7 @@ repositories {
     mavenCentral()
     maven { url 'https://jitpack.io/' }
     maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
-    maven { url 'https://repo.sk1er.club/repository/maven-releases/' }
+    maven { url 'https://repo.essential.gg/repository/maven-releases/' }
     maven { url 'https://maven.minecraftforge.net/'}
 }
 
@@ -57,7 +57,7 @@ configurations {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
     maven {
         url "https://repo.codemc.io/repository/maven-public/"
     }
@@ -66,11 +66,11 @@ repositories {
         url "https://repo.spongepowered.org/maven/"
     }
     maven { url 'https://jitpack.io' } //fabric asm
-    maven { url 'https://repo.sk1er.club/repository/maven-releases/' }
+    maven { url 'https://repo.essential.gg/repository/maven-releases/' }
     maven {
         url "https://repo.codemc.io/repository/maven-public/"
     }
-	maven { url "https://maven.legacyfabric.net"}
+    maven { url "https://maven.legacyfabric.net"}
     maven { url 'https://maven.minecraftforge.net/'}
 }
 
@@ -78,10 +78,14 @@ dependencies {
 //    annotationProcessor 'org.spongepowered:mixin:0.7.11-SNAPSHOT'
     include "com.logisticscraft:occlusionculling:${project.occlusionculling_version}"
 
-    include 'org.spongepowered:mixin:0.7.11-SNAPSHOT'
+    include ('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
+        exclude module: 'guava'
+        exclude module: 'gson'
+        exclude module: 'commons-io'
+    }
 
     sourceSets.main.java.srcDirs += new File(project.rootDir, "EntityCulling-Shared/src/main/java");//(project(':EntityCulling-Shared').sourceSets.main.java.srcDirs)
-	sourceSets.main.resources.srcDirs += new File(project.rootDir, "EntityCulling-Shared/src/main/resources");//sourceSets.main.resources.srcDirs += (project(':EntityCulling-Shared').sourceSets.main.resources.srcDirs)
+    sourceSets.main.resources.srcDirs += new File(project.rootDir, "EntityCulling-Shared/src/main/resources");//sourceSets.main.resources.srcDirs += (project(':EntityCulling-Shared').sourceSets.main.resources.srcDirs)
 }
 
 
@@ -134,7 +138,7 @@ processResources {
 }
 
 // move resources so they can be accessed at runtime
-task moveResources {
+tasks.register('moveResources') {
     doLast {
         ant.move file: "${buildDir}/resources/main",
                 todir: "${buildDir}/classes/java"

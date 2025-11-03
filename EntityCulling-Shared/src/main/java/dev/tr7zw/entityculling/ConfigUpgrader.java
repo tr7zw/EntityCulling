@@ -6,8 +6,8 @@ public class ConfigUpgrader {
         boolean changed = false;
 
         // check for more changes here
-        
+
         return changed;
     }
-    
+
 }
