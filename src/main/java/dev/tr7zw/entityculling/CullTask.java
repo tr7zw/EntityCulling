@@ -2,7 +2,6 @@ package dev.tr7zw.entityculling;
 
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
@@ -16,7 +15,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.chunk.Chunk;
 
 public class CullTask implements Runnable {
 
@@ -24,8 +22,8 @@ public class CullTask implements Runnable {
 
     private final OcclusionCullingInstance culling;
     private final Minecraft client = Minecraft.getMinecraft();
-    private final int sleepDelay = EntityCullingModBase.instance.config.sleepDelay;
-    private final int hitboxLimit = EntityCullingModBase.instance.config.hitboxLimit;
+    private final int sleepDelay = EntityCullingMod.instance.config.sleepDelay;
+    private final int hitboxLimit = EntityCullingMod.instance.config.hitboxLimit;
     private final Set<String> unCullable;
     public long lastTime = 0;
 
@@ -45,9 +43,9 @@ public class CullTask implements Runnable {
             try {
                 Thread.sleep(sleepDelay);
 
-                if (EntityCullingModBase.enabled && client.theWorld != null && client.thePlayer != null && client.thePlayer.ticksExisted > 10 && client.getRenderViewEntity() != null) {
+                if (EntityCullingMod.enabled && client.theWorld != null && client.thePlayer != null && client.thePlayer.ticksExisted > 10 && client.getRenderViewEntity() != null) {
                     Vec3 cameraMC;
-                    if(EntityCullingModBase.instance.config.debugMode) {
+                    if(EntityCullingMod.instance.config.debugMode) {
                         cameraMC = client.thePlayer.getPositionEyes(0);
                     } else {
                         cameraMC = getCameraPos();
@@ -105,7 +103,7 @@ public class CullTask implements Runnable {
                                     cullable.setCulled(false);
                                     continue;
                                 }
-                                if(entity.getPositionVector().squareDistanceTo(cameraMC) > EntityCullingModBase.instance.config.tracingDistance * EntityCullingModBase.instance.config.tracingDistance) {
+                                if(entity.getPositionVector().squareDistanceTo(cameraMC) > EntityCullingMod.instance.config.tracingDistance * EntityCullingMod.instance.config.tracingDistance) {
                                     cullable.setCulled(false); // If your entity view distance is larger than tracingDistance just render it
                                     continue;
                                 }
@@ -177,7 +175,7 @@ public class CullTask implements Runnable {
     }
 
     private boolean isSkippableArmorstand(Entity entity) {
-        if(!EntityCullingModBase.instance.config.skipMarkerArmorStands)return false;
+        if(!EntityCullingMod.instance.config.skipMarkerArmorStands)return false;
         return entity instanceof EntityArmorStand && ((EntityArmorStand) entity).hasMarker();
     }
 }

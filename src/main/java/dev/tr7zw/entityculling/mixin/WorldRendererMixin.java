@@ -6,10 +6,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import dev.tr7zw.entityculling.EntityCullingModBase;
+import dev.tr7zw.entityculling.EntityCullingMod;
 import dev.tr7zw.entityculling.access.Cullable;
 import dev.tr7zw.entityculling.access.EntityRendererInter;
-import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
@@ -29,15 +28,15 @@ public abstract class WorldRendererMixin {
         Cullable cullable = (Cullable) entity;
         if (!cullable.isForcedVisible() && cullable.isCulled()) {
             EntityRendererInter<Entity> entityRenderer = (EntityRendererInter) getEntityRenderObject(entity);
-            if (EntityCullingModBase.instance.config.renderNametagsThroughWalls && entityRenderer.shadowShouldShowName(entity)) {
+            if (EntityCullingMod.instance.config.renderNametagsThroughWalls && entityRenderer.shadowShouldShowName(entity)) {
                 entityRenderer.shadowRenderNameTag(entity, p_doRenderEntity_2_, d1, d2);
                 //entityRenderer.doRender(entity, entity.posX, entity.posY, entity.posZ, tickDelta, tickDelta);
             }
-            EntityCullingModBase.instance.skippedEntities++;
+            EntityCullingMod.instance.skippedEntities++;
             info.cancel();
             return;
         }
-        EntityCullingModBase.instance.renderedEntities++;
+        EntityCullingMod.instance.renderedEntities++;
         cullable.setOutOfCamera(false);
     }
 
