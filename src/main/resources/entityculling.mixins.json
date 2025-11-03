@@ -2,9 +2,7 @@
   "required": true,
   "package": "dev.tr7zw.entityculling.mixin",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "entityculling.refmap.json",
-  "mixins": [
-  ],
+  "refmap": "${modID}.mixins.refmap.json",
   "client": [
     "BlockEntityRenderDispatcherMixin",
     "EntityRendererMixin",
