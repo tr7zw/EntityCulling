@@ -23,7 +23,7 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 
-@Mod(modid = "entityculling", name = "EntityCulling", version = "@VER@", clientSideOnly = true)
+@Mod(modid = "entityculling", name = "EntityCulling", version = "1.6.2", clientSideOnly = true)
 public class EntityCullingMod {
 
     public static EntityCullingMod instance = new EntityCullingMod();
