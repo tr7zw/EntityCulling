@@ -9,8 +9,9 @@ import net.minecraft.util.BlockPos;
 public class Provider implements DataProvider {
 
     private final Minecraft client = Minecraft.getMinecraft();
+    private final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
     private WorldClient world = null;
-    
+
     @Override
     public boolean prepareChunk(int chunkX, int chunkZ) {
         world = client.theWorld;
@@ -19,8 +20,7 @@ public class Provider implements DataProvider {
 
     @Override
     public boolean isOpaqueFullCube(int x, int y, int z) {
-        BlockPos pos = new BlockPos(x, y, z);
-        return world.getBlockState(pos).getBlock().isOpaqueCube();
+        return world.getBlockState(pos.set(x, y, z)).getBlock().isOpaqueCube();
     }
 
     @Override
