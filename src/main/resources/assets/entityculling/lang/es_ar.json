@@ -1,5 +1,6 @@
 {
     "text.entityculling.title": "EntityCulling",
+    "key.category.minecraft.text.entityculling.title": "EntityCulling",
     "key.entityculling.toggle": "Alternar depuración de culling",
     "key.entityculling.toggleBoxes": "Mostrar cajas de culling",
     "text.entityculling.tab.general_options": "General",
@@ -19,4 +20,6 @@
     "text.entityculling.skipEntityCulling.tooltip": "Desactiva por completo el ocultamiento de entidades. Útil para pruebas o si querés desactivarlo temporalmente.",
     "text.entityculling.skipBlockEntityCulling": "Desactivar ocultamiento de bloques-entidad",
     "text.entityculling.skipBlockEntityCulling.tooltip": "Desactiva por completo el ocultamiento de bloques-entidad. Útil para depurar o desactivar temporalmente el sistema."
+    "text.entityculling.blockEntityFrustumCulling": "Culling de entidades de bloque por frustum",
+    "text.entityculling.blockEntityFrustumCulling.tooltip": "Cuando está activado, la extracción del estado de las entidades de bloque será filtrada según el frustum de la cámara. Esto puede mejorar el rendimiento en caso de que tu cargador de mods u otro mod no lo haga ya."
 }
