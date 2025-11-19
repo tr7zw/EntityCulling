@@ -1,8 +1,6 @@
 package dev.tr7zw.entityculling.config;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.Map.Entry;
 
 import dev.tr7zw.transition.mc.ComponentProvider;
@@ -24,11 +22,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.*;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import org.jetbrains.annotations.*;
 
 @UtilityClass
 public class ConfigScreenProvider {
@@ -75,22 +74,22 @@ public class ConfigScreenProvider {
             // Reusable lists
             List<Entry<ResourceKey<EntityType<?>>, EntityType<?>>> entities = new ArrayList<>(
                     BuiltInRegistries.ENTITY_TYPE.entrySet());
-            entities.sort((a, b) -> a.getKey().location().toString().compareTo(b.getKey().location().toString()));
+            entities.sort(Comparator.comparing(ConfigScreen::getStringEntity));
             List<Entry<ResourceKey<BlockEntityType<?>>, BlockEntityType<?>>> blockEntities = new ArrayList<>(
                     BuiltInRegistries.BLOCK_ENTITY_TYPE.entrySet());
-            entities.sort((a, b) -> a.getKey().location().toString().compareTo(b.getKey().location().toString()));
+            blockEntities.sort(Comparator.comparing(ConfigScreen::getStringBlockEntity));
             // Tick culling whitelist
             WListPanel<Entry<ResourceKey<EntityType<?>>, EntityType<?>>, WToggleButton> tickCullList = new WListPanel<Entry<ResourceKey<EntityType<?>>, EntityType<?>>, WToggleButton>(
                     entities, () -> new WToggleButton(ComponentProvider.EMPTY), (s, l) -> {
                         l.setLabel(s.getValue().getDescription());
-                        l.setToolip(ComponentProvider.literal(s.getKey().location().toString()));
-                        l.setToggle(inst.config.tickCullingWhitelist.contains(s.getKey().location().toString()));
+                        l.setToolip(ComponentProvider.literal(getStringEntity(s)));
+                        l.setToggle(inst.config.tickCullingWhitelist.contains(getStringEntity(s)));
                         l.setOnToggle(b -> {
                             if (b) {
-                                inst.config.tickCullingWhitelist.add(s.getKey().location().toString());
+                                inst.config.tickCullingWhitelist.add(getStringEntity(s));
                                 inst.tickCullWhistelist.add(s.getValue());
                             } else {
-                                inst.config.tickCullingWhitelist.remove(s.getKey().location().toString());
+                                inst.config.tickCullingWhitelist.remove(getStringEntity(s));
                                 inst.tickCullWhistelist.remove(s.getValue());
                             }
                             inst.writeConfig();
@@ -102,7 +101,7 @@ public class ConfigScreenProvider {
             tickCullTab.add(tickCullList, 0, 0, 17, 7);
             WTextField tickCullSearchField = new WTextField();
             tickCullSearchField.setChangedListener(s -> {
-                tickCullList.setFilter(e -> e.getKey().location().toString().toLowerCase().contains(s.toLowerCase()));
+                tickCullList.setFilter(e -> getStringEntity(e).toLowerCase().contains(s.toLowerCase()));
                 tickCullList.layout();
             });
             tickCullTab.add(tickCullSearchField, 0, 7, 17, 1);
@@ -114,14 +113,14 @@ public class ConfigScreenProvider {
             WListPanel<Entry<ResourceKey<EntityType<?>>, EntityType<?>>, WToggleButton> entityCullList = new WListPanel<Entry<ResourceKey<EntityType<?>>, EntityType<?>>, WToggleButton>(
                     entities, () -> new WToggleButton(ComponentProvider.EMPTY), (s, l) -> {
                         l.setLabel(s.getValue().getDescription());
-                        l.setToolip(ComponentProvider.literal(s.getKey().location().toString()));
-                        l.setToggle(inst.config.entityWhitelist.contains(s.getKey().location().toString()));
+                        l.setToolip(ComponentProvider.literal(getStringEntity(s)));
+                        l.setToggle(inst.config.entityWhitelist.contains(getStringEntity(s)));
                         l.setOnToggle(b -> {
                             if (b) {
-                                inst.config.entityWhitelist.add(s.getKey().location().toString());
+                                inst.config.entityWhitelist.add(getStringEntity(s));
                                 inst.entityWhitelist.add(s.getValue());
                             } else {
-                                inst.config.entityWhitelist.remove(s.getKey().location().toString());
+                                inst.config.entityWhitelist.remove(getStringEntity(s));
                                 inst.entityWhitelist.remove(s.getValue());
                             }
                             inst.writeConfig();
@@ -133,7 +132,7 @@ public class ConfigScreenProvider {
             entityCullTab.add(entityCullList, 0, 0, 17, 7);
             WTextField entityCullSearchField = new WTextField();
             entityCullSearchField.setChangedListener(s -> {
-                entityCullList.setFilter(e -> e.getKey().location().toString().toLowerCase().contains(s.toLowerCase()));
+                entityCullList.setFilter(e -> getStringEntity(e).toLowerCase().contains(s.toLowerCase()));
                 entityCullList.layout();
             });
             entityCullTab.add(entityCullSearchField, 0, 7, 17, 1);
@@ -145,14 +144,14 @@ public class ConfigScreenProvider {
             // BlockEntity whitelist
             WListPanel<Entry<ResourceKey<BlockEntityType<?>>, BlockEntityType<?>>, WToggleButton> blockEntityCullList = new WListPanel<Entry<ResourceKey<BlockEntityType<?>>, BlockEntityType<?>>, WToggleButton>(
                     blockEntities, () -> new WToggleButton(ComponentProvider.EMPTY), (s, l) -> {
-                        l.setLabel(ComponentProvider.literal(s.getKey().location().toString()));
-                        l.setToggle(inst.config.blockEntityWhitelist.contains(s.getKey().location().toString()));
+                        l.setLabel(ComponentProvider.literal(getStringBlockEntity(s)));
+                        l.setToggle(inst.config.blockEntityWhitelist.contains(getStringBlockEntity(s)));
                         l.setOnToggle(b -> {
                             if (b) {
-                                inst.config.blockEntityWhitelist.add(s.getKey().location().toString());
+                                inst.config.blockEntityWhitelist.add(getStringBlockEntity(s));
                                 inst.blockEntityWhitelist.add(s.getValue());
                             } else {
-                                inst.config.blockEntityWhitelist.remove(s.getKey().location().toString());
+                                inst.config.blockEntityWhitelist.remove(getStringBlockEntity(s));
                                 inst.blockEntityWhitelist.remove(s.getValue());
                             }
                             inst.writeConfig();
@@ -164,8 +163,7 @@ public class ConfigScreenProvider {
             blockEntityCullTab.add(blockEntityCullList, 0, 0, 17, 7);
             WTextField blockEntityCullSearchField = new WTextField();
             blockEntityCullSearchField.setChangedListener(s -> {
-                blockEntityCullList
-                        .setFilter(e -> e.getKey().location().toString().toLowerCase().contains(s.toLowerCase()));
+                blockEntityCullList.setFilter(e -> getStringBlockEntity(e).toLowerCase().contains(s.toLowerCase()));
                 blockEntityCullList.layout();
             });
             blockEntityCullTab.add(blockEntityCullSearchField, 0, 7, 17, 1);
@@ -192,6 +190,15 @@ public class ConfigScreenProvider {
 
             root.validate(this);
             root.setHost(this);
+        }
+
+        private static @NotNull String getStringEntity(Entry<ResourceKey<EntityType<?>>, EntityType<?>> a) {
+            return a.getKey()/*? >= 1.21.11 {*/.identifier() /*?} else {*//* .location() *//*?}*/.toString();
+        }
+
+        private static @NotNull String getStringBlockEntity(
+                Entry<ResourceKey<BlockEntityType<?>>, BlockEntityType<?>> a) {
+            return a.getKey()/*? >= 1.21.11 {*/.identifier() /*?} else {*//* .location() *//*?}*/.toString();
         }
 
         @Override

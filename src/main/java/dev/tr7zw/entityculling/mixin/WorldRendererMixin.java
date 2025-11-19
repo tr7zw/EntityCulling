@@ -98,7 +98,7 @@ public class WorldRendererMixin {
     //? }
 
     //? if < 1.21.9 {
-/*
+    /*
      @Inject(at = @At("HEAD"), method = "renderEntity", cancellable = true)
      private void renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta,
           PoseStack matrices, MultiBufferSource vertexConsumers, org.spongepowered.asm.mixin.injection.callback.CallbackInfo info) {
@@ -126,7 +126,7 @@ public class WorldRendererMixin {
                   matrices.popPose();
              }
      //? if >= 1.21.4 {
-
+    
                 if (EntityCullingModBase.instance.debugHitboxes) {
                     lateRenders.add(() -> {
                         renderDebugBox(entity, cameraX, cameraY, cameraZ, tickDelta, matrices, vertexConsumers, false);
@@ -141,7 +141,7 @@ public class WorldRendererMixin {
          EntityCullingModBase.instance.renderedEntities++;
         cullable.setOutOfCamera(false);
      //? if >= 1.21.4 {
-
+    
         if (EntityCullingModBase.instance.debugHitboxes) {
              lateRenders.add(() -> {
                  renderDebugBox(entity, cameraX, cameraY, cameraZ, tickDelta, matrices, vertexConsumers, true);
@@ -151,8 +151,8 @@ public class WorldRendererMixin {
      }
     *///? }
 
-    //? if >= 1.21.4 {
-
+    //? if >= 1.21.4 && < 1.21.11 {
+    /*
     //    @Inject(at = @At("RETURN"), method = "renderEntities")
     //    private void renderEntities(PoseStack poseStack, net.minecraft.client.renderer.MultiBufferSource.BufferSource bufferSource, net.minecraft.client.Camera camera,
     //            net.minecraft.client.DeltaTracker deltaTracker, List<Entity> list, CallbackInfo info) {
@@ -169,7 +169,7 @@ public class WorldRendererMixin {
     //            lateRenders.clear();
     //        }
     //    }
-
+    
     private void renderDebugBox(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta,
             PoseStack matrices, MultiBufferSource vertexConsumers, boolean visible) {
         AABB boundingBox = NMSCullingHelper.getCullingBox(entity);
@@ -179,11 +179,11 @@ public class WorldRendererMixin {
         double minX = MathUtilities.floor(boundingBox.minX - aabbExpansion) - cameraX;
         double minY = MathUtilities.floor(boundingBox.minY - aabbExpansion) - cameraY;
         double minZ = MathUtilities.floor(boundingBox.minZ - aabbExpansion) - cameraZ;
-
+    
         DebugRenderer.renderFilledBox(matrices, vertexConsumers, new AABB(maxX, maxY, maxZ, minX, minY, minZ),
                 visible ? 0f : 1f, visible ? 1f : 0f, 0f, 0.25f);
     }
-
-    //? }
+    
+    *///? }
 
 }

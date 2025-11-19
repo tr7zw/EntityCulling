@@ -1,7 +1,7 @@
 package dev.tr7zw.entityculling;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.*;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
@@ -60,7 +60,7 @@ public class EntityCullingMod extends EntityCullingModBase
         }
         return new AABB(pos);
         //? } else {
-/*
+        /*
                return entity.getRenderBoundingBox();
         *///? }
     }
@@ -69,7 +69,8 @@ public class EntityCullingMod extends EntityCullingModBase
 
     public static final net.minecraft.client.gui.components.debug.DebugEntryCategory DEBUG_CATEGORY = new net.minecraft.client.gui.components.debug.DebugEntryCategory(
             ComponentProvider.translatable("text.entityculling.title"), 10F);
-    public static final ResourceLocation DEBUG_CATEGORY_ID = GeneralUtil.getResourceLocation("entityculling", "debug");
+    public static final /*? >= 1.21.11 {*/ Identifier /*?} else {*//* ResourceLocation *//*?}*/ DEBUG_CATEGORY_ID = GeneralUtil
+            .getResourceLocation("entityculling", "debug");
 
     private static void registerDebugLine(String id, net.minecraft.client.gui.components.debug.DebugScreenEntry entry) {
         dev.tr7zw.entityculling.mixin.DebugScreenEntriesAccessor

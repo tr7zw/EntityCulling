@@ -16,7 +16,13 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.PigRenderer;
 import net.minecraft.server.Bootstrap;
+//? if >= 1.21.11 {
+
+import net.minecraft.world.entity.animal.pig.*;
+//? } else {
+/*
 import net.minecraft.world.entity.animal.Pig;
+*///? }
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 
 public class MixinTests {

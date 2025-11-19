@@ -17,7 +17,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.warden.AngerLevel;
 import net.minecraft.world.entity.monster.warden.Warden;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
+//? if >= 1.21.11 {
+
+import net.minecraft.world.entity.vehicle.minecart.*;
+//? } else {
+/*
+        import net.minecraft.world.entity.vehicle.*;
+
+*///? }
 
 @Mixin(ClientLevel.class)
 public class ClientWorldMixin {

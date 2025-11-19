@@ -16,7 +16,7 @@ import net.minecraft.client.gui.components.DebugScreenOverlay;
 public class DebugHudMixin {
 
     //? if < 1.21.9 {
-/*
+    /*
         private int lastTickedEntities = 0;
         private int lastSkippedEntityTicks = 0;
         private final DecimalFormat entityCullingFormatter = new DecimalFormat("###.##");

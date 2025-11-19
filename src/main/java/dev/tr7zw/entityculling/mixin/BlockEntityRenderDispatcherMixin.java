@@ -51,7 +51,7 @@ public abstract class BlockEntityRenderDispatcherMixin {
         }
     }
     //? if neoforge {
-/*
+    /*
      @Inject(method = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher;tryExtractRenderState(Lnet/minecraft/world/level/block/entity/BlockEntity;FLnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;Lnet/minecraft/client/renderer/culling/Frustum;)Lnet/minecraft/client/renderer/blockentity/state/BlockEntityRenderState;", at = @At("HEAD"), cancellable = true)
      public void tryExtractRenderState(BlockEntity blockEntity, float f,
             net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay crumblingOverlay, net.minecraft.client.renderer.culling.Frustum frustum,
@@ -80,7 +80,7 @@ public abstract class BlockEntityRenderDispatcherMixin {
     *///? }
 
     //? } else {
-/*
+    /*
      @Inject(method = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher;render(Lnet/minecraft/world/level/block/entity/BlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;)V", at = @At("HEAD"), cancellable = true)
      public <E extends BlockEntity> void render(E blockEntity, float f, com.mojang.blaze3d.vertex.PoseStack poseStack,
             net.minecraft.client.renderer.MultiBufferSource multiBufferSource, org.spongepowered.asm.mixin.injection.callback.CallbackInfo info) {
@@ -92,10 +92,10 @@ public abstract class BlockEntityRenderDispatcherMixin {
          return; // Not a block entity that has a renderer, skip all logic
      }
      //? if >= 1.21.6 {
-
+    
          if (blockEntityRenderer.shouldRenderOffScreen()) {
      //? } else {
-/^
+    /^
       if(blockEntityRenderer.shouldRenderOffScreen(blockEntity)) {
      ^///? }
           EntityCullingModBase.instance.renderedBlockEntities++;

@@ -20,6 +20,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.*;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -148,7 +149,8 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
 
             cullTask.setIngame(true);
             cullTask.setCameraMC(EntityCullingModBase.instance.config.debugMode ? client.player.getEyePosition(0)
-                    : client.gameRenderer.getMainCamera().getPosition());
+                    : client.gameRenderer.getMainCamera()
+                            /*? >= 1.21.11 {*/ .position() /*?} else {*//* .getPosition() *//*?}*/);
             cullTask.requestCull = true;
             if (changed) {
                 lastTickTime = (System.nanoTime() - start) / 1_000_000.0;

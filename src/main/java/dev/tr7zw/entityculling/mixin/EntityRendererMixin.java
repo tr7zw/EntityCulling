@@ -18,7 +18,7 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
     @Override
     public boolean shadowShouldShowName(T entity) {
         //? if <= 1.21.1 {
-/*
+        /*
          return shouldShowName(entity);
         *///? } else {
 
@@ -32,38 +32,38 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
         //? if >= 1.21.9 {
 
         //? } else if >= 1.21.2 {
-/*
+        /*
          renderNameTag(((EntityRenderer) (Object) this).createRenderState(entity, delta), component, poseStack,
                 multiBufferSource, light);
         *///? } else if >= 1.20.5 {
-/*
+        /*
          renderNameTag(entity, component, poseStack, multiBufferSource, light, delta);
         *///? } else {
-/*
+        /*
          renderNameTag(entity, component, poseStack, multiBufferSource, light);
         *///? }
     }
 
     //? if <= 1.21.1 {
-/*
+    /*
      @Shadow
      public abstract boolean shouldShowName(T entity);
     *///? }
 
     //? if < 1.21.9 {
-/*
+    /*
      //? if >= 1.21.2 {
-
+    
          @Shadow
          public abstract void renderNameTag(net.minecraft.client.renderer.entity.state.EntityRenderState entityRenderState,
                  Component component, PoseStack poseStack, MultiBufferSource multiBufferSource, int i);
      //? } else if >= 1.20.5 {
-/^
+    /^
          @Shadow
       public abstract void renderNameTag(T entity, Component component, PoseStack poseStack,
       MultiBufferSource multiBufferSource, int i, float f);
      ^///? } else {
-/^
+    /^
          @Shadow
          public abstract void renderNameTag(T entity, Component component, PoseStack poseStack,
       MultiBufferSource multiBufferSource, int i);
@@ -73,7 +73,7 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
     @Override
     public boolean entityCullingIgnoresCulling(T entity) {
         //? if <= 1.21.1 {
-/*
+        /*
          return entity.noCulling;
         *///? } else {
 
@@ -84,7 +84,7 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
     @Override
     public AABB entityCullingGetCullingBox(T entity) {
         //? if <= 1.21.1 {
-/*
+        /*
          return entity.getBoundingBoxForCulling();
         *///? } else {
 

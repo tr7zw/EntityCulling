@@ -16,7 +16,7 @@ public class NMSCullingHelper {
     @SuppressWarnings("unchecked")
     public static boolean ignoresCulling(Entity entity) {
         //? if <= 1.21.1 {
-/*
+        /*
          return entity.noCulling;
         *///? } else {
 
@@ -32,7 +32,7 @@ public class NMSCullingHelper {
             return EntityType.ARMOR_STAND.getDimensions().makeBoundingBox(entity.position());
         }
         //? if <= 1.21.1 {
-/*
+        /*
          return entity.getBoundingBoxForCulling();
         *///? } else {
 
@@ -43,7 +43,7 @@ public class NMSCullingHelper {
 
     public static Vec3 getRenderOffset(EntityRenderer entityRenderer, Entity entity, float tickDelta) {
         //? if <= 1.21.1 {
-/*
+        /*
          return entityRenderer.getRenderOffset(entity, tickDelta);
         *///? } else {
 

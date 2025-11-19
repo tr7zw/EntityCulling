@@ -7,13 +7,14 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.client.gui.components.debug.DebugScreenEntries;
 import net.minecraft.client.gui.components.debug.DebugScreenEntry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.*;
 
 @Mixin(DebugScreenEntries.class)
 public interface DebugScreenEntriesAccessor {
 
     @Invoker
-    public static ResourceLocation invokeRegister(ResourceLocation arg, DebugScreenEntry arg2) {
+    public static /*? >= 1.21.11 {*/ Identifier /*?} else {*//* ResourceLocation *//*?}*/ invokeRegister(
+            /*? >= 1.21.11 {*/ Identifier /*?} else {*//* ResourceLocation *//*?}*/ arg, DebugScreenEntry arg2) {
         throw new AssertionError();
     }
 
