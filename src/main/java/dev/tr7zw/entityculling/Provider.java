@@ -20,11 +20,13 @@ public class Provider implements DataProvider {
     @Override
     public boolean isOpaqueFullCube(int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
-        //#if MC <= 12101
-        //$$ return world.getBlockState(pos).isSolidRender(net.minecraft.world.level.EmptyBlockGetter.INSTANCE, BlockPos.ZERO);
-        //#else
+        //? if <= 1.21.1 {
+/*
+         return world.getBlockState(pos).isSolidRender(net.minecraft.world.level.EmptyBlockGetter.INSTANCE, BlockPos.ZERO);
+        *///? } else {
+
         return world.getBlockState(pos).isSolidRender();
-        //#endif
+        //? }
     }
 
     @Override

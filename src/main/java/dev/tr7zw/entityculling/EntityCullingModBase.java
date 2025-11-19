@@ -42,9 +42,10 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     private Set<Function<Entity, Boolean>> dynamicEntityWhitelist = new HashSet<>();
     private int tickCounter = 0;
     public double lastTickTime = 0;
-    //#if MC >= 12109
+    //? if >= 1.21.9 {
+
     public net.minecraft.client.renderer.culling.Frustum frustum = null;
-    //#endif
+    //? }
 
     public void onInitialize() {
         instance = this;

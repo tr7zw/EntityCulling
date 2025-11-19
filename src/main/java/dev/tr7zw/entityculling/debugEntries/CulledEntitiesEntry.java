@@ -1,4 +1,5 @@
-//#if MC >= 12109
+//? if >= 1.21.9 {
+
 package dev.tr7zw.entityculling.debugEntries;
 
 import dev.tr7zw.entityculling.EntityCullingMod;
@@ -32,4 +33,4 @@ public class CulledEntitiesEntry implements DebugScreenEntry {
     }
 
 }
-//#endif
+//? }

@@ -3,7 +3,8 @@ package dev.tr7zw.entityculling.mixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-//#if MC >= 12109
+//? if >= 1.21.9 {
+
 import net.minecraft.client.gui.components.debug.DebugScreenEntries;
 import net.minecraft.client.gui.components.debug.DebugScreenEntry;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +18,8 @@ public interface DebugScreenEntriesAccessor {
     }
 
 }
-//#else
-//$$ @Mixin(targets = "net.minecraft.client.Minecraft") // dummy for older versions
-//$$ public class DebugScreenEntriesAccessor {}
-//#endif
+//? } else {
+/*
+ @Mixin(targets = "net.minecraft.client.Minecraft") // dummy for older versions
+ public class DebugScreenEntriesAccessor {}
+*///? }

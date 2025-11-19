@@ -1,4 +1,5 @@
-//#if MC >= 12109
+//? if >= 1.21.9 {
+
 package dev.tr7zw.entityculling.debugEntries;
 
 import java.text.DecimalFormat;
@@ -34,4 +35,4 @@ public class CullTimingEntry implements DebugScreenEntry {
     }
 
 }
-//#endif
+//? }

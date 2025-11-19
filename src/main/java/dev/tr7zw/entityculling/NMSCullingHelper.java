@@ -15,12 +15,14 @@ public class NMSCullingHelper {
 
     @SuppressWarnings("unchecked")
     public static boolean ignoresCulling(Entity entity) {
-        //#if MC <= 12101
-        //$$ return entity.noCulling;
-        //#else
+        //? if <= 1.21.1 {
+/*
+         return entity.noCulling;
+        *///? } else {
+
         return ((EntityRendererInter<Entity>) MC.getEntityRenderDispatcher().getRenderer(entity))
                 .entityCullingIgnoresCulling(entity);
-        //#endif
+        //? }
     }
 
     @SuppressWarnings("unchecked")
@@ -29,20 +31,24 @@ public class NMSCullingHelper {
             // Marker armor stands have no bounding box by default, so we create the default one here
             return EntityType.ARMOR_STAND.getDimensions().makeBoundingBox(entity.position());
         }
-        //#if MC <= 12101
-        //$$ return entity.getBoundingBoxForCulling();
-        //#else
+        //? if <= 1.21.1 {
+/*
+         return entity.getBoundingBoxForCulling();
+        *///? } else {
+
         return ((EntityRendererInter<Entity>) MC.getEntityRenderDispatcher().getRenderer(entity))
                 .entityCullingGetCullingBox(entity);
-        //#endif
+        //? }
     }
 
     public static Vec3 getRenderOffset(EntityRenderer entityRenderer, Entity entity, float tickDelta) {
-        //#if MC <= 12101
-        //$$ return entityRenderer.getRenderOffset(entity, tickDelta);
-        //#else
+        //? if <= 1.21.1 {
+/*
+         return entityRenderer.getRenderOffset(entity, tickDelta);
+        *///? } else {
+
         return entityRenderer.getRenderOffset(entityRenderer.createRenderState(entity, tickDelta));
-        //#endif
+        //? }
     }
 
 }
