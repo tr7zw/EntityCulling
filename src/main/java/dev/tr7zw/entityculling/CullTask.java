@@ -50,7 +50,7 @@ public class CullTask implements Runnable {
             try {
                 Thread.sleep(sleepDelay);
                 if (EntityCullingMod.enabled && client.world != null && client.player != null
-                        && client.player.field_1645 > 10) {
+                        && client.player.age > 10) {
                     net.minecraft.util.math.Vec3d cameraMC = /*false *//*EntityCullingModBase.instance.config.debugMode*//*
                             ? client.player.
                             : client.worldRenderer.field_1795.getPosition()*/ real(client.player);
@@ -62,8 +62,8 @@ public class CullTask implements Runnable {
                         lastPos.set(cameraMC.x, cameraMC.y, cameraMC.z);
                         Vec3d camera = lastPos;
                         culling.resetCache();
-                        if (!Config.Fields.disableBlockEntityCulling) cullBlockEntities(cameraMC, camera);
-                        if (!Config.Fields.disableEntityCulling) cullEntities(cameraMC, camera);
+                        if (!Config.FIELDS.disableBlockEntityCulling) cullBlockEntities(cameraMC, camera);
+                        if (!Config.FIELDS.disableEntityCulling) cullEntities(cameraMC, camera);
                         lastTime = (System.currentTimeMillis() - start);
                     }
                 }
@@ -76,7 +76,7 @@ public class CullTask implements Runnable {
 
     private void cullEntities(net.minecraft.util.math.Vec3d cameraMC, Vec3d camera) {
         Entity entity;
-        Iterator<?> iterable = client.world.method_291().iterator();
+        Iterator<?> iterable = client.world.getEntities().iterator();
         while (iterable.hasNext()) {
             try {
                 entity = (Entity) iterable.next();
@@ -108,7 +108,7 @@ public class CullTask implements Runnable {
     private void cullBlockEntities(net.minecraft.util.math.Vec3d cameraMC, Vec3d camera) {
         for (int x = -8; x <= 8; x++) {
             for (int z = -8; z <= 8; z++) {
-                Chunk chunk = client.world.method_214(client.player.chunkX + x, client.player.chunkZ + z);
+                Chunk chunk = client.world.getChunk(client.player.chunkX + x, client.player.chunkZ + z);
                 Iterator<?> iterator = chunk.blockEntities.entrySet().iterator();
                 Entry<BlockPos, BlockEntity> entry;
                 while (iterator.hasNext()) {
@@ -129,7 +129,7 @@ public class CullTask implements Runnable {
                     if (!cullable.isForcedVisible()) {
                         BlockPos pos = entry.getKey();
 
-                        if (!BlockEntityRenderDispatcher.INSTANCE.method_1276(entry.getValue())) continue;
+                        if (!BlockEntityRenderDispatcher.INSTANCE.hasRenderer(entry.getValue())) continue;
                         //if (idk) System.out.println("sup");
                         if (closerThan(pos, cameraMC, 64)) { // 64 is the fixed max tile view distance
                             //if (idk) System.out.println("I am going insane");
@@ -161,10 +161,10 @@ public class CullTask implements Runnable {
     }
 
     private net.minecraft.util.math.Vec3d real(ClientPlayerEntity player) {
-        float f = ((MinecraftAccessor) MinecraftAccessor.getInstance()).getTimer().field_2370;
-        double d = player.field_1637 + (player.x - player.field_1637) * (double)f;
-        double d2 = player.field_1638 + (player.y - player.field_1638) * (double)f;
-        double d3 = player.field_1639 + (player.z - player.field_1639) * (double)f;
+        float f = ((MinecraftAccessor) MinecraftAccessor.getInstance()).getTimer().partialTick;
+        double d = player.lastTickX + (player.x - player.lastTickX) * (double)f;
+        double d2 = player.lastTickY + (player.y - player.lastTickY) * (double)f;
+        double d3 = player.lastTickZ + (player.z - player.lastTickZ) * (double)f;
         return net.minecraft.util.math.Vec3d.create(d, d2, d3);
     }
 

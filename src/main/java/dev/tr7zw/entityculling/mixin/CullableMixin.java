@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Unique;
 public class CullableMixin implements Cullable {
 
     @Unique
-    private long lasttime = 0;
+    private long lastTime = 0;
     @Unique
     private boolean culled = false;
     @Unique
@@ -20,12 +20,12 @@ public class CullableMixin implements Cullable {
 
     @Override
     public void setTimeout() {
-        lasttime = System.currentTimeMillis() + 100;
+        lastTime = System.currentTimeMillis() + 100;
     }
 
     @Override
     public boolean isForcedVisible() {
-        return lasttime > System.currentTimeMillis();
+        return lastTime > System.currentTimeMillis();
     }
 
     @Override

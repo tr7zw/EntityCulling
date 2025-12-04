@@ -20,7 +20,7 @@
         "client": [
             "dev.tr7zw.entityculling.EntityCullingMod"
         ],
-        "gcapi": [
+        "gcapi3": [
             "dev.tr7zw.entityculling.Config"
         ]
     },

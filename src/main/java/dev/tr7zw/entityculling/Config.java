@@ -1,28 +1,32 @@
 package dev.tr7zw.entityculling;
 
-import blue.endless.jankson.Comment;
-import net.glasslauncher.mods.api.gcapi.api.ConfigName;
-import net.glasslauncher.mods.api.gcapi.api.GConfig;
+import net.glasslauncher.mods.gcapi3.api.ConfigEntry;
+import net.glasslauncher.mods.gcapi3.api.ConfigRoot;
 
 public class Config {
 
-    @GConfig(value = "config", visibleName = "Entity Culling Config")
-    public static final Fields FIELDS = new Fields();
+    @ConfigRoot(value = "config", visibleName = "Entity Culling Config")
+    public static final ConfigFields FIELDS = new ConfigFields();
 
-    @SuppressWarnings("CanBeFinal")
-    public static class Fields {
+    public static class ConfigFields {
 
-        @ConfigName("Disable Entity culling")
-        public static Boolean disableEntityCulling = false;
+        @ConfigEntry(name = "Disable Entity culling")
+        public Boolean disableEntityCulling = false;
 
-        @ConfigName("Disable Block Entity culling")
-        public static Boolean disableBlockEntityCulling = false;
+        @ConfigEntry(name = "Disable Block Entity culling")
+        public Boolean disableBlockEntityCulling = false;
 
-        @ConfigName("F3 Info")
-        public static Boolean showF3Info = true;
+        @ConfigEntry(name = "F3 Info")
+        public Boolean showF3Info = true;
 
-        @ConfigName("Make glass cull entities and blocks")
-        @Comment("for funsies/debugging")
-        public static Boolean glassCulls = false;
+        @ConfigEntry(
+                name = "F3 Info Y Offset",
+                maxLength = 4096,
+                minLength = -4096
+        )
+        public Integer f3InfoYOffset = 0;
+
+        @ConfigEntry(name = "Make glass cull entities and blocks", description = "for funsies/debugging")
+        public Boolean glassCulls = false;
     }
 }

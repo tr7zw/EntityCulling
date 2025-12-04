@@ -1,0 +1,4 @@
+text.betterf3.module.entityculling=Entity Culling
+text.betterf3.line.cullinglastpass=[Culling] Last pass
+text.betterf3.line.cullingrenderedblockentities=[Culling] Rendered Block Entities
+text.betterf3.line.cullingrenderedentities=[Culling] Rendered Entities
