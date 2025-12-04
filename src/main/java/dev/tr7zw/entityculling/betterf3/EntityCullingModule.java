@@ -16,14 +16,8 @@ public class EntityCullingModule extends BaseModule {
         this.valueColor = defaultValueColor;
 
         lines.add(new DebugLine("cullinglastpass"));
-
-        if (!Config.FIELDS.disableBlockEntityCulling) {
-            lines.add(new DebugLine("cullingrenderedblockentities"));
-        }
-
-        if (!Config.FIELDS.disableEntityCulling) {
-            lines.add(new DebugLine("cullingrenderedentities"));
-        }
+        lines.add(new DebugLine("cullingrenderedblockentities"));
+        lines.add(new DebugLine("cullingrenderedentities"));
     }
 
     @Override
@@ -35,22 +29,22 @@ public class EntityCullingModule extends BaseModule {
             EntityCullingMod.instance.skippedEntityTicks = 0;
         }
 
-        lines.get(0).setValue(EntityCullingMod.instance.cullTask.lastTime + "ms");
+        lines.get(0).setValue( EntityCullingMod.instance.cullTask.lastTime + "ms" );
 
         if (!Config.FIELDS.disableBlockEntityCulling) {
             lines.get(1).setValue( EntityCullingMod.instance.renderedBlockEntities
                                  + " Skipped: "
                                  + EntityCullingMod.instance.skippedBlockEntities );
+        } else {
+            lines.get(1).setValue("Culling Disabled");
+        }
 
-            if (!Config.FIELDS.disableEntityCulling) {
-                lines.get(2).setValue( EntityCullingMod.instance.renderedEntities
-                                     + " Skipped: "
-                                     + EntityCullingMod.instance.skippedEntities);
-            }
-        } else if (!Config.FIELDS.disableEntityCulling) {
+        if (!Config.FIELDS.disableEntityCulling) {
             lines.get(2).setValue( EntityCullingMod.instance.renderedEntities
                                  + " Skipped: "
                                  + EntityCullingMod.instance.skippedEntities);
+        } else {
+            lines.get(2).setValue("Culling Disabled");
         }
 
         EntityCullingMod.instance.renderedBlockEntities = 0;

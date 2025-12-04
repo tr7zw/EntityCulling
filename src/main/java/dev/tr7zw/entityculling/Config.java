@@ -16,7 +16,7 @@ public class Config {
         @ConfigEntry(name = "Disable Block Entity culling")
         public Boolean disableBlockEntityCulling = false;
 
-        @ConfigEntry(name = "F3 Info")
+        @ConfigEntry(name = "F3 Info", description = "If BetterF3 is installed disable there instead")
         public Boolean showF3Info = true;
 
         @ConfigEntry(

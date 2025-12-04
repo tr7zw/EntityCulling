@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.tr7zw.entityculling.Config;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -23,49 +22,6 @@ import dev.tr7zw.entityculling.EntityCullingMod;
 public class DebugHudMixin extends DrawContext {
 
     @Shadow private Minecraft minecraft;
-
-//    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/platform/Lighting;turnOff()V"))
-//    public void clearDebugVariables(float tickDelta, boolean screenOpen, int mouseX, int mouseY, CallbackInfo ci) {
-//        if (this.minecraft.options.debugHud) {
-//            if (FabricLoader.getInstance().isModLoaded("betterf3")) {
-//                this.minecraft.getRenderChunkDebugInfo();
-//                this.minecraft.getRenderEntityDebugInfo();
-//                this.minecraft.getWorldDebugInfo();
-//                this.minecraft.getChunkSourceDebugInfo();
-//            }
-//
-//            if (  (0 != EntityCullingMod.instance.tickedEntities)
-//               || (0 != EntityCullingMod.instance.skippedEntityTicks)
-//            ) {
-//                EntityCullingMod.instance.tickedEntities = 0;
-//                EntityCullingMod.instance.skippedEntityTicks = 0;
-//            }
-//
-//            EntityCullingMod.instance.renderedBlockEntities = 0;
-//            EntityCullingMod.instance.skippedBlockEntities = 0;
-//            EntityCullingMod.instance.renderedEntities = 0;
-//            EntityCullingMod.instance.skippedEntities = 0;
-//        }
-//    }
-//
-//    @Inject(method = "render", at = @At(value = "INVOKE", target = "Ljava/lang/Runtime;maxMemory()J"))
-//    public void getLeftText(float tickDelta, boolean screenOpen, int mouseX, int mouseY, CallbackInfo ci) {
-//        if (!Config.FIELDS.showF3Info) {
-//            return;
-//        }
-//
-//        TextRenderer textRenderer = this.minecraft.textRenderer;
-//        List<String> debugLines = getStrings();
-//
-//        for (int lineIndex = 0; lineIndex < debugLines.size(); lineIndex++) {
-//            String debugString = debugLines.get(lineIndex);
-//            this.drawTextWithShadow( textRenderer
-//                                   , debugString
-//                                   , 2
-//                                   , 106 + Config.FIELDS.f3InfoYOffset + (lineIndex * 9)
-//                                   , 0xE0E0E0 );
-//        }
-//    }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Ljava/lang/Runtime;maxMemory()J"))
     public void getLeftText(float tickDelta, boolean screenOpen, int mouseX, int mouseY, CallbackInfo ci) {
