@@ -21,7 +21,7 @@ public class Provider implements DataProvider {
     @Override
     public boolean isOpaqueFullCube(int x, int y, int z) {
         int blockId = world.getBlockId(x, y, z);
-        return Block.BLOCKS_OPAQUE[blockId] || (Config.Fields.glassCulls && blockId == Block.GLASS.id);
+        return Block.BLOCKS_OPAQUE[blockId] || (Config.FIELDS.glassCulls && blockId == Block.GLASS.id);
     }
 
     @Override

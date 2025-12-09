@@ -21,16 +21,16 @@ public abstract class EntityRenderDispatcherMixin {
 
     @Shadow public abstract EntityRenderer get(Entity entity);
 
-    @Inject(at = @At("HEAD"), method = "method_1920", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "render(Lnet/minecraft/entity/Entity;DDDFF)V", cancellable = true)
     private void renderEntity(Entity entity, double e, double f, double g, float h, float par6, CallbackInfo ci) {
-        if (Config.Fields.disableEntityCulling) {
+        if (Config.FIELDS.disableEntityCulling) {
             return;
         }
         Cullable cullable = (Cullable) entity;
         if (!cullable.isForcedVisible() && cullable.isCulled()) {
             EntityCullingMod.instance.skippedEntities++;
             if (entity instanceof LivingEntity livingEntity && get(livingEntity) instanceof LivingEntityRenderer livingEntityRenderer) {
-                ((LivingEntityRendererAccessor) livingEntityRenderer).invokeMethod_821(livingEntity, e, f, g);
+                ((LivingEntityRendererAccessor) livingEntityRenderer).invokeRenderNameTag(livingEntity, e, f, g);
             }
             ci.cancel();
             return;

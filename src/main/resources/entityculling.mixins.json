@@ -3,8 +3,10 @@
   "minVersion": "0.8",
   "package": "dev.tr7zw.entityculling.mixin",
   "compatibilityLevel": "JAVA_16",
+  "plugin": "dev.tr7zw.entityculling.EntityCullingMixinPlugin",
   "mixins": [],
   "client": [
+    "BetterF3Mixin",
     "BlockEntityRenderDispatcherMixin",
     "ClientPlayerEntityMixin",
     "CullableMixin",

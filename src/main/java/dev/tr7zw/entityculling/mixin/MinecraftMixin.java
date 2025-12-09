@@ -14,7 +14,7 @@ public class MinecraftMixin {
         EntityCullingMod.instance.clientTick();
     }
 
-    @Inject(method = "tick", at=@At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_196(ZZ)V"))
+    @Inject(method = "tick", at=@At(value = "INVOKE", target = "Lnet/minecraft/world/World;allowSpawning(ZZ)V"))
     public void worldTick(CallbackInfo ci) {
         EntityCullingMod.instance.worldTick();
     }
