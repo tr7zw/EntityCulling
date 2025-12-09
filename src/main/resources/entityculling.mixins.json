@@ -7,7 +7,6 @@
     "BlockEntityRenderDispatcherMixin",
     "EntityRendererMixin",
     "CullableMixin",
-    "DebugHudMixin",
     "WorldRendererMixin"
   ],
   "injectors": {

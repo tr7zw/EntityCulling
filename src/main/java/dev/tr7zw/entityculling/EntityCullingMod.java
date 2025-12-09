@@ -14,6 +14,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -102,6 +103,24 @@ public class EntityCullingMod {
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
         cullTask.requestCull = true;
+    }
+
+    @SubscribeEvent
+    public void onRenderGameOverlay(RenderGameOverlayEvent.Text event) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (!mc.gameSettings.showDebugInfo || mc.gameSettings.reducedDebugInfo || mc.thePlayer.hasReducedDebug()) {
+            return;
+        }
+
+        event.left.add("[Culling] Last pass: " + cullTask.lastTime + "ms");
+        event.left.add("[Culling] Rendered Block Entities: " + renderedBlockEntities + " Skipped: " + skippedBlockEntities);
+        event.left.add("[Culling] Rendered Entities: " + renderedEntities + " Skipped: " + skippedEntities);
+        //event.left.add("[Culling] Ticked Entities: " + lastTickedEntities + " Skipped: " + lastSkippedEntityTicks);
+
+        renderedBlockEntities = 0;
+        skippedBlockEntities = 0;
+        renderedEntities = 0;
+        skippedEntities = 0;
     }
 
     @SubscribeEvent
