@@ -130,9 +130,9 @@ public class CullTask implements Runnable {
 
     // 1.8 doesn't know where the heck the camera is... what?!?
     private Vec3 getCameraPos() {
-        if (client.gameSettings.thirdPersonView == 0) {
-            return client.getRenderViewEntity().getPositionEyes(0);
-        }
+        //if (client.gameSettings.thirdPersonView == 0) {
+        //    return client.getRenderViewEntity().getPositionEyes(0);
+        //}
         return client.getRenderViewEntity().getPositionEyes(0);
         // doesn't work correctly
 //        Entity entity = client.getRenderViewEntity();
