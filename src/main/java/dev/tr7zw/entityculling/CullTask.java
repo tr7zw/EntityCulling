@@ -125,7 +125,7 @@ public class CullTask implements Runnable {
                     continue;
                 }
                 AABB boundingBox = NMSCullingHelper.getCullingBox(entity);
-                if (boundingBox.getXsize() > hitboxLimit || boundingBox.getYsize() > hitboxLimit
+                if (boundingBox == null || boundingBox.getXsize() > hitboxLimit || boundingBox.getYsize() > hitboxLimit
                         || boundingBox.getZsize() > hitboxLimit) {
                     cullable.setCulled(false); // To big to bother to cull
                     continue;

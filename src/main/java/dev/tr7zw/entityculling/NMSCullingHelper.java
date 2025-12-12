@@ -19,8 +19,11 @@ public class NMSCullingHelper {
         /*
          return entity.noCulling;
         *///? } else {
-
-        return ((EntityRendererInter<Entity>) MC.getEntityRenderDispatcher().getRenderer(entity))
+        var renderer = MC.getEntityRenderDispatcher().getRenderer(entity);
+        if (renderer == null) {
+            return true;
+        }
+        return ((EntityRendererInter<Entity>) renderer)
                 .entityCullingIgnoresCulling(entity);
         //? }
     }
@@ -35,8 +38,11 @@ public class NMSCullingHelper {
         /*
          return entity.getBoundingBoxForCulling();
         *///? } else {
-
-        return ((EntityRendererInter<Entity>) MC.getEntityRenderDispatcher().getRenderer(entity))
+        var renderer = MC.getEntityRenderDispatcher().getRenderer(entity);
+        if (renderer == null) {
+            return null;
+        }
+        return ((EntityRendererInter<Entity>) renderer)
                 .entityCullingGetCullingBox(entity);
         //? }
     }
