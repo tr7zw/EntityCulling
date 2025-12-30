@@ -38,6 +38,10 @@ public class ClientWorldMixin {
             EntityCullingModBase.instance.tickedEntities++;
             return; // disabled
         }
+        if (EntityCullingModBase.instance.config.forceDisplayCulling
+                && entity instanceof net.minecraft.world.entity.Display display) {
+            processDisplay(display);
+        }
         // Use abstract minecart instead of whitelist to also catch modded Minecarts
         if (NMSCullingHelper.ignoresCulling(entity) || entity == GeneralUtil.getPlayer()
                 || entity == GeneralUtil.getCameraEntity() || entity.isPassenger() || entity.isVehicle()
@@ -63,6 +67,15 @@ public class ClientWorldMixin {
             }
         }
         EntityCullingModBase.instance.tickedEntities++;
+    }
+
+    private void processDisplay(net.minecraft.world.entity.Display display) {
+        if (display.getBoundingBoxForCulling().getSize() == 0 && display instanceof DisplayAccessor accessor) {
+            accessor.invokeSetWidth(3);
+            accessor.invokeSetHeight(3);
+            // cause culling data update
+            display.setPos(display.getX(), display.getY(), display.getZ());
+        }
     }
 
     private void basicTick(Entity entity) {

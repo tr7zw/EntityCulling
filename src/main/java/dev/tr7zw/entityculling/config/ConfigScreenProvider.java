@@ -60,6 +60,8 @@ public class ConfigScreenProvider {
                     () -> inst.config.skipEntityCulling, b -> inst.config.skipEntityCulling = b));
             generalOptions.add(getOnOffOption("text.entityculling.skipBlockEntityCulling",
                     () -> inst.config.skipBlockEntityCulling, b -> inst.config.skipBlockEntityCulling = b));
+            generalOptions.add(getOnOffOption("text.entityculling.forceDisplayCulling",
+                    () -> inst.config.forceDisplayCulling, b -> inst.config.forceDisplayCulling = b));
             //? if >= 1.21.9 {
 
             generalOptions.add(getOnOffOption("text.entityculling.blockEntityFrustumCulling",

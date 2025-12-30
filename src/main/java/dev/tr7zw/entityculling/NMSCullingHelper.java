@@ -23,8 +23,7 @@ public class NMSCullingHelper {
         if (renderer == null) {
             return true;
         }
-        return ((EntityRendererInter<Entity>) renderer)
-                .entityCullingIgnoresCulling(entity);
+        return ((EntityRendererInter<Entity>) renderer).entityCullingIgnoresCulling(entity);
         //? }
     }
 
@@ -42,8 +41,7 @@ public class NMSCullingHelper {
         if (renderer == null) {
             return null;
         }
-        return ((EntityRendererInter<Entity>) renderer)
-                .entityCullingGetCullingBox(entity);
+        return ((EntityRendererInter<Entity>) renderer).entityCullingGetCullingBox(entity);
         //? }
     }
 

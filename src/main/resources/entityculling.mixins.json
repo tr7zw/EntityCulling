@@ -13,7 +13,8 @@
         "DebugHudMixin",
         "ClientWorldMixin",
         "DebugScreenEntriesAccessor",
-        "LivingEntityRendererAccessor"
+        "LivingEntityRendererAccessor",
+        "DisplayAccessor"
     ],
     "injectors": {
         "defaultRequire": 1
