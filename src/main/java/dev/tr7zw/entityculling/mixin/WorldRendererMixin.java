@@ -3,6 +3,7 @@ package dev.tr7zw.entityculling.mixin;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.client.player.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -57,7 +58,7 @@ public class WorldRendererMixin {
                     var renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
                     double d = GeneralUtil.getCameraEntity().distanceToSqr(entity);
                     if (renderer instanceof LivingEntityRendererAccessor accessor
-                            && accessor.invokeShouldShowName(living, d)) {
+                            && accessor.invokeShouldShowName(living, d) && !entity.isDiscrete()) { // INFO: The discrete check happens in the rendering itself, so it needs to be checked here as well
                         net.minecraft.network.chat.Component display;
                         if (entity instanceof net.minecraft.client.entity.ClientAvatarEntity avatar && d < 100
                                 && (display = avatar.belowNameDisplay()) != null) {
