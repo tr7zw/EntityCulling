@@ -122,10 +122,10 @@ public class CullTask implements Runnable {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                EntityCullingMod.LOGGER.error(e);
             }
         }
-        System.out.println("Shutting down culling task!");
+        EntityCullingMod.LOGGER.info("Shutting down culling task!");
     }
 
     // 1.8 doesn't know where the heck the camera is... what?!?
