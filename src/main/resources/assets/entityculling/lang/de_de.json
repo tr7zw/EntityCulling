@@ -18,10 +18,10 @@
     "text.entityculling.disableF3.tooltip": "Wenn diese Option aktiviert ist, werden in den F3-Debug-Informationen keine Culling-Informationen angezeigt.",
     "text.entityculling.skipEntityCulling": "Entitäten-Culling überspringen",
     "text.entityculling.skipEntityCulling.tooltip": "Wenn diese Option aktiviert ist, wird das Culling von Entitäten komplett übersprungen. Das kann beim Debuggen oder wenn du Culling vorübergehend deaktivieren willst, nützlich sein.",
-    "text.entityculling.skipBlockEntityCulling": "Blockentitäten-Culling überspringen",
+    "text.entityculling.skipBlockEntityCulling": "Block-Entitäten-Culling überspringen",
     "text.entityculling.skipBlockEntityCulling.tooltip": "Wenn diese Option aktiviert ist, wird das Culling von Block-Entitäten komplett übersprungen. Das kann beim Debuggen oder wenn du Culling vorübergehend deaktivieren willst, nützlich sein.",
-    "text.entityculling.blockEntityFrustumCulling": "Blockentitäten-Frustum-Culling",
-    "text.entityculling.blockEntityFrustumCulling.tooltip": "Wenn diese Option aktiviert ist, wird die Extraktion des Block-Entity-Status basierend auf dem Sichtkegel der Kamera reduziert. Dies kann die Leistung verbessern, falls dein Modloader/eine anderere Mod dies nicht bereits tut.",
-    "text.entityculling.forceDisplayCulling": "Culling anzeigen erzwingen",
+    "text.entityculling.blockEntityFrustumCulling": "Block-Entitäten-Frustum-Culling",
+    "text.entityculling.blockEntityFrustumCulling.tooltip": "Wenn diese Option aktiviert ist, wird die Extraktion des Block-Entity-Status basierend auf dem Sichtkegel der Kamera reduziert. Dies kann die Leistung verbessern, falls dein Modloader/eine andere Mod dies nicht bereits tut.",
+    "text.entityculling.forceDisplayCulling": "Anzeige-Entitäten-Culling erzwingen",
     "text.entityculling.forceDisplayCulling.tooltip": "Wenn diese Option aktiviert ist, wird Anzeige-Entitäten ohne Bounding Box eine Standard-Bounding Box zugewiesen, um sie zu verbergen. Dies kann die Leistung für Maps/Server verbessern, deren Anzeige-Entitäten nicht korrekt konfiguriert sind, kann jedoch zu visuellen Problemen führen."
 }
