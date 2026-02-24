@@ -23,5 +23,5 @@
     "text.entityculling.blockEntityFrustumCulling": "Block-Entitäten-Frustum-Culling",
     "text.entityculling.blockEntityFrustumCulling.tooltip": "Wenn diese Option aktiviert ist, wird die Extraktion des Block-Entity-Status basierend auf dem Sichtkegel der Kamera reduziert. Dies kann die Leistung verbessern, falls dein Modloader/eine andere Mod dies nicht bereits tut.",
     "text.entityculling.forceDisplayCulling": "Anzeige-Entitäten-Culling erzwingen",
-    "text.entityculling.forceDisplayCulling.tooltip": "Wenn diese Option aktiviert ist, wird Anzeige-Entitäten ohne Bounding Box eine Standard-Bounding Box zugewiesen, um sie zu verbergen. Dies kann die Leistung für Maps/Server verbessern, deren Anzeige-Entitäten nicht korrekt konfiguriert sind, kann jedoch zu visuellen Problemen führen."
+    "text.entityculling.forceDisplayCulling.tooltip": "Wenn diese Option aktiviert ist, wird Anzeige-Entitäten ohne Begrenzungsrahmen ein Standardbegrenzungsrahmen zugewiesen, um sie zu verbergen. Dies kann die Leistung für Maps/Server verbessern, deren Anzeige-Entitäten nicht korrekt konfiguriert sind, kann jedoch zu visuellen Problemen führen."
 }
