@@ -22,6 +22,9 @@
         ],
         "gcapi3": [
             "dev.tr7zw.entityculling.Config"
+        ],
+        "betterf3:event_bus_client": [
+            "dev.tr7zw.entityculling.betterf3.ModuleListener"
         ]
     },
     "mixins": [
