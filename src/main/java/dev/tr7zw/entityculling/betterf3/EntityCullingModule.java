@@ -3,21 +3,23 @@ package dev.tr7zw.entityculling.betterf3;
 import dev.tr7zw.entityculling.Config;
 import dev.tr7zw.entityculling.EntityCullingMod;
 import net.minecraft.client.Minecraft;
+import net.modificationstation.stationapi.api.util.Identifier;
 import ralf2oo2.betterf3.modules.BaseModule;
 import ralf2oo2.betterf3.utils.DebugLine;
 
 public class EntityCullingModule extends BaseModule {
 
-    public EntityCullingModule() {
+    public EntityCullingModule(Identifier id) {
+        super(id);
         this.defaultNameColor = 0xFF5555;
         this.defaultValueColor = 0xFFFF55;
 
         this.nameColor = defaultNameColor;
         this.valueColor = defaultValueColor;
 
-        lines.add(new DebugLine("cullinglastpass"));
-        lines.add(new DebugLine("cullingrenderedblockentities"));
-        lines.add(new DebugLine("cullingrenderedentities"));
+        lines.add(new DebugLine("cullinglastpass").withNamespace(ModuleListener.NAMESPACE));
+        lines.add(new DebugLine("cullingrenderedblockentities").withNamespace(ModuleListener.NAMESPACE));
+        lines.add(new DebugLine("cullingrenderedentities").withNamespace(ModuleListener.NAMESPACE));
     }
 
     @Override
