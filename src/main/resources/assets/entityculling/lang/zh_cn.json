@@ -1,5 +1,6 @@
 {
     "text.entityculling.title": "EntityCulling",
+    "key.category.minecraft.text.entityculling.title": "EntityCulling",
     "key.entityculling.toggle": "调试切换剔除",
     "key.entityculling.toggleBoxes": "显示筛选框",
     "text.entityculling.tab.general_options": "常规",
@@ -18,5 +19,9 @@
     "text.entityculling.skipEntityCulling": "跳过实体剔除",
     "text.entityculling.skipEntityCulling.tooltip": "开启后，将完全跳过实体的剔除。这在你调试时很有用，或者当你想要临时禁用剔除实体功能时也很方便。",
     "text.entityculling.skipBlockEntityCulling": "跳过方块实体剔除",
-    "text.entityculling.skipBlockEntityCulling.tooltip": "开启后，将完全跳过方块实体的剔除。这在你调试时很有用，或者当你想要临时禁用剔除功能时也很方便。"
+    "text.entityculling.skipBlockEntityCulling.tooltip": "开启后，将完全跳过方块实体的剔除。这在你调试时很有用，或者当你想要临时禁用剔除功能时也很方便。",
+    "text.entityculling.blockEntityFrustumCulling": "方块实体视锥剔除",
+    "text.entityculling.blockEntityFrustumCulling.tooltip": "开启后，将根据摄像机的视锥体对方块实体状态提取进行剔除。如果你的模组加载器或其他模组尚未执行此操作，这可以提高性能。",
+    "text.entityculling.forceDisplayCulling": "强制对展示实体剔除",
+    "text.entityculling.forceDisplayCulling.tooltip": "开启后，将为没有边界框的展示实体分配默认边界框以用于剔除目的。这可以提高未正确配置展示实体的地图/服务器的性能，但可能会导致视觉问题。"
 }
