@@ -60,14 +60,24 @@ public class WorldRendererMixin {
                     if (renderer instanceof LivingEntityRendererAccessor accessor
                             && accessor.invokeShouldShowName(living, d) && !entity.isDiscrete()) { // INFO: The discrete check happens in the rendering itself, so it needs to be checked here as well
                         net.minecraft.network.chat.Component display;
-                        if (entity instanceof net.minecraft.client.entity.ClientAvatarEntity avatar && d < 100
-                                && (display = avatar.belowNameDisplay()) != null) {
+                        //? if >= 26.0 {
+
+                        Entity checkEntity = entity;
+                        //? } else {
+                        /*
+                        if (entity instanceof net.minecraft.client.entity.ClientAvatarEntity checkEntity) {
+                        *///? }
+                        if (d < 100 && (display = checkEntity.belowNameDisplay()) != null) {
                             var avatarState = new net.minecraft.client.renderer.entity.state.AvatarRenderState();
                             avatarState.entityType = EntityType.PLAYER;
                             avatarState.scoreText = display;
                             avatarState.isInvisibleToPlayer = true;
                             state = avatarState;
                         }
+                        //? if < 26.0 {
+                        /*
+                        }
+                         *///? }
                         state.nameTag = entity.getDisplayName();
                         state.nameTagAttachment = entity.getAttachments().getNullable(
                                 net.minecraft.world.entity.EntityAttachment.NAME_TAG, 0, entity.getYRot(partialTick));
@@ -92,7 +102,7 @@ public class WorldRendererMixin {
     @Inject(at = @At("HEAD"), method = "extractVisibleEntities")
     private void extractVisibleEntities(net.minecraft.client.Camera camera,
             net.minecraft.client.renderer.culling.Frustum frustum, net.minecraft.client.DeltaTracker deltaTracker,
-            net.minecraft.client.renderer.state.LevelRenderState levelRenderState, CallbackInfo ci) {
+            net.minecraft.client.renderer.state.level.LevelRenderState levelRenderState, CallbackInfo ci) {
         EntityCullingModBase.instance.frustum = frustum;
     }
 

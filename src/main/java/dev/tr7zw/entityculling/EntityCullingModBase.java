@@ -137,8 +137,14 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
                     Map<BlockPos, BlockEntity> blockEntities = new HashMap<>();
                     for (int x = -8; x <= 8; x++) {
                         for (int z = -8; z <= 8; z++) {
+                            //? if >= 26.0 {
+                            LevelChunk chunk = client.level.getChunk(client.player.chunkPosition().x() + x,
+                                    client.player.chunkPosition().z() + z);
+                            //? } else {
+                            /*
                             LevelChunk chunk = client.level.getChunk(client.player.chunkPosition().x + x,
                                     client.player.chunkPosition().z + z);
+                            *///? }
                             blockEntities.putAll(chunk.getBlockEntities());
                         }
                     }
