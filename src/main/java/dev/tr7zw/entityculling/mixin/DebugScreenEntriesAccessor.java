@@ -13,8 +13,7 @@ import net.minecraft.resources.*;
 public interface DebugScreenEntriesAccessor {
 
     @Invoker
-    public static /*? >= 1.21.11 {*/ Identifier /*?} else {*//* ResourceLocation *//*?}*/ invokeRegister(
-            /*? >= 1.21.11 {*/ Identifier /*?} else {*//* ResourceLocation *//*?}*/ arg, DebugScreenEntry arg2) {
+    public static Identifier invokeRegister(Identifier arg, DebugScreenEntry arg2) {
         throw new AssertionError();
     }
 
