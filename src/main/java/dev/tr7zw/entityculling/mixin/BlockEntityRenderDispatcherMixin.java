@@ -38,16 +38,25 @@ public abstract class BlockEntityRenderDispatcherMixin {
             // Implement frustum culling like with entities
             EntityCullingModBase.instance.skippedBlockEntities++;
             info.setReturnValue(null);
+            if (EntityCullingModBase.instance.debugCollector.isRunning()) {
+                EntityCullingModBase.instance.debugCollector.addBlockEntity(blockEntity, false);
+            }
             return;
         }
         if (blockEntity instanceof Cullable cullable) {
             if (!cullable.isForcedVisible() && cullable.isCulled()) {
                 EntityCullingModBase.instance.skippedBlockEntities++;
                 info.setReturnValue(null);
+                if (EntityCullingModBase.instance.debugCollector.isRunning()) {
+                    EntityCullingModBase.instance.debugCollector.addBlockEntity(blockEntity, false);
+                }
                 return;
             }
             EntityCullingModBase.instance.renderedBlockEntities++;
             cullable.setOutOfCamera(false);
+            if (EntityCullingModBase.instance.debugCollector.isRunning()) {
+                EntityCullingModBase.instance.debugCollector.addBlockEntity(blockEntity, true);
+            }
         }
     }
     //? if neoforge {

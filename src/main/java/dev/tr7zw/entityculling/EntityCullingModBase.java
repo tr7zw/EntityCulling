@@ -1,17 +1,13 @@
 package dev.tr7zw.entityculling;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 
 import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
+import dev.tr7zw.transition.manager.*;
 import dev.tr7zw.transition.mc.ClientUtil;
 import dev.tr7zw.transition.mc.ComponentProvider;
 import dev.tr7zw.transition.mc.GeneralUtil;
@@ -20,7 +16,6 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.*;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -31,9 +26,10 @@ import net.minecraft.world.phys.AABB;
 public abstract class EntityCullingModBase extends EntityCullingVersionlessBase {
 
     public static EntityCullingModBase instance;
+    public final DebugCollector debugCollector = new DebugCollector();
     public Set<BlockEntityType<?>> blockEntityWhitelist = new HashSet<>();
     public Set<EntityType<?>> entityWhitelist = new HashSet<>();
-    public Set<EntityType<?>> tickCullWhistelist = new HashSet<>();
+    public Set<EntityType<?>> tickCullWhitelists = new HashSet<>();
     public CullTask cullTask;
     protected KeyMapping keybind = GeneralUtil.createKeyMapping("key.entityculling.toggle", -1,
             "text.entityculling.title");
@@ -43,6 +39,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     private Set<Function<Entity, Boolean>> dynamicEntityWhitelist = new HashSet<>();
     private int tickCounter = 0;
     public double lastTickTime = 0;
+    private boolean freezeCamera = false;
     //? if >= 1.21.9 {
 
     public net.minecraft.client.renderer.culling.Frustum frustum = null;
@@ -59,6 +56,13 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
             LOGGER.error("The CullingThread has crashed! Please report the following stacktrace!", ex);
         });
 
+        CodeManager.getInstance().registerCode("entityculling_debug", () -> {
+            debugCollector.requestStart();
+        });
+        CodeManager.getInstance().registerCode("entityculling_freezecam", () -> {
+            freezeCamera = !freezeCamera;
+            ClientUtil.sendChatMessage(ComponentProvider.literal("Toggle freeze camera: " + freezeCamera));
+        });
         initModloader();
     }
 
@@ -82,7 +86,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
                 Optional<EntityType<?>> entity = BuiltInRegistries.ENTITY_TYPE
                         .getOptional(GeneralUtil.getResourceLocation(entityType));
                 entity.ifPresent(e -> {
-                    tickCullWhistelist.add(e);
+                    tickCullWhitelists.add(e);
                 });
             }
             for (String entityType : config.entityWhitelist) {
@@ -124,14 +128,17 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
         }
         // Cull logic preparation
         long start = System.nanoTime();
+        debugCollector.tick();
         Minecraft client = Minecraft.getInstance();
         boolean ingame = client.level != null && client.player != null && client.player.tickCount > 10;
         if (ingame && enabled) {
             boolean changed = false;
             if (tickCounter++ % config.captureRate == 0) {
                 if (!config.skipEntityCulling) {
-                    cullTask.setEntitiesForRendering(
-                            StreamSupport.stream(client.level.entitiesForRendering().spliterator(), false).toList());
+                    List<Entity> entities = StreamSupport
+                            .stream(client.level.entitiesForRendering().spliterator(), false).toList();
+                    cullTask.setEntitiesForRendering(entities);
+                    debugCollector.getDataHolder().consideredEntities = entities.size();
                 }
                 if (!config.skipBlockEntityCulling) {
                     Map<BlockPos, BlockEntity> blockEntities = new HashMap<>();
@@ -149,14 +156,17 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
                         }
                     }
                     cullTask.setBlockEntities(blockEntities);
+                    debugCollector.getDataHolder().consideredBlockEntities = blockEntities.size();
                 }
                 changed = true;
             }
 
             cullTask.setIngame(true);
-            cullTask.setCameraMC(EntityCullingModBase.instance.config.debugMode ? client.player.getEyePosition(0)
-                    : client.gameRenderer.getMainCamera()
-                            /*? >= 1.21.11 {*/ .position() /*?} else {*//* .getPosition() *//*?}*/);
+            if (!freezeCamera) {
+                cullTask.setCameraMC(EntityCullingModBase.instance.config.debugMode ? client.player.getEyePosition(0)
+                        : client.gameRenderer.getMainCamera()
+                                /*? >= 1.21.11 {*/.position() /*?} else {*//* .getPosition() *//*?}*/);
+            }
             cullTask.requestCull = true;
             if (changed) {
                 lastTickTime = (System.nanoTime() - start) / 1_000_000.0;

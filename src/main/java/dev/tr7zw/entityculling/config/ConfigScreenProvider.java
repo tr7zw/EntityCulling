@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import dev.tr7zw.transition.mc.ComponentProvider;
-import dev.tr7zw.transition.mc.ItemUtil;
 import dev.tr7zw.entityculling.EntityCullingModBase;
 import dev.tr7zw.entityculling.versionless.Config;
 import dev.tr7zw.trender.gui.client.AbstractConfigScreen;
@@ -88,10 +87,10 @@ public class ConfigScreenProvider {
                         l.setOnToggle(b -> {
                             if (b) {
                                 inst.config.tickCullingWhitelist.add(getStringEntity(s));
-                                inst.tickCullWhistelist.add(s.getValue());
+                                inst.tickCullWhitelists.add(s.getValue());
                             } else {
                                 inst.config.tickCullingWhitelist.remove(getStringEntity(s));
-                                inst.tickCullWhistelist.remove(s.getValue());
+                                inst.tickCullWhitelists.remove(s.getValue());
                             }
                             inst.writeConfig();
                         });

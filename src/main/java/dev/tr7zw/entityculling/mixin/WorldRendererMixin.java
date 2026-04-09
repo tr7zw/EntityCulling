@@ -1,8 +1,8 @@
 package dev.tr7zw.entityculling.mixin;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+import net.minecraft.client.*;
 import net.minecraft.client.player.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,7 +21,6 @@ import dev.tr7zw.entityculling.EntityCullingModBase;
 import dev.tr7zw.entityculling.NMSCullingHelper;
 import dev.tr7zw.entityculling.versionless.access.Cullable;
 import dev.tr7zw.transition.mc.GeneralUtil;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.debug.DebugRenderer;
@@ -53,50 +52,63 @@ public class WorldRendererMixin {
             EntityCullingModBase.instance.skippedEntities++;
             var state = new net.minecraft.client.renderer.entity.state.EntityRenderState();
             state.entityType = EntityType.INTERACTION;
-            if (EntityCullingModBase.instance.config.renderNametagsThroughWalls && entity.shouldShowName()) {
-                if (entity instanceof LivingEntity living) {
-                    var renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
-                    double d = GeneralUtil.getCameraEntity().distanceToSqr(entity);
-                    if (renderer instanceof LivingEntityRendererAccessor accessor
-                            && accessor.invokeShouldShowName(living, d) && !entity.isDiscrete()) { // INFO: The discrete check happens in the rendering itself, so it needs to be checked here as well
-                        net.minecraft.network.chat.Component display;
-                        //? if >= 26.0 {
-
-                        Entity checkEntity = entity;
-                        //? } else {
-                        /*
-                        if (entity instanceof net.minecraft.client.entity.ClientAvatarEntity checkEntity) {
-                        *///? }
-                        if (d < 100 && (display = checkEntity.belowNameDisplay()) != null) {
-                            var avatarState = new net.minecraft.client.renderer.entity.state.AvatarRenderState();
-                            avatarState.entityType = EntityType.PLAYER;
-                            avatarState.scoreText = display;
-                            avatarState.isInvisibleToPlayer = true;
-                            state = avatarState;
-                        }
-                        //? if < 26.0 {
-                        /*
-                        }
-                         *///? }
-                        state.nameTag = entity.getDisplayName();
-                        state.nameTagAttachment = entity.getAttachments().getNullable(
-                                net.minecraft.world.entity.EntityAttachment.NAME_TAG, 0, entity.getYRot(partialTick));
-                    }
-                } else {
-                    state.nameTag = entity.getDisplayName();
-                    state.nameTagAttachment = entity.getAttachments().getNullable(
-                            net.minecraft.world.entity.EntityAttachment.NAME_TAG, 0, entity.getYRot(partialTick));
-                }
-            }
+            state = processNametag(entity, partialTick, state);
             state.x = net.minecraft.util.Mth.lerp(partialTick, entity.xOld, entity.getX());
             state.y = net.minecraft.util.Mth.lerp(partialTick, entity.yOld, entity.getY());
             state.z = net.minecraft.util.Mth.lerp(partialTick, entity.zOld, entity.getZ());
             state.isInvisible = true;
             ci.setReturnValue(state);
+            if (EntityCullingModBase.instance.debugCollector.isRunning()) {
+                EntityCullingModBase.instance.debugCollector.addEntity(entity, false, false);
+            }
             return;
         }
         EntityCullingModBase.instance.renderedEntities++;
         cullable.setOutOfCamera(false);
+        if (EntityCullingModBase.instance.debugCollector.isRunning()) {
+            EntityCullingModBase.instance.debugCollector.addEntity(entity, true,
+                    NMSCullingHelper.ignoresCulling(entity));
+        }
+    }
+
+    private static net.minecraft.client.renderer.entity.state.EntityRenderState processNametag(Entity entity,
+            float partialTick, net.minecraft.client.renderer.entity.state.EntityRenderState state) {
+        if (EntityCullingModBase.instance.config.renderNametagsThroughWalls && entity.shouldShowName()) {
+            if (entity instanceof LivingEntity living) {
+                var renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
+                double d = GeneralUtil.getCameraEntity().distanceToSqr(entity);
+                if (renderer instanceof LivingEntityRendererAccessor accessor
+                        && accessor.invokeShouldShowName(living, d) && !entity.isDiscrete()) { // INFO: The discrete check happens in the rendering itself, so it needs to be checked here as well
+                    net.minecraft.network.chat.Component display;
+                    //? if >= 26.0 {
+
+                    Entity checkEntity = entity;
+                    //? } else {
+                    /*
+                    if (entity instanceof net.minecraft.client.entity.ClientAvatarEntity checkEntity) {
+                    *///? }
+                    if (d < 100 && (display = checkEntity.belowNameDisplay()) != null) {
+                        var avatarState = new net.minecraft.client.renderer.entity.state.AvatarRenderState();
+                        avatarState.entityType = EntityType.PLAYER;
+                        avatarState.scoreText = display;
+                        avatarState.isInvisibleToPlayer = true;
+                        state = avatarState;
+                    }
+                    //? if < 26.0 {
+                    /*
+                    }
+                     *///? }
+                    state.nameTag = entity.getDisplayName();
+                    state.nameTagAttachment = entity.getAttachments().getNullable(
+                            net.minecraft.world.entity.EntityAttachment.NAME_TAG, 0, entity.getYRot(partialTick));
+                }
+            } else {
+                state.nameTag = entity.getDisplayName();
+                state.nameTagAttachment = entity.getAttachments().getNullable(
+                        net.minecraft.world.entity.EntityAttachment.NAME_TAG, 0, entity.getYRot(partialTick));
+            }
+        }
+        return state;
     }
 
     @Inject(at = @At("HEAD"), method = "extractVisibleEntities")

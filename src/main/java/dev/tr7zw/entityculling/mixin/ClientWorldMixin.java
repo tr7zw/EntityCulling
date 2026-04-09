@@ -50,7 +50,7 @@ public class ClientWorldMixin {
             return; // never skip the client tick for the player or entities in vehicles/with
                     // passengers. Also respect the "noCulling" flag
         }
-        if (EntityCullingModBase.instance.tickCullWhistelist.contains(entity.getType())
+        if (EntityCullingModBase.instance.tickCullWhitelists.contains(entity.getType())
                 || EntityCullingModBase.instance.entityWhitelist.contains(entity.getType())) {
             EntityCullingModBase.instance.tickedEntities++;
             return; // whitelisted, don't skip that tick
@@ -60,6 +60,7 @@ public class ClientWorldMixin {
             if (cull.isCulled() || cull.isOutOfCamera()) {
                 basicTick(entity);
                 EntityCullingModBase.instance.skippedEntityTicks++;
+                EntityCullingModBase.instance.debugCollector.getDataHolder().skippedEntityTicks++;
                 info.cancel();
                 return;
             } else {
@@ -67,6 +68,7 @@ public class ClientWorldMixin {
             }
         }
         EntityCullingModBase.instance.tickedEntities++;
+        EntityCullingModBase.instance.debugCollector.getDataHolder().tickedEntities++;
     }
 
     private void processDisplay(net.minecraft.world.entity.Display display) {
