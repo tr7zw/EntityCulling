@@ -1,4 +1,27 @@
 {
     "text.entityculling.title": "EntityCulling",
-    "key.entityculling.toggle": "Activer/Désactiver le débogage du culling"
+    "key.category.minecraft.text.entityculling.title": "EntityCulling",
+    "key.entityculling.toggle": "Activer/Désactiver le débogage du culling",
+    "key.entityculling.toggleBoxes": "Afficher les boîtes de culling",
+    "text.entityculling.tab.general_options": "Général",
+    "text.entityculling.tab.tick_culling": "Ignorer le culling des ticks",
+    "text.entityculling.tab.tick_culling.tooltip": "Les entités sélectionnées dans cet onglet ne verront pas leur méthode de tick optimisée lorsqu'elles sont masquées. Cela peut être utile pour des entités qui doivent continuer à se mettre à jour, comme les bateaux.",
+    "text.entityculling.tab.entity_culling": "Ignorer les entités",
+    "text.entityculling.tab.entity_culling.tooltip": "Les entités sélectionnées dans cet onglet ne seront jamais masquées. Ceci est principalement utile pour les entités côté client ou celles qui doivent être rendues indépendamment de leur visibilité.",
+    "text.entityculling.tab.block_entity_culling": "Ignorer les entités de bloc",
+    "text.entityculling.tab.block_entity_culling.tooltip": "Les entités de bloc sélectionnées dans cet onglet ne seront jamais masquées. Ceci est principalement utile pour celles qui doivent être rendues indépendamment de leur visibilité.",
+    "text.entityculling.renderNametagsThroughWalls": "Afficher les étiquettes à travers les murs",
+    "text.entityculling.renderNametagsThroughWalls.tooltip": "Lorsque désactivé, les entités masquées n'afficheront pas leur étiquette à travers les murs.",
+    "text.entityculling.tickCulling": "Culling des ticks",
+    "text.entityculling.tickCulling.tooltip": "Lorsque activé, les entités masquées ne seront plus mises à jour. Cela peut améliorer les performances dans certains cas, mais peut provoquer des problèmes avec certains mods. Consultez les options de contrôle avancé dans les autres onglets.",
+    "text.entityculling.disableF3": "Désactiver les informations de débogage F3",
+    "text.entityculling.disableF3.tooltip": "Lorsque activé, les informations de débogage (F3) n'afficheront plus les données liées au culling.",
+    "text.entityculling.skipEntityCulling": "Désactiver le culling des entités",
+    "text.entityculling.skipEntityCulling.tooltip": "Lorsque activé, le culling des entités sera complètement désactivé. Utile pour le débogage ou pour désactiver temporairement cette optimisation.",
+    "text.entityculling.skipBlockEntityCulling": "Désactiver le culling des entités de bloc",
+    "text.entityculling.skipBlockEntityCulling.tooltip": "Lorsque activé, le culling des entités de bloc sera complètement désactivé. Utile pour le débogage ou pour désactiver temporairement cette optimisation.",
+    "text.entityculling.blockEntityFrustumCulling": "Culling des entités de bloc par frustum",
+    "text.entityculling.blockEntityFrustumCulling.tooltip": "Lorsque activé, l'extraction de l'état des entités de bloc sera filtrée selon le frustum de la caméra. Cela peut améliorer les performances si votre modloader ou un autre mod ne le fait pas déjà.",
+    "text.entityculling.forceDisplayCulling": "Forcer le culling des entités d'affichage",
+    "text.entityculling.forceDisplayCulling.tooltip": "Lorsque activé, les entités d'affichage sans boîte englobante recevront une boîte par défaut pour le culling. Cela peut améliorer les performances sur certaines cartes ou serveurs mal configurés, mais peut entraîner des problèmes visuels."
 }
