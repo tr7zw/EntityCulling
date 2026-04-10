@@ -1,4 +1,13 @@
 {
     "text.entityculling.title": "EntityCulling",
-    "key.entityculling.toggle": "Activer/Désactiver le débogage du culling"
+    "key.category.minecraft.text.entityculling.title": "EntityCulling",
+    "key.entityculling.toggle": "Activer/Désactiver le débogage du culling",
+    "key.entityculling.toggleBoxes": "Afficher les boîtes de collision de culling",
+    "text.entityculling.tab.general_options": "Général",
+    "text.entityculling.tab.entity_culling": "Ignore les entités",
+    "text.entityculling.tab.block_entity_culling.tooltip": "Les entités de bloc sélectionnées dans cette catégorie ne seront pas jamais éliminées du rendu. Cela est principalement nécessaire pour les entités de bloc qui ont besoin d'être affichées peu importe leur visibilité",
+    "text.entityculling.renderNametagsThroughWalls": "Affiche les étiquettes de nom à travers les murs",
+    "text.entityculling.disableF3": "Masque les informations de débogage F3",
+    "text.entityculling.disableF3.tooltip": "Quand activé, les informations de débogage F3 n'afficheront pas les informations de culling",
+    "text.entityculling.forceDisplayCulling.tooltip": "Quand activé, les entités d'affichage sans boîte de collision vont se voir assigner une boîte de collision par défaut à des fins de culling. Cela peut grandement améliorer les performances pour des maps/serveurs qui ne paramètrent pas correctement leur entités d'affichage, mais peut causer des problèmes visuels."
 }
