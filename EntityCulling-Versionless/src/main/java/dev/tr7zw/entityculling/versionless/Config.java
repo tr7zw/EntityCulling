@@ -36,5 +36,6 @@ public class Config {
     public boolean skipBlockEntityCulling = false;
     public boolean blockEntityFrustumCulling = true;
     public boolean forceDisplayCulling = false;
+    public boolean solidLeaves = false;
 
 }

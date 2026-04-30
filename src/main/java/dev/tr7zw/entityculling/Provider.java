@@ -5,6 +5,7 @@ import com.logisticscraft.occlusionculling.DataProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.*;
 
 public class Provider implements DataProvider {
 
@@ -20,12 +21,16 @@ public class Provider implements DataProvider {
     @Override
     public boolean isOpaqueFullCube(int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
+        var state = world.getBlockState(pos);
+        if (EntityCullingModBase.instance.config.solidLeaves && state.getBlock() instanceof LeavesBlock) {
+            return true;
+        }
         //? if <= 1.21.1 {
         /*
-         return world.getBlockState(pos).isSolidRender(net.minecraft.world.level.EmptyBlockGetter.INSTANCE, BlockPos.ZERO);
+         return state.isSolidRender(net.minecraft.world.level.EmptyBlockGetter.INSTANCE, BlockPos.ZERO);
         *///? } else {
 
-        return world.getBlockState(pos).isSolidRender();
+        return state.isSolidRender();
         //? }
     }
 

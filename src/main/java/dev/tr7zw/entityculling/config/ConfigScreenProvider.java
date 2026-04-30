@@ -66,9 +66,12 @@ public class ConfigScreenProvider {
                     () -> inst.config.blockEntityFrustumCulling, b -> inst.config.blockEntityFrustumCulling = b));
             //? }
 
+            generalOptions.add(getOnOffOption("text.entityculling.solidLeaves", () -> inst.config.solidLeaves,
+                    b -> inst.config.solidLeaves = b));
+
             var generalOptionList = createOptionList(generalOptions);
             generalOptionList.setGap(-1);
-            generalOptionList.setSize(14 * 20, 8 * 20);
+            generalOptionList.setSize(14 * 20, 9 * 20);
             wTabPanel.add(generalOptionList,
                     b -> b.title(ComponentProvider.translatable("text.entityculling.tab.general_options")));
             // Reusable lists
