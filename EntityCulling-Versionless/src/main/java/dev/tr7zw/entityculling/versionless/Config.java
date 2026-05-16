@@ -12,7 +12,8 @@ public class Config {
             Arrays.asList("minecraft:beacon", "create:rope_pulley", "create:hose_pulley", "betterend:eternal_pedestal",
                     "botania:magic_missile", "botania:flame_ring", "botania:falling_star"));
     public Set<String> entityWhitelist = new HashSet<>(
-            Arrays.asList("botania:mana_burst", "drg_flares:drg_flares", "quark:soul_bead"));
+            Arrays.asList("botania:mana_burst", "drg_flares:drg_flares", "quark:soul_bead",
+                          "mts:builder_existing", "mts:builder_rendering", "mts:builder_seat"));
     public int tracingDistance = 128;
     public boolean debugMode = false;
     public int sleepDelay = 10;
