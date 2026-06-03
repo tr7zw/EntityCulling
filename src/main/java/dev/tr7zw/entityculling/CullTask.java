@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
-import com.logisticscraft.occlusionculling.util.Vec3d;
+import dev.tr7zw.entityculling.versionless.IOcclusionCullingInstance;
+import dev.tr7zw.entityculling.versionless.util.Vec3d;
 
 import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
 import dev.tr7zw.entityculling.versionless.access.Cullable;
@@ -19,7 +19,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Position;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.phys.AABB;
@@ -27,11 +26,11 @@ import net.minecraft.world.phys.Vec3;
 
 public class CullTask implements Runnable {
 
-    public boolean requestCull = false;
-    public boolean disableEntityCulling = false;
-    public boolean disableBlockEntityCulling = false;
+    public volatile boolean requestCull = false;
+    public volatile boolean disableEntityCulling = false;
+    public volatile boolean disableBlockEntityCulling = false;
 
-    private final OcclusionCullingInstance culling;
+    private final IOcclusionCullingInstance culling;
     private final Minecraft client = Minecraft.getInstance();
     private final int sleepDelay = EntityCullingModBase.instance.config.sleepDelay;
     private final int hitboxLimit = EntityCullingModBase.instance.config.hitboxLimit;
@@ -46,19 +45,23 @@ public class CullTask implements Runnable {
 
     // Defensive copy of the required Client data
     @Setter
-    private boolean ingame = false;
+    private volatile boolean ingame = false;
     @Setter
-    private List<Entity> entitiesForRendering = new ArrayList<>();
+    private volatile List<Entity> entitiesForRendering = new ArrayList<>();
     @Setter
-    private Map<BlockPos, BlockEntity> blockEntities = new HashMap<>();
+    private volatile Map<BlockPos, BlockEntity> blockEntities = new HashMap<>();
     @Setter
-    private Vec3 cameraMC = new Vec3(0, 0, 0);
+    private volatile Vec3 cameraMC = new Vec3(0, 0, 0);
 
-    public CullTask(OcclusionCullingInstance culling, Set<BlockEntityType<?>> blockEntityWhitelist,
+    public CullTask(IOcclusionCullingInstance culling, Set<BlockEntityType<?>> blockEntityWhitelist,
             Set<EntityType<?>> entityWhistelist) {
         this.culling = culling;
         this.blockEntityWhitelist = blockEntityWhitelist;
         this.entityWhistelist = entityWhistelist;
+    }
+
+    public void resetTransientState() {
+        requestCull = true;
     }
 
     @Override
@@ -77,7 +80,8 @@ public class CullTask implements Runnable {
                         culling.resetCache();
                         cullBlockEntities(cameraMC, camera);
                         cullEntities(cameraMC, camera);
-                        lastTime = (System.nanoTime() - start) / 1_000_000.0;
+                        long elapsed = System.nanoTime() - start;
+                        lastTime = elapsed / 1_000_000.0;
                     }
                 } else {
                     lastTime = 0; // Reset last time if not enabled
@@ -118,15 +122,10 @@ public class CullTask implements Runnable {
                     cullable.setCulled(false);
                     continue;
                 }
-                if (!entity.position().closerThan(cameraMC, EntityCullingModBase.instance.config.tracingDistance)) {
-                    cullable.setCulled(false); // If your entity view distance is larger than tracingDistance just
-                                               // render it
-                    continue;
-                }
                 AABB boundingBox = NMSCullingHelper.getCullingBox(entity);
                 if (boundingBox == null || boundingBox.getXsize() > hitboxLimit || boundingBox.getYsize() > hitboxLimit
                         || boundingBox.getZsize() > hitboxLimit) {
-                    cullable.setCulled(false); // To big to bother to cull
+                    cullable.setCulled(false); // Too big to bother to cull
                     continue;
                 }
                 aabbMin.set(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
@@ -172,7 +171,7 @@ public class CullTask implements Runnable {
                     AABB boundingBox = EntityCullingModBase.instance.setupAABB(entry.getValue(), pos);
                     if (boundingBox.getXsize() > hitboxLimit || boundingBox.getYsize() > hitboxLimit
                             || boundingBox.getZsize() > hitboxLimit) {
-                        cullable.setCulled(false); // To big to bother to cull
+                        cullable.setCulled(false); // Too big to bother to cull
                         continue;
                     }
                     aabbMin.set(boundingBox.minX, boundingBox.minY, boundingBox.minZ);

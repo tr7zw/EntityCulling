@@ -10,12 +10,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 
 public abstract class EntityCullingVersionlessBase {
 
     public static final Logger LOGGER = LogManager.getLogger("EntityCulling");
-    public OcclusionCullingInstance culling;
+    public IOcclusionCullingInstance culling;
     public boolean debugHitboxes = false;
     public static boolean enabled = true;
     protected Thread cullThread;

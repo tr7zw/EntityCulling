@@ -35,6 +35,7 @@ public class EntityCullingMod extends EntityCullingModBase
         ModLoaderEventUtil.registerClientTickStartListener(this::clientTick);
         ModLoaderEventUtil.registerWorldTickStartListener(this::worldTick);
         ModLoaderUtil.registerKeybind(keybind);
+        ModLoaderUtil.registerKeybind(keybindTracer);
         //? if >= 1.21.4 {
 
         ModLoaderUtil.registerKeybind(keybindBoxes);

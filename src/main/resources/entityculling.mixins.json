@@ -14,7 +14,8 @@
         "ClientWorldMixin",
         "DebugScreenEntriesAccessor",
         "LivingEntityRendererAccessor",
-        "DisplayAccessor"
+        "DisplayAccessor",
+        "LevelChunkSectionMixin"
     ],
     "injectors": {
         "defaultRequire": 1

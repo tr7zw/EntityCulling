@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
-import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
+import dev.tr7zw.entityculling.versionless.OcclusionCullingInstance;
 
 import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
 import dev.tr7zw.transition.manager.*;
@@ -14,6 +14,7 @@ import dev.tr7zw.transition.mc.GeneralUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Entity;
@@ -30,16 +31,21 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     public Set<BlockEntityType<?>> blockEntityWhitelist = new HashSet<>();
     public Set<EntityType<?>> entityWhitelist = new HashSet<>();
     public Set<EntityType<?>> tickCullWhitelists = new HashSet<>();
+    public Provider provider;
     public CullTask cullTask;
     protected KeyMapping keybind = GeneralUtil.createKeyMapping("key.entityculling.toggle", -1,
             "text.entityculling.title");
     protected KeyMapping keybindBoxes = GeneralUtil.createKeyMapping("key.entityculling.toggleBoxes", -1,
             "text.entityculling.title");
+    protected KeyMapping keybindTracer = GeneralUtil.createKeyMapping("key.entityculling.toggleTracer", -1,
+            "text.entityculling.title");
+    protected boolean pressedTracer = false;
     private Set<Function<BlockEntity, Boolean>> dynamicBlockEntityWhitelist = new HashSet<>();
     private Set<Function<Entity, Boolean>> dynamicEntityWhitelist = new HashSet<>();
     private int tickCounter = 0;
     public double lastTickTime = 0;
     private boolean freezeCamera = false;
+    private ClientLevel lastKnownLevel = null;
     //? if >= 1.21.9 {
 
     public net.minecraft.client.renderer.culling.Frustum frustum = null;
@@ -48,7 +54,8 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     public void onInitialize() {
         instance = this;
         super.onInitialize();
-        culling = new OcclusionCullingInstance(config.tracingDistance, new Provider());
+        provider = new Provider();
+        culling = new OcclusionCullingInstance(config.tracingDistance, provider);
         cullTask = new CullTask(culling, blockEntityWhitelist, entityWhitelist);
 
         cullThread = new Thread(cullTask, "CullThread");
@@ -126,55 +133,80 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
         } else {
             pressedBox = false;
         }
+        if (keybindTracer.isDown()) {
+            if (pressedTracer)
+                return;
+            pressedTracer = true;
+            culling.toggleImplementation();
+            culling.resetCache();
+            cullTask.requestCull = true;
+            ClientUtil.sendChatMessage(ComponentProvider.literal("Tracer: " + culling.getImplementationName())
+                    .withStyle(ChatFormatting.AQUA));
+        } else {
+            pressedTracer = false;
+        }
         // Cull logic preparation
         long start = System.nanoTime();
         debugCollector.tick();
         Minecraft client = Minecraft.getInstance();
+
+        if (client.level != lastKnownLevel) {
+            lastKnownLevel = client.level;
+            culling.resetCache();
+            cullTask.resetTransientState();
+        }
+
         boolean ingame = client.level != null && client.player != null && client.player.tickCount > 10;
         if (ingame && enabled) {
-            boolean changed = false;
-            if (tickCounter++ % config.captureRate == 0) {
-                if (!config.skipEntityCulling) {
-                    List<Entity> entities = StreamSupport
-                            .stream(client.level.entitiesForRendering().spliterator(), false).toList();
-                    cullTask.setEntitiesForRendering(entities);
-                    debugCollector.getDataHolder().consideredEntities = entities.size();
-                }
-                if (!config.skipBlockEntityCulling) {
-                    Map<BlockPos, BlockEntity> blockEntities = new HashMap<>();
-                    for (int x = -8; x <= 8; x++) {
-                        for (int z = -8; z <= 8; z++) {
-                            //? if >= 26.0 {
-                            LevelChunk chunk = client.level.getChunk(client.player.chunkPosition().x() + x,
-                                    client.player.chunkPosition().z() + z);
-                            //? } else {
-                            /*
-                            LevelChunk chunk = client.level.getChunk(client.player.chunkPosition().x + x,
-                                    client.player.chunkPosition().z + z);
-                            *///? }
-                            blockEntities.putAll(chunk.getBlockEntities());
-                        }
-                    }
-                    cullTask.setBlockEntities(blockEntities);
-                    debugCollector.getDataHolder().consideredBlockEntities = blockEntities.size();
-                }
-                changed = true;
-            }
-
-            cullTask.setIngame(true);
-            if (!freezeCamera) {
-                cullTask.setCameraMC(EntityCullingModBase.instance.config.debugMode ? client.player.getEyePosition(0)
-                        : client.gameRenderer.getMainCamera()
-                                /*? >= 1.21.11 {*/.position() /*?} else {*//* .getPosition() *//*?}*/);
-            }
-            cullTask.requestCull = true;
-            if (changed) {
-                lastTickTime = (System.nanoTime() - start) / 1_000_000.0;
-            }
+            updateDefensiveCopy(client, start);
         } else {
             cullTask.setIngame(false);
             cullTask.setEntitiesForRendering(Collections.emptyList());
             cullTask.setBlockEntities(Collections.emptyMap());
+            lastTickTime = (System.nanoTime() - start) / 1_000_000.0;
+        }
+    }
+
+    private void updateDefensiveCopy(Minecraft client, long start) {
+        provider.processTree64Requests(1024);
+
+        boolean changed = false;
+        if (tickCounter++ % config.captureRate == 0) {
+            if (!config.skipEntityCulling) {
+                List<Entity> entities = StreamSupport.stream(client.level.entitiesForRendering().spliterator(), false)
+                        .toList();
+                cullTask.setEntitiesForRendering(entities);
+                debugCollector.getDataHolder().consideredEntities = entities.size();
+            }
+            if (!config.skipBlockEntityCulling) {
+                Map<BlockPos, BlockEntity> blockEntities = new HashMap<>();
+                for (int x = -8; x <= 8; x++) {
+                    for (int z = -8; z <= 8; z++) {
+                        //? if >= 26.0 {
+                        LevelChunk chunk = client.level.getChunk(client.player.chunkPosition().x() + x,
+                                client.player.chunkPosition().z() + z);
+                        //? } else {
+                        /*
+                        LevelChunk chunk = client.level.getChunk(client.player.chunkPosition().x + x,
+                                client.player.chunkPosition().z + z);
+                        *///? }
+                        blockEntities.putAll(chunk.getBlockEntities());
+                    }
+                }
+                cullTask.setBlockEntities(blockEntities);
+                debugCollector.getDataHolder().consideredBlockEntities = blockEntities.size();
+            }
+            changed = true;
+        }
+
+        cullTask.setIngame(true);
+        if (!freezeCamera) {
+            cullTask.setCameraMC(EntityCullingModBase.instance.config.debugMode ? client.player.getEyePosition(0)
+                    : client.gameRenderer.getMainCamera()
+                            /*? >= 1.21.11 {*/.position() /*?} else {*//* .getPosition() *//*?}*/);
+        }
+        cullTask.requestCull = true;
+        if (changed) {
             lastTickTime = (System.nanoTime() - start) / 1_000_000.0;
         }
     }

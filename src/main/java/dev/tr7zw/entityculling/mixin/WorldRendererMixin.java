@@ -1,7 +1,6 @@
 package dev.tr7zw.entityculling.mixin;
 
-import java.util.*;
-
+import dev.tr7zw.entityculling.versionless.util.*;
 import net.minecraft.client.*;
 import net.minecraft.client.player.*;
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.logisticscraft.occlusionculling.util.MathUtilities;
 //? if < 1.21.5 {
 /*
  import com.mojang.blaze3d.systems.RenderSystem;
@@ -29,6 +27,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
+
+import java.util.*;
 
 @Mixin(LevelRenderer.class)
 public class WorldRendererMixin {

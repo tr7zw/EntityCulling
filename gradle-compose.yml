@@ -11,9 +11,6 @@ replacements:
   fabric_entrypoint: "dev.tr7zw.entityculling.EntityCullingMod"
   fabric_modmenu_entrypoint: "dev.tr7zw.entityculling.config.EntityCullingModMenu"
   relocationpackage: "dev.tr7zw.entityculling"
-  dependencies: '
-  	inc "com.logisticscraft:occlusionculling:0.0.8-SNAPSHOT"
-  '
   licensename: "LICENSE-EntityCulling"
   modrinthid: NNAgCjsB
   curseforgeid: 448233
@@ -36,8 +33,6 @@ subProjects:
     template: "Versionless"
     replacements:
       dependencies: '
-      compileOnly "com.logisticscraft:occlusionculling:0.0.8-SNAPSHOT"
-
       compileOnly "com.google.code.gson:gson:2.10.1"
 
       compileOnly "org.apache.logging.log4j:log4j-core:2.20.0"
