@@ -1,5 +1,6 @@
 {
     "versions": [
-        "26.1-fabric"
+        "26.1-fabric",
+        "26.1-neoforge"
     ]
 }
