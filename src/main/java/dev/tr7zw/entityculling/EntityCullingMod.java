@@ -69,7 +69,7 @@ public class EntityCullingMod extends EntityCullingModBase
 
     public static final net.minecraft.client.gui.components.debug.DebugEntryCategory DEBUG_CATEGORY = new net.minecraft.client.gui.components.debug.DebugEntryCategory(
             ComponentProvider.translatable("text.entityculling.title"), 10F);
-    public static final /*? >= 1.21.11 {*/ Identifier /*?} else {*//* ResourceLocation *//*?}*/ DEBUG_CATEGORY_ID = GeneralUtil
+    public static final /*? >= 1.21.11 {*/ Identifier /*?} else {*//* Identifier *//*?}*/ DEBUG_CATEGORY_ID = GeneralUtil
             .getResourceLocation("entityculling", "debug");
 
     private static void registerDebugLine(String id, net.minecraft.client.gui.components.debug.DebugScreenEntry entry) {

@@ -3,7 +3,7 @@ package dev.tr7zw.entityculling.config;
 import java.util.*;
 import java.util.Map.Entry;
 
-import dev.tr7zw.transition.mc.ComponentProvider;
+import dev.tr7zw.transition.mc.*;
 import dev.tr7zw.entityculling.EntityCullingModBase;
 import dev.tr7zw.entityculling.versionless.Config;
 import dev.tr7zw.trender.gui.client.AbstractConfigScreen;
@@ -180,7 +180,7 @@ public class ConfigScreenProvider {
             WButton doneButton = new WButton(CommonComponents.GUI_DONE);
             doneButton.setOnClick(() -> {
                 save();
-                Minecraft.getInstance().setScreen(previous);
+                GeneralUtil.setScreen(previous);
             });
             root.add(doneButton, 0, 25, 6, 2);
 

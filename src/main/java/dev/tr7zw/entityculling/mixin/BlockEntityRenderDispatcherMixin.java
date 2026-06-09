@@ -19,12 +19,21 @@ public abstract class BlockEntityRenderDispatcherMixin {
     //? if >= 1.21.9 {
 
     @Inject(method = "tryExtractRenderState", at = @At("HEAD"), cancellable = true)
-    public void tryExtractRenderState(BlockEntity blockEntity, float f,
+    public void tryExtractRenderState(BlockEntity blockEntity, float partialTicks,
             net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay crumblingOverlay,
+            //? if >= 26.2 {
+            boolean isGloballyRendered,
+            //? }
             CallbackInfoReturnable<net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState> info) {
         if (EntityCullingModBase.instance.config.skipBlockEntityCulling) {
             return;
         }
+        //? if >= 26.2 {
+
+        if (isGloballyRendered) {
+            return;
+        }
+        //? }
         BlockEntityRenderer blockEntityRenderer = getRenderer(blockEntity);
         if (blockEntityRenderer == null) {
             return; // Not a block entity that has a renderer, skip all logic

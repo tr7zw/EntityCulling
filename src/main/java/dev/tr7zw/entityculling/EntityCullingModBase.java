@@ -164,7 +164,8 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
             cullTask.setIngame(true);
             if (!freezeCamera) {
                 cullTask.setCameraMC(EntityCullingModBase.instance.config.debugMode ? client.player.getEyePosition(0)
-                        : client.gameRenderer.getMainCamera()
+                        : /*? >= 26.2 {*/client.gameRenderer
+                                .mainCamera() /*?} else {*//* client.gameRenderer.getMainCamera() *//*?}*/
                                 /*? >= 1.21.11 {*/.position() /*?} else {*//* .getPosition() *//*?}*/);
             }
             cullTask.requestCull = true;

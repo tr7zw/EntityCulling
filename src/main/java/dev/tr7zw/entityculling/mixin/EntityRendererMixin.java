@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import dev.tr7zw.entityculling.access.EntityRendererInter;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -26,23 +26,26 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
         //? }
     }
 
+    //? if < 26.1 {
+    /*
     @Override
     public void shadowRenderNameTag(T entity, Component component, PoseStack poseStack,
             MultiBufferSource multiBufferSource, int light, float delta) {
         //? if >= 1.21.9 {
-
+    
         //? } else if >= 1.21.2 {
-        /*
+        /^
          renderNameTag(((EntityRenderer) (Object) this).createRenderState(entity, delta), component, poseStack,
                 multiBufferSource, light);
-        *///? } else if >= 1.20.5 {
-        /*
+        ^///? } else if >= 1.20.5 {
+        /^
          renderNameTag(entity, component, poseStack, multiBufferSource, light, delta);
-        *///? } else {
-        /*
+        ^///? } else {
+        /^
          renderNameTag(entity, component, poseStack, multiBufferSource, light);
-        *///? }
+        ^///? }
     }
+    *///? }
 
     //? if <= 1.21.1 {
     /*

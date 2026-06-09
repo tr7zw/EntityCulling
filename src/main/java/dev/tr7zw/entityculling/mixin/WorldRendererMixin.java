@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.minecraft.client.*;
 import net.minecraft.client.player.*;
+import net.minecraft.world.entity.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,16 +22,18 @@ import dev.tr7zw.entityculling.EntityCullingModBase;
 import dev.tr7zw.entityculling.NMSCullingHelper;
 import dev.tr7zw.entityculling.versionless.access.Cullable;
 import dev.tr7zw.transition.mc.GeneralUtil;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
 
+//? if >= 26.2 {
+
+@Mixin(net.minecraft.client.renderer.extract.LevelExtractor.class)
+//? } else {
+/*
 @Mixin(LevelRenderer.class)
+*///? }
 public class WorldRendererMixin {
 
     private EntityRenderDispatcher entityCulling$entityRenderDispatcher = Minecraft.getInstance()
@@ -51,7 +54,14 @@ public class WorldRendererMixin {
         if (!cullable.isForcedVisible() && cullable.isCulled() && !NMSCullingHelper.ignoresCulling(entity)) {
             EntityCullingModBase.instance.skippedEntities++;
             var state = new net.minecraft.client.renderer.entity.state.EntityRenderState();
+
+            //? if >= 26.2 {
+
+            state.entityType = EntityTypes.INTERACTION;
+            //? } else {
+            /*
             state.entityType = EntityType.INTERACTION;
+            *///? }
             state = processNametag(entity, partialTick, state);
             state.x = net.minecraft.util.Mth.lerp(partialTick, entity.xOld, entity.getX());
             state.y = net.minecraft.util.Mth.lerp(partialTick, entity.yOld, entity.getY());
@@ -89,7 +99,13 @@ public class WorldRendererMixin {
                     *///? }
                     if (d < 100 && (display = checkEntity.belowNameDisplay()) != null) {
                         var avatarState = new net.minecraft.client.renderer.entity.state.AvatarRenderState();
+                        //? if >= 26.2 {
+
+                        avatarState.entityType = EntityTypes.PLAYER;
+                        //? } else {
+                        /*
                         avatarState.entityType = EntityType.PLAYER;
+                        *///? }
                         avatarState.scoreText = display;
                         avatarState.isInvisibleToPlayer = true;
                         state = avatarState;
