@@ -3,7 +3,7 @@ package dev.tr7zw.entityculling.versionless.tree64;
 import java.util.HashSet;
 import java.util.Set;
 
-import dev.tr7zw.entityculling.versionless.DataProvider;
+import dev.tr7zw.entityculling.versionless.access.DataProvider;
 
 public final class Tree64World {
 

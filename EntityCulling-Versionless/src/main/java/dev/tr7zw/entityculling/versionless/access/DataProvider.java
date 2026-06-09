@@ -1,4 +1,4 @@
-package dev.tr7zw.entityculling.versionless;
+package dev.tr7zw.entityculling.versionless.access;
 
 import dev.tr7zw.entityculling.versionless.tree64.Tree64SubChunk;
 import dev.tr7zw.entityculling.versionless.util.Vec3d;

@@ -1,5 +1,6 @@
 package dev.tr7zw.entityculling.versionless;
 
+import dev.tr7zw.entityculling.versionless.access.*;
 import dev.tr7zw.entityculling.versionless.cache.ArrayOcclusionCache;
 import dev.tr7zw.entityculling.versionless.cache.OcclusionCache;
 import dev.tr7zw.entityculling.versionless.util.Vec3d;
@@ -15,7 +16,7 @@ public class OcclusionCullingInstance implements IOcclusionCullingInstance {
     }
 
     public OcclusionCullingInstance(int maxDistance, DataProvider provider, OcclusionCache cache,
-            double aabbExpansion) {
+                                    double aabbExpansion) {
         this.legacy = new LegacyOcclusionCullingInstance(maxDistance, provider, cache, aabbExpansion);
         this.tree64 = new TreeOcclusionCullingInstance(maxDistance, provider, aabbExpansion);
         this.active = this.tree64;

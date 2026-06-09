@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import dev.tr7zw.entityculling.versionless.DataProvider;
+import dev.tr7zw.entityculling.versionless.access.DataProvider;
 import dev.tr7zw.entityculling.versionless.tree64.Tree64SubChunk;
 
 import dev.tr7zw.entityculling.access.LevelChunkSectionTree64Access;

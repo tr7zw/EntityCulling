@@ -17,7 +17,6 @@ public final class Tree64RayMarcher {
     }
 
     public boolean isVisible(Vec3d start, Vec3d target, int[] blockedVoxelOut) {
-        long rayStartNs = System.nanoTime();
         double dirX = target.x - start.x;
         double dirY = target.y - start.y;
         double dirZ = target.z - start.z;
@@ -29,8 +28,6 @@ public final class Tree64RayMarcher {
 
         double t = 0.0;
         boolean allowWallClipping = true;
-        int samples = 0;
-        int steps = 0;
 
         for (int i = 0; i < MAX_STEPS && t <= 1.0; i++) {
             if (t >= 1.0 - EPSILON) {
@@ -46,7 +43,6 @@ public final class Tree64RayMarcher {
             int voxelZ = MathUtilities.floor(posZ);
 
             int sample = world.sample(voxelX, voxelY, voxelZ);
-            samples++;
 
             boolean opaque = sample == Tree64World.SAMPLE_OPAQUE;
             if (opaque) {
@@ -104,7 +100,6 @@ public final class Tree64RayMarcher {
                 nextT = t + 1e-6;
             }
             t = nextT;
-            steps++;
         }
 
         return true;

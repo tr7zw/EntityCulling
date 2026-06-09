@@ -2,6 +2,7 @@ package dev.tr7zw.entityculling.versionless;
 
 import java.util.Arrays;
 
+import dev.tr7zw.entityculling.versionless.access.*;
 import dev.tr7zw.entityculling.versionless.cache.SparseVisibilityCache;
 import dev.tr7zw.entityculling.versionless.tree64.Tree64RayMarcher;
 import dev.tr7zw.entityculling.versionless.tree64.Tree64World;
