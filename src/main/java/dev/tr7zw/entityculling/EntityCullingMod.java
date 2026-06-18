@@ -34,11 +34,7 @@ public class EntityCullingMod extends EntityCullingModBase
     public void initModloader() {
         ModLoaderEventUtil.registerClientTickStartListener(this::clientTick);
         ModLoaderEventUtil.registerWorldTickStartListener(this::worldTick);
-        ModLoaderUtil.registerKeybind(keybind);
-        //? if >= 1.21.4 {
-
-        ModLoaderUtil.registerKeybind(keybindBoxes);
-        //? }
+        KeybindHolder.INSTANCE.registerKeybinds();
         ModLoaderUtil.registerConfigScreen(ConfigScreenProvider::createConfigScreen);
         ModLoaderUtil.disableDisplayTest();
 

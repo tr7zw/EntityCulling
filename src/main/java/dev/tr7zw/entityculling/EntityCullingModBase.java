@@ -31,10 +31,6 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     public Set<EntityType<?>> entityWhitelist = new HashSet<>();
     public Set<EntityType<?>> tickCullWhitelists = new HashSet<>();
     public CullTask cullTask;
-    protected KeyMapping keybind = GeneralUtil.createKeyMapping("key.entityculling.toggle", -1,
-            "text.entityculling.title");
-    protected KeyMapping keybindBoxes = GeneralUtil.createKeyMapping("key.entityculling.toggleBoxes", -1,
-            "text.entityculling.title");
     private Set<Function<BlockEntity, Boolean>> dynamicBlockEntityWhitelist = new HashSet<>();
     private Set<Function<Entity, Boolean>> dynamicEntityWhitelist = new HashSet<>();
     private int tickCounter = 0;
@@ -98,7 +94,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
             }
         }
         // Handle keybinds
-        if (keybind.isDown()) {
+        if (KeybindHolder.INSTANCE.keybind.isDown()) {
             if (pressed)
                 return;
             pressed = true;
@@ -111,7 +107,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
         } else {
             pressed = false;
         }
-        if (keybindBoxes.isDown()) {
+        if (KeybindHolder.INSTANCE.keybindBoxes.isDown()) {
             if (pressedBox)
                 return;
             pressedBox = true;
