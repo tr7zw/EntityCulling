@@ -5,7 +5,6 @@ import dev.tr7zw.transition.mc.*;
 import lombok.experimental.*;
 import net.minecraft.client.*;
 
-
 public final class KeybindHolder {
     public static final KeybindHolder INSTANCE = new KeybindHolder();
     private boolean initialized = false;

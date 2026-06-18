@@ -41,6 +41,15 @@ public class ConfigUpgrader {
                     "minecraft:pale_oak_boat", "minecraft:pale_oak_chest_boat", "minecraft:spruce_boat",
                     "minecraft:spruce_chest_boat", "minecraft:bamboo_raft", "minecraft:bamboo_chest_raft"));
         }
+        if (config.configVersion < 8) {
+            config.configVersion = 8;
+            changed = true;
+            // Force add all default values to the lists, since this wasn't maintained correctly and some people have outdated values
+            Config tmp = new Config();
+            config.entityWhitelist.addAll(tmp.entityWhitelist);
+            config.tickCullingWhitelist.addAll(tmp.tickCullingWhitelist);
+            config.blockEntityWhitelist.addAll(tmp.blockEntityWhitelist);
+        }
         // check for more changes here
 
         return changed;

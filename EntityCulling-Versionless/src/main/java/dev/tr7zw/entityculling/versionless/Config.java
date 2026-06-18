@@ -6,8 +6,9 @@ import java.util.Set;
 
 public class Config {
 
-    public int configVersion = 7;
+    public int configVersion = 8;
     public boolean renderNametagsThroughWalls = true;
+    // spotless:off
     public Set<String> blockEntityWhitelist = new HashSet<>(
             Arrays.asList(
               "betterend:eternal_pedestal",
@@ -24,12 +25,14 @@ public class Config {
 			  "drg_flares:drg_flares",
 			  "quark:soul_bead"
 	));
+	// spotless:on
     public int tracingDistance = 128;
     public boolean debugMode = false;
     public int sleepDelay = 10;
     public int hitboxLimit = 50;
     public int captureRate = 5;
     public boolean tickCulling = true;
+    // spotless:off
     public Set<String> tickCullingWhitelist = new HashSet<>(
             Arrays.asList(
               "alexscaves:gum_worm",
@@ -78,6 +81,7 @@ public class Config {
 	          "mts:builder_seat",
 	          "voidscape:corrupted_pawn"
 	));
+	// spotless:on
     public boolean disableF3 = false;
     public boolean skipEntityCulling = false;
     public boolean skipBlockEntityCulling = false;
