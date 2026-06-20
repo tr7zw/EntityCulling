@@ -43,7 +43,9 @@
          if(FMLEnvironment.getDist() == Dist.CLIENT) {
  //? }
                     ModLoaderEventUtil.registerClientSetupListener(() -> new EntityCullingMod().onInitialize());
+                    //? if >= 26.1 {
                     KeybindHolder.INSTANCE.registerKeybinds();
+                    //? }
             }
     }
 
