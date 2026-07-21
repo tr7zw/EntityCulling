@@ -18,5 +18,11 @@
     "text.entityculling.skipEntityCulling": "Skip culling untuk entity",
     "text.entityculling.skipEntityCulling.tooltip": "Kalau diaktifkan, proses culling untuk entity akan diskip sepenuhnya. Cocok untuk keperluan debugging atau kalau ingin mematikan culling sementara.",
     "text.entityculling.skipBlockEntityCulling": "Skip culling untuk block entity",
-    "text.entityculling.skipBlockEntityCulling.tooltip": "Kalau diaktifkan, proses culling untuk block entity akan diskip sepenuhnya. Cocok untuk keperluan debugging atau kalau ingin mematikan culling sementara."
+    "text.entityculling.skipBlockEntityCulling.tooltip": "Kalau diaktifkan, proses culling untuk block entity akan diskip sepenuhnya. Cocok untuk keperluan debugging atau kalau ingin mematikan culling sementara.",
+    "text.entityculling.blockEntityFrustumCulling": "Frustum culling block entity",
+    "text.entityculling.blockEntityFrustumCulling.tooltip": "Kalau diaktifkan, ekstraksi state block entity akan diculling berdasarkan view frustum kamera. Ini dapat meningkatkan performa jika modloader/mod lainmu belum melakukan hal ini.",
+    "text.entityculling.forceDisplayCulling": "Paksa display culling",
+    "text.entityculling.forceDisplayCulling.tooltip": "Kalau diaktifkan, display entity tanpa bounding box akan diberikan bounding box default untuk keperluan culling. Ini dapat meningkatkan performa untuk map/server yang tidak mengatur display entity mereka dengan benar, tapi juga dapat mengakibatkan masalah visual.",
+    "text.entityculling.solidLeaves": "Daun solid",
+    "text.entityculling.solidLeaves.tooltip": "Kalau diaktifkan, daun akan diperlakukan sebagai solid untuk keperluan culling. Ini dapat meningkatkan performa di hutan, tapi juga dapat mengakibatkan masalah visual. Berguna ketika pengaturan 'See-Through Leaves' dimatikan, atau ketika menggunakan resource pack daun lebat."
 }
