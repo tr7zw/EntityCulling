@@ -2,6 +2,7 @@ package dev.tr7zw.tests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import net.minecraft.client.renderer.blockentity.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.objenesis.Objenesis;
@@ -13,7 +14,6 @@ import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.PigRenderer;
 import net.minecraft.server.Bootstrap;
 //? if >= 1.21.11 {
@@ -52,6 +52,7 @@ public class MixinTests {
         objenesis.newInstance(DebugScreenOverlay.class);
         objenesis.newInstance(PigRenderer.class);
         objenesis.newInstance(LevelRenderer.class);
+        objenesis.newInstance(BannerRenderer.class);
     }
 
 }
