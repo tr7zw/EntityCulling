@@ -18,19 +18,33 @@ public abstract class BlockEntityRenderDispatcherMixin {
 
     //? if >= 1.21.9 {
 
+    //? if neoforge && >= 26.2 {
+    /*
+    @Inject(method = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher;tryExtractRenderState(Lnet/minecraft/world/level/block/entity/BlockEntity;FLnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;ZLnet/minecraft/client/renderer/culling/Frustum;)Lnet/minecraft/client/renderer/blockentity/state/BlockEntityRenderState;", at = @At("HEAD"), cancellable = true)
+     *///? } else if neoforge {
+    /*
+        @Inject(method = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher;tryExtractRenderState(Lnet/minecraft/world/level/block/entity/BlockEntity;FLnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;Lnet/minecraft/client/renderer/culling/Frustum;)Lnet/minecraft/client/renderer/blockentity/state/BlockEntityRenderState;", at = @At("HEAD"), cancellable = true)
+     *///? } else {
     @Inject(method = "tryExtractRenderState", at = @At("HEAD"), cancellable = true)
+    //? }
     public void tryExtractRenderState(BlockEntity blockEntity, float partialTicks,
             net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay crumblingOverlay,
             //? if >= 26.2 {
             boolean isGloballyRendered,
             //? }
+            //? if neoforge && >= 26.2 {
+            /*
+            net.minecraft.client.renderer.culling.Frustum neoFrustum,
+            *///? }
             CallbackInfoReturnable<net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState> info) {
         if (EntityCullingModBase.instance.config.skipBlockEntityCulling) {
+            EntityCullingModBase.instance.renderedBlockEntities++;
             return;
         }
         //? if >= 26.2 {
 
         if (isGloballyRendered) {
+            EntityCullingModBase.instance.renderedBlockEntities++;
             return;
         }
         //? }
@@ -39,6 +53,12 @@ public abstract class BlockEntityRenderDispatcherMixin {
             return; // Not a block entity that has a renderer, skip all logic
         }
         var frustum = EntityCullingModBase.instance.frustum;
+        //? if neoforge && >= 26.2 {
+        /*
+        if (neoFrustum != null) {
+            frustum = neoFrustum;
+        }
+        *///? }
         if (blockEntityRenderer.shouldRenderOffScreen()) {
             EntityCullingModBase.instance.renderedBlockEntities++;
             return;
@@ -68,34 +88,6 @@ public abstract class BlockEntityRenderDispatcherMixin {
             }
         }
     }
-    //? if neoforge {
-    /*
-     @Inject(method = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher;tryExtractRenderState(Lnet/minecraft/world/level/block/entity/BlockEntity;FLnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;Lnet/minecraft/client/renderer/culling/Frustum;)Lnet/minecraft/client/renderer/blockentity/state/BlockEntityRenderState;", at = @At("HEAD"), cancellable = true)
-     public void tryExtractRenderState(BlockEntity blockEntity, float f,
-            net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay crumblingOverlay, net.minecraft.client.renderer.culling.Frustum frustum,
-            CallbackInfoReturnable<net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState> info) {
-        if (EntityCullingModBase.instance.config.skipBlockEntityCulling) {
-            return;
-       }
-        BlockEntityRenderer blockEntityRenderer = getRenderer(blockEntity);
-        if (blockEntityRenderer == null) {
-            return; // Not a block entity that has a renderer, skip all logic
-        }
-        if (blockEntityRenderer.shouldRenderOffScreen()) {
-            EntityCullingModBase.instance.renderedBlockEntities++;
-            return;
-        }
-       if (blockEntity instanceof Cullable cullable) {
-            if (!cullable.isForcedVisible() && cullable.isCulled()) {
-                EntityCullingModBase.instance.skippedBlockEntities++;
-               info.setReturnValue(null);
-                return;
-            }
-           EntityCullingModBase.instance.renderedBlockEntities++;
-           cullable.setOutOfCamera(false);
-        }
-     }
-    *///? }
 
     //? } else {
     /*
