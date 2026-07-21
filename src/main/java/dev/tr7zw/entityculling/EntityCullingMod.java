@@ -1,5 +1,6 @@
 package dev.tr7zw.entityculling;
 
+import net.minecraft.client.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.*;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
@@ -49,13 +50,16 @@ public class EntityCullingMod extends EntityCullingModBase
 
     @Override
     public AABB setupAABB(BlockEntity entity, BlockPos pos) {
-        //? if fabric || neoforge {
+        //? if fabric {
 
         if (entity instanceof BannerBlockEntity) {
             return new AABB(pos).inflate(0, 1, 0);
         }
         return new AABB(pos);
-        //? } else {
+        //? } else if neoforge {
+        /*
+               return ((net.neoforged.neoforge.client.extensions.IBlockEntityRendererExtension)Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(entity)).getRenderBoundingBox(entity);
+        *///? } else if forge {
         /*
                return entity.getRenderBoundingBox();
         *///? }
