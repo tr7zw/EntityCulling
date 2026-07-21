@@ -21,5 +21,9 @@
     "text.entityculling.skipBlockEntityCulling": "Desactivar ocultamiento de bloques-entidad",
     "text.entityculling.skipBlockEntityCulling.tooltip": "Desactiva por completo el ocultamiento de bloques-entidad. Útil para depurar o desactivar temporalmente el sistema.",
     "text.entityculling.blockEntityFrustumCulling": "Culling de entidades de bloque por frustum",
-    "text.entityculling.blockEntityFrustumCulling.tooltip": "Cuando está activado, la extracción del estado de las entidades de bloque será filtrada según el frustum de la cámara. Esto puede mejorar el rendimiento en caso de que tu cargador de mods u otro mod no lo haga ya."
+    "text.entityculling.blockEntityFrustumCulling.tooltip": "Cuando está activado, la extracción del estado de las entidades de bloque será filtrada según el frustum de la cámara. Esto puede mejorar el rendimiento en caso de que tu cargador de mods u otro mod no lo haga ya.",
+    "text.entityculling.forceDisplayCulling": "Forzar culling de visualización",
+    "text.entityculling.forceDisplayCulling.tooltip": "Al activarlo, las entidades de visualización sin caja de colisión recibirán una caja de colisión predeterminada para efectos de culling. Esto puede mejorar el rendimiento en mapas o servidores que no configuran bien sus entidades de visualización, pero puede causar problemas visuales.",
+    "text.entityculling.solidLeaves": "Hojas sólidas",
+    "text.entityculling.solidLeaves.tooltip": "Al activarlo, las hojas se tratarán como sólidas para efectos de culling. Esto puede mejorar el rendimiento en bosques, pero también causar problemas visuales. Útil si tenés 'See-Through Leaves' desactivado, o si usás un resource pack de hojas tupidas."
 }
