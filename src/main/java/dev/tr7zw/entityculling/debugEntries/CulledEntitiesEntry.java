@@ -23,8 +23,8 @@ public class CulledEntitiesEntry implements DebugScreenEntry {
     }
 
     @Override
-    public boolean isAllowed(boolean bl) {
-        return true;
+    public boolean isAllowed(boolean reducedDebugInfo) {
+        return !reducedDebugInfo;
     }
 
     @Override
