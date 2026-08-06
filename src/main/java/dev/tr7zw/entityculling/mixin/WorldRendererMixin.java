@@ -87,6 +87,14 @@ public class WorldRendererMixin {
             if (entity instanceof LivingEntity living) {
                 var renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
                 double d = GeneralUtil.getCameraEntity().distanceToSqr(entity);
+
+                double nameTagDistance = 64.0D;
+                //? if >= 26.2 {
+
+                nameTagDistance = living.getAttributeValue(
+                        net.minecraft.world.entity.ai.attributes.Attributes.NAME_TAG_DISTANCE);
+                //? }
+
                 if (renderer instanceof LivingEntityRendererAccessor accessor
                         && accessor.invokeShouldShowName(living, d) && !entity.isDiscrete()) { // INFO: The discrete check happens in the rendering itself, so it needs to be checked here as well
                     net.minecraft.network.chat.Component display;
@@ -97,6 +105,7 @@ public class WorldRendererMixin {
                     /*
                     if (entity instanceof net.minecraft.client.entity.ClientAvatarEntity checkEntity) {
                     *///? }
+
                     if (d < 100 && (display = checkEntity.belowNameDisplay()) != null) {
                         var avatarState = new net.minecraft.client.renderer.entity.state.AvatarRenderState();
                         //? if >= 26.2 {
@@ -110,13 +119,19 @@ public class WorldRendererMixin {
                         avatarState.isInvisibleToPlayer = true;
                         state = avatarState;
                     }
+
                     //? if < 26.0 {
                     /*
                     }
-                     *///? }
-                    state.nameTag = entity.getDisplayName();
-                    state.nameTagAttachment = entity.getAttachments().getNullable(
-                            net.minecraft.world.entity.EntityAttachment.NAME_TAG, 0, entity.getYRot(partialTick));
+                    *///? }
+
+                    if (d < nameTagDistance * nameTagDistance) {
+                        state.nameTag = entity.getDisplayName();
+                        state.nameTagAttachment = entity.getAttachments().getNullable(
+                                net.minecraft.world.entity.EntityAttachment.NAME_TAG,
+                                0,
+                                entity.getYRot(partialTick));
+                    }
                 }
             } else {
                 state.nameTag = entity.getDisplayName();
