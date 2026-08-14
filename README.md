@@ -5,7 +5,6 @@
   <a href="https://github.com/tr7zw/EntityCulling"><img src="https://tr7zw.github.io/uikit/social_buttons_icon/Github-Button-64.png" alt="GitHub" style="margin: 5px 10px;"></a>
   <a href="https://modrinth.com/mod/entityculling"><img src="https://tr7zw.github.io/uikit/social_buttons_icon/Modrinth-Button-64.png" alt="GitHub" style="margin: 5px 10px;"></a>
   <a href="https://www.curseforge.com/minecraft/mc-mods/entityculling"><img src="https://tr7zw.github.io/uikit/social_buttons_icon/Curseforge-Button-64.png" alt="GitHub" style="margin: 5px 10px;"></a>
-  <a href="https://ko-fi.com/tr7zw"><img src="https://tr7zw.github.io/uikit/social_buttons_icon/Kofi-Button-64.png" alt="Ko-fi" style="margin: 5px 10px;"></a>
 </p>
 
 <br>![Divider](https://tr7zw.github.io/uikit/divider_faded/Divider_01.png)
