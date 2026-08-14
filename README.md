@@ -12,36 +12,33 @@
 
 <img src="https://tr7zw.github.io/uikit/headlines/large/About.png" alt="About" style="margin: 5px 10px;">
 
-Modern Minecraft rendering is fast—but not always smart. Why render block entities and mobs that are hidden behind walls or ceilings and are completely out of sight, when you could just skip them entirely?
+Minecraft skips rendering things that are behind you, so why is it rendering everything that you still can't see because of walls or ceilings in the way?
 
-This mod introduces **asynchronous path-tracing** to efficiently determine what's actually visible to the player. By leveraging multiple CPU cores, it calculates line-of-sight visibility in real time and eliminates unnecessary draw calls for hidden block entities and entities.
+This mod introduces **asynchronous path-tracing** to efficiently determine what's actually visible to the player. Using other available CPU cores, it calculates line-of-sight visibility in real time and eliminates unnecessary draw calls/processing for hidden block entities and entities.
 
-The result?  
-Smarter rendering. Less overhead. More performance.
+This can drastically improve the frame rate, depending on the number of entities and the position in the world.
 
 <br>![Divider](https://tr7zw.github.io/uikit/divider_faded/Divider_01.png)
 
 <br>![Features](https://tr7zw.github.io/uikit/headlines/large/Features.png)
 
-Unlock untapped performance by only rendering entities that truly matter. This mod goes beyond conventional optimization to bring next-level visibility optimization to deliver advanced visibility culling for Minecraft, giving you smoother gameplay.
+### Asynchronous Path-Tracing
 
-### Multithreaded Path-Tracing
-
-- Uses spare CPU threads to rapidly calculate visibility
-- Runs alongside the main game thread without blocking
-- Updates visibility data in real time
-
-### Smart Occlusion Culling
-
-- Skips the rendering of block entities and mobs hidden behind terrain or structures
-- Works like Minecraft's back-face culling, but smarter
-- Reduces GPU load without sacrificing visual fidelity
+- Uses spare CPU threads to calculate visibility
+- Runs alongside the main game thread without blocking (every few ticks, required data will be collected on the main thread)
+- Updates visibility data in real time, keeping pop-ins to a minimum
 
 ### Entity Tick Optimization
 
 - Reduces client impact from entities that are not visible
-- Only updated the essentials
 - Fully configurable and compatible with most mods
+- No impact on server-side simulation, farms, or mob behavior
+
+### Fully Configurable
+
+- All features of the mod can be toggled on/off in the config screen
+- Whitelist entities and block entities that should not be culled or tick-culled
+- When playing with fast graphics or custom leaves, there is an option to treat leaves as solid blocks for Entity Culling. This can help to increase the performance in forested areas
 
 <br>
 
@@ -70,7 +67,7 @@ Unlock untapped performance by only rendering entities that truly matter. This m
 
 <br>![Known Issues](https://tr7zw.github.io/uikit/headlines/medium/Known%20Issues.png)
 
-Client-side entities, commonly used by magic mods for animations, may not behave as expected. Whitelist the relevant entities via the config screen for tick culling and/or entity culling.
+Client-side entities, commonly used by magic mods for animations, may not behave as expected. Whitelist the relevant entities via the config screen for tick culling and/or entity culling. Consider reporting the ids of any entities that are not behaving correctly on the Github for inclusion in future updates.
 
 You’ll also need to whitelist block entities that render well beyond their normal bounds. Examples include the vanilla beacon, pulleys from Create, and certain Botania blocks.
 
@@ -84,11 +81,26 @@ No. This is a fully client-side mod and does **not** need to be installed on the
 
 ### Will this affect mob behavior or farms?
 
-No. The mod only skips rendering—not simulation. Mobs will continue to spawn, move, and drop items as expected. Your farms and other gameplay mechanics will remain unaffected.
+No. This mod only skips the rendering of entities and has no impact on their logic. Mobs will continue to spawn, move, and drop items as expected. Your farms and other gameplay mechanics will remain unaffected. The tick culling feature is fully limited to the client side world, so it will not affect the server-side simulation.
 
 ### I have "Use Entity Culling" enabled in Sodium - does this still help?
 
 Yes! While Sodium performs basic visibility checks based on loaded chunks, this mod goes further. It analyzes the actual line-of-sight visibility, skipping entities that are within visible chunks but not actually visible to the player. It’s a much more aggressive and accurate approach.
+
+### How can I test the performance impact of this mod?
+
+In the controls menu, you can bind a debug key to toggle the mod on and off on the fly. This allows you to compare performance with and without the mod active, without needing to restart the game. This can also be used to check if visibility issues are caused by this mod or another mod.
+
+Consider doing this, when playing on a really old computer, that is already struggling to run Minecraft. When the CPU is already maxed out, there is no spare CPU time to run the visibility calculations. Outside of this case, the mod should never cause a negative performance impact on the game, and at worst have no effect at all, when there is just nothing to cull.
+
+### The F3 numbers do not seem right, what is going on?
+
+The F3 debug screen numbers (in later versions hidden by default, can be turned on via F3+F6) are internally collected and may not necessarily reflect the actual render counts. Having active shaders for instance will cause higher numbers due to the shadow rendering.
+Also keep in mind that the mod tries to error on the side of caution, so entities too close to walls or ceilings may be rendering through them, due to the possibility of clipping.
+
+### Why is this mod running on the CPU, not the GPU?
+
+The goal is to reduce the GPU load and have less unnecessary data transfers between the GPU and CPU. Doing the calculations would probably increase the GPU load, and main (render) thread load of the CPU. But feel free to prove me wrong and create a PR with a GPU-based implementation. Honestly, I lack the knowhow and time to implement this myself.
 
 <br>![Divider](https://tr7zw.github.io/uikit/divider_faded/Divider_01.png)
 
