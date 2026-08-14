@@ -9,7 +9,7 @@ import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
 
 import dev.tr7zw.entityculling.access.EntityRendererInter;
-import dev.tr7zw.entityculling.versionless.access.Cullable;
+import dev.tr7zw.entityculling.access.Cullable;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
 import net.minecraft.client.multiplayer.ClientLevel;

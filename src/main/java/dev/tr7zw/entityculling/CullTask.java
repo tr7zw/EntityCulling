@@ -7,21 +7,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 import com.logisticscraft.occlusionculling.util.Vec3d;
 
 import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
-import dev.tr7zw.entityculling.versionless.access.Cullable;
+import dev.tr7zw.entityculling.access.Cullable;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Position;
-import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -32,11 +27,8 @@ public class CullTask implements Runnable {
     public boolean disableBlockEntityCulling = false;
 
     private final OcclusionCullingInstance culling;
-    private final Minecraft client = Minecraft.getInstance();
     private final int sleepDelay = EntityCullingModBase.instance.config.sleepDelay;
     private final int hitboxLimit = EntityCullingModBase.instance.config.hitboxLimit;
-    private final Set<BlockEntityType<?>> blockEntityWhitelist;
-    private final Set<EntityType<?>> entityWhistelist;
     public double lastTime = 0;
 
     // reused preallocated vars
@@ -48,17 +40,14 @@ public class CullTask implements Runnable {
     @Setter
     private boolean ingame = false;
     @Setter
-    private List<Entity> entitiesForRendering = new ArrayList<>();
+    private List<Cullable> entitiesForRendering = new ArrayList<>();
     @Setter
-    private Map<BlockPos, BlockEntity> blockEntities = new HashMap<>();
+    private Map<BlockPos, Cullable> blockEntities = new HashMap<>();
     @Setter
     private Vec3 cameraMC = new Vec3(0, 0, 0);
 
-    public CullTask(OcclusionCullingInstance culling, Set<BlockEntityType<?>> blockEntityWhitelist,
-            Set<EntityType<?>> entityWhistelist) {
+    public CullTask(OcclusionCullingInstance culling) {
         this.culling = culling;
-        this.blockEntityWhitelist = blockEntityWhitelist;
-        this.entityWhistelist = entityWhistelist;
     }
 
     @Override
@@ -93,37 +82,29 @@ public class CullTask implements Runnable {
         if (disableEntityCulling) {
             return;
         }
-        Entity entity = null;
-        Iterator<Entity> iterable = entitiesForRendering.iterator();
+        Cullable cullable = null;
+        Iterator<Cullable> iterable = entitiesForRendering.iterator();
         while (iterable.hasNext()) {
-            entity = iterable.next();
-            if (entity == null) {
+            cullable = iterable.next();
+            if (cullable == null) {
                 // assume the iterator is broken, cancel the loop
                 // https://github.com/tr7zw/EntityCulling/issues/168
                 break;
             }
-            if (!(entity instanceof Cullable)) {
-                continue; // Not sure how this could happen outside from mixin screwing up the inject into
-                          // Entity
-            }
-            if (entityWhistelist.contains(entity.getType())) {
+            if (EntityCullingModBase.instance.isEntityDynamicWhitelisted(cullable)) {
                 continue;
             }
-            if (EntityCullingModBase.instance.isDynamicWhitelisted(entity)) {
-                continue;
-            }
-            Cullable cullable = (Cullable) entity;
             if (!cullable.isForcedVisible()) {
-                if (Minecraft.getInstance().shouldEntityAppearGlowing(entity)) {
+                if (cullable.isShouldEntityAppearGlowing()) {
                     cullable.setCulled(false);
                     continue;
                 }
-                if (!entity.position().closerThan(cameraMC, EntityCullingModBase.instance.config.tracingDistance)) {
+                if (!cullable.getEc$Position().closerThan(cameraMC, EntityCullingModBase.instance.config.tracingDistance)) {
                     cullable.setCulled(false); // If your entity view distance is larger than tracingDistance just
                                                // render it
                     continue;
                 }
-                AABB boundingBox = NMSCullingHelper.getCullingBox(entity);
+                AABB boundingBox = cullable.getEc$BoundingBox();
                 if (boundingBox == null || boundingBox.getXsize() > hitboxLimit || boundingBox.getYsize() > hitboxLimit
                         || boundingBox.getZsize() > hitboxLimit) {
                     cullable.setCulled(false); // To big to bother to cull
@@ -141,8 +122,8 @@ public class CullTask implements Runnable {
         if (disableBlockEntityCulling) {
             return;
         }
-        Iterator<Entry<BlockPos, BlockEntity>> iterator = blockEntities.entrySet().iterator();
-        Entry<BlockPos, BlockEntity> entry;
+        Iterator<Entry<BlockPos, Cullable>> iterator = blockEntities.entrySet().iterator();
+        Entry<BlockPos, Cullable> entry;
         while (iterator.hasNext()) {
             try {
                 entry = iterator.next();
@@ -156,20 +137,14 @@ public class CullTask implements Runnable {
                 // https://github.com/tr7zw/EntityCulling/issues/168
                 break;
             }
-            if (blockEntityWhitelist.contains(entry.getValue().getType())) {
+            if (EntityCullingModBase.instance.isBlockEntityDynamicWhitelisted(entry.getValue())) {
                 continue;
             }
-            if (client.getBlockEntityRenderDispatcher().getRenderer(entry.getValue()) == null) {
-                continue; // No renderer, so no culling
-            }
-            if (EntityCullingModBase.instance.isDynamicWhitelisted(entry.getValue())) {
-                continue;
-            }
-            Cullable cullable = (Cullable) entry.getValue();
+            Cullable cullable = entry.getValue();
             if (!cullable.isForcedVisible()) {
                 BlockPos pos = entry.getKey();
                 if (closerThan(pos, cameraMC, 64)) { // 64 is the fixed max tile view distance
-                    AABB boundingBox = EntityCullingModBase.instance.setupAABB(entry.getValue(), pos);
+                    AABB boundingBox = cullable.getEc$BoundingBox();//EntityCullingModBase.instance.setupAABB(entry.getValue(), pos);
                     if (boundingBox.getXsize() > hitboxLimit || boundingBox.getYsize() > hitboxLimit
                             || boundingBox.getZsize() > hitboxLimit) {
                         cullable.setCulled(false); // To big to bother to cull

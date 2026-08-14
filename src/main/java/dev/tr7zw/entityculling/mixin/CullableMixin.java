@@ -1,9 +1,11 @@
 package dev.tr7zw.entityculling.mixin;
 
+import lombok.*;
+import net.minecraft.world.phys.*;
 import org.spongepowered.asm.mixin.Mixin;
 
 import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
-import dev.tr7zw.entityculling.versionless.access.Cullable;
+import dev.tr7zw.entityculling.access.Cullable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -13,6 +15,15 @@ public class CullableMixin implements Cullable {
     private long lasttime = 0;
     private boolean culled = false;
     private boolean outOfCamera = false;
+    @Getter
+    @Setter
+    private boolean shouldEntityAppearGlowing = false;
+    @Getter
+    @Setter
+    private AABB ec$BoundingBox = null;
+    @Getter
+    @Setter
+    private Vec3 ec$Position;
 
     @Override
     public void setTimeout() {

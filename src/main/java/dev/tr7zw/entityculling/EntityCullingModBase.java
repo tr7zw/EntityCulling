@@ -6,13 +6,13 @@ import java.util.stream.StreamSupport;
 
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 
+import dev.tr7zw.entityculling.access.*;
 import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
 import dev.tr7zw.transition.manager.*;
 import dev.tr7zw.transition.mc.ClientUtil;
 import dev.tr7zw.transition.mc.ComponentProvider;
 import dev.tr7zw.transition.mc.GeneralUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -45,7 +45,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
         instance = this;
         super.onInitialize();
         culling = new OcclusionCullingInstance(config.tracingDistance, new Provider());
-        cullTask = new CullTask(culling, blockEntityWhitelist, entityWhitelist);
+        cullTask = new CullTask(culling);
 
         cullThread = new Thread(cullTask, "CullThread");
         cullThread.setUncaughtExceptionHandler((thread, ex) -> {
@@ -131,13 +131,13 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
             boolean changed = false;
             if (tickCounter++ % config.captureRate == 0) {
                 if (!config.skipEntityCulling) {
-                    List<Entity> entities = StreamSupport
-                            .stream(client.level.entitiesForRendering().spliterator(), false).toList();
+                    List<Cullable> entities = StreamSupport
+                            .stream(client.level.entitiesForRendering().spliterator(), false).map(this::prefetchEntityData).filter(Objects::nonNull).toList();
                     cullTask.setEntitiesForRendering(entities);
                     debugCollector.getDataHolder().consideredEntities = entities.size();
                 }
                 if (!config.skipBlockEntityCulling) {
-                    Map<BlockPos, BlockEntity> blockEntities = new HashMap<>();
+                    Map<BlockPos, Cullable> blockEntities = new HashMap<>();
                     for (int x = -8; x <= 8; x++) {
                         for (int z = -8; z <= 8; z++) {
                             //? if >= 26.0 {
@@ -148,7 +148,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
                             LevelChunk chunk = client.level.getChunk(client.player.chunkPosition().x + x,
                                     client.player.chunkPosition().z + z);
                             *///? }
-                            blockEntities.putAll(chunk.getBlockEntities());
+                            prefetchBlockEntityData(blockEntities, chunk.getBlockEntities());
                         }
                     }
                     cullTask.setBlockEntities(blockEntities);
@@ -176,20 +176,47 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
         }
     }
 
+    private void prefetchBlockEntityData(Map<BlockPos, Cullable> blockEntities, Map<BlockPos, BlockEntity> entities) {
+        for (Map.Entry<BlockPos, BlockEntity> entry : entities.entrySet()) {
+            BlockEntity entity = entry.getValue();
+            if (entity instanceof Cullable cullable) {
+                if (blockEntityWhitelist.contains(entity.getType()) || Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(entry.getValue()) == null) {
+                    // No renderer/whitelisted, so no culling
+                    continue;
+                }
+                cullable.setEc$BoundingBox(setupAABB(entity, entry.getKey()));
+                blockEntities.put(entry.getKey(), cullable);
+            }
+        }
+    }
+
+    private Cullable prefetchEntityData(Entity entity) {
+        if (entity instanceof Cullable cullable) {
+            if (entityWhitelist.contains(entity.getType())) {
+                return null;
+            }
+            cullable.setShouldEntityAppearGlowing(Minecraft.getInstance().shouldEntityAppearGlowing(entity));
+            cullable.setEc$BoundingBox(NMSCullingHelper.getCullingBox(entity));
+            cullable.setEc$Position(entity.position());
+            return cullable;
+        }
+        return null;
+    }
+
     public abstract AABB setupAABB(BlockEntity entity, BlockPos pos);
 
-    public boolean isDynamicWhitelisted(BlockEntity entity) {
+    public boolean isBlockEntityDynamicWhitelisted(Cullable entity) {
         for (Function<BlockEntity, Boolean> fun : dynamicBlockEntityWhitelist) {
-            if (fun.apply(entity)) {
+            if (entity instanceof BlockEntity be && fun.apply(be)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean isDynamicWhitelisted(Entity entity) {
+    public boolean isEntityDynamicWhitelisted(Cullable entity) {
         for (Function<Entity, Boolean> fun : dynamicEntityWhitelist) {
-            if (fun.apply(entity)) {
+            if (entity instanceof Entity ent && fun.apply(ent)) {
                 return true;
             }
         }

@@ -7,8 +7,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import dev.tr7zw.entityculling.EntityCullingModBase;
-import dev.tr7zw.entityculling.versionless.access.Cullable;
-import net.minecraft.client.Minecraft;
+import dev.tr7zw.entityculling.access.Cullable;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.world.level.block.entity.BlockEntity;
