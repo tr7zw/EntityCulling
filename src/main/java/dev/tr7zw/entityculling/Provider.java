@@ -3,14 +3,14 @@ package dev.tr7zw.entityculling;
 import com.logisticscraft.occlusionculling.DataProvider;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 
 public class Provider implements DataProvider {
 
     private final Minecraft client = Minecraft.getMinecraft();
     private final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-    private WorldClient world = null;
+    private World world = null;
 
     @Override
     public boolean prepareChunk(int chunkX, int chunkZ) {

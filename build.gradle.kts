@@ -1,8 +1,8 @@
 plugins {
     idea
     java
-    id("gg.essential.loom") version "1.10.+"
-    id("com.gradleup.shadow") version "9.2.+"
+    id("gg.essential.loom") version "1.15.+"
+    id("com.gradleup.shadow") version "9.6.+"
 }
 
 val modID: String by project
@@ -25,7 +25,7 @@ loom {
         getByName("client") {
             property("mixin.debug.verbose", "true")
             property("mixin.debug.export", "true")
-            programArgs("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker", "--mixin", "$modID.mixins.json")
+            programArgs("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
         }
         remove(getByName("server"))
     }
@@ -50,7 +50,6 @@ loom {
 
 repositories {
     mavenCentral()
-    maven("https://repo.essential.gg/repository/maven-public")
     maven("https://repo.spongepowered.org/repository/maven-public/")
     maven("https://repo.codemc.io/repository/maven-public/")
 }
@@ -110,7 +109,6 @@ tasks {
             "FMLCorePluginContainsFMLMod" to true,
             "ForceLoadAsMod" to true,
             "TweakClass" to "org.spongepowered.asm.launch.MixinTweaker",
-            "MixinConfigs" to "$modID.mixins.json",
         ))
     }
 

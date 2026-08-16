@@ -1,51 +1,54 @@
 package dev.tr7zw.entityculling.mixin;
 
-import org.spongepowered.asm.mixin.Mixin;
-
 import dev.tr7zw.entityculling.EntityCullingMod;
-import dev.tr7zw.entityculling.access.Cullable;
+import dev.tr7zw.entityculling.ducks.CullableExt;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
-@Mixin(value = { Entity.class, TileEntity.class })
-public class CullableMixin implements Cullable {
+@Mixin(value = {Entity.class, TileEntity.class})
+public class CullableMixin implements CullableExt {
 
-    private long lasttime = 0;
+    @Unique
+    private long lastTime = 0;
+    @Unique
     private boolean culled = false;
+    @Unique
     private boolean outOfCamera = false;
 
     @Override
-    public void setTimeout() {
-        lasttime = System.currentTimeMillis() + 1000;
+    public void entityCulling$setTimeout() {
+        lastTime = System.currentTimeMillis() + 1000;
     }
 
     @Override
-    public boolean isForcedVisible() {
-        return lasttime > System.currentTimeMillis();
+    public boolean entityCulling$isForcedVisible() {
+        return lastTime > System.currentTimeMillis();
     }
 
     @Override
-    public void setCulled(boolean value) {
+    public void entityCulling$setCulled(boolean value) {
         this.culled = value;
-        if(!value) {
-            setTimeout();
+        if (!value) {
+            entityCulling$setTimeout();
         }
     }
 
     @Override
-    public boolean isCulled() {
-        if(!EntityCullingMod.enabled)return false;
+    public boolean entityCulling$isCulled() {
+        if (!EntityCullingMod.enabled) return false;
         return culled;
     }
 
     @Override
-    public void setOutOfCamera(boolean value) {
+    public void entityCulling$setOutOfCamera(boolean value) {
         this.outOfCamera = value;
     }
 
     @Override
-    public boolean isOutOfCamera() {
-        if(!EntityCullingMod.enabled)return false;
+    public boolean entityCulling$isOutOfCamera() {
+        if (!EntityCullingMod.enabled) return false;
         return outOfCamera;
     }
 
