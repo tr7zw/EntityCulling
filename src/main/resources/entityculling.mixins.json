@@ -4,9 +4,9 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "${modID}.mixins.refmap.json",
   "client": [
-    "BlockEntityRenderDispatcherMixin",
-    "EntityRendererMixin",
+    "TileEntityRenderDispatcherMixin",
     "CullableMixin",
+    "RenderAccessor",
     "WorldRendererMixin"
   ],
   "injectors": {

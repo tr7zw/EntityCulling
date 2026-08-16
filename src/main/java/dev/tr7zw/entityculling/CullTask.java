@@ -7,7 +7,7 @@ import java.util.Set;
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 import com.logisticscraft.occlusionculling.util.Vec3d;
 
-import dev.tr7zw.entityculling.access.Cullable;
+import dev.tr7zw.entityculling.ducks.CullableExt;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
@@ -69,10 +69,10 @@ public class CullTask implements Runnable {
                             if(unCullable.contains(entry.getBlockType().getUnlocalizedName())) {
                                 continue;
                             }
-                            Cullable cullable = (Cullable) entry;
-                            if (!cullable.isForcedVisible()) {
+                            CullableExt cullable = (CullableExt) entry;
+                            if (!cullable.entityCulling$isForcedVisible()) {
                                 if (noCulling) {
-                                    cullable.setCulled(false);
+                                    cullable.entityCulling$setCulled(false);
                                     continue;
                                 }
                                 BlockPos pos = entry.getPos();
@@ -80,7 +80,7 @@ public class CullTask implements Runnable {
                                     aabbMin.set(pos.getX(), pos.getY(), pos.getZ());
                                     aabbMax.set(pos.getX()+1d, pos.getY()+1d, pos.getZ()+1d);
                                     boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
-                                    cullable.setCulled(!visible);
+                                    cullable.entityCulling$setCulled(!visible);
                                 }
 
                             }
@@ -94,28 +94,28 @@ public class CullTask implements Runnable {
                                 break; // We are not synced to the main thread, so NPE's/CME are allowed here and way less
                                 // overhead probably than trying to sync stuff up for no really good reason
                             }
-                            if(!(entity instanceof Cullable)) {
+                            if(!(entity instanceof CullableExt)) {
                                 continue; // Not sure how this could happen outside from mixin screwing up the inject into Entity
                             }
-                            Cullable cullable = (Cullable) entity;
-                            if (!cullable.isForcedVisible()) {
+                            CullableExt cullable = (CullableExt) entity;
+                            if (!cullable.entityCulling$isForcedVisible()) {
                                 if (noCulling || isSkippableArmorstand(entity)) {
-                                    cullable.setCulled(false);
+                                    cullable.entityCulling$setCulled(false);
                                     continue;
                                 }
                                 if(entity.getPositionVector().squareDistanceTo(cameraMC) > EntityCullingMod.instance.config.tracingDistance * EntityCullingMod.instance.config.tracingDistance) {
-                                    cullable.setCulled(false); // If your entity view distance is larger than tracingDistance just render it
+                                    cullable.entityCulling$setCulled(false); // If your entity view distance is larger than tracingDistance just render it
                                     continue;
                                 }
                                 AxisAlignedBB boundingBox = entity.getEntityBoundingBox();
                                 if(boundingBox.maxX - boundingBox.minX > hitboxLimit || boundingBox.maxY - boundingBox.minY > hitboxLimit || boundingBox.maxZ - boundingBox.minZ > hitboxLimit) {
-                                    cullable.setCulled(false); // Too big to bother to cull
+                                    cullable.entityCulling$setCulled(false); // Too big to bother to cull
                                     continue;
                                 }
                                 aabbMin.set(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
                                 aabbMax.set(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ);
                                 boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
-                                cullable.setCulled(!visible);
+                                cullable.entityCulling$setCulled(!visible);
                             }
                         }
                         lastTime = (System.currentTimeMillis()-start);

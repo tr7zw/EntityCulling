@@ -27,7 +27,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 
-@Mod(modid = EntityCullingMod.MODID, name = EntityCullingMod.NAME, version = "1.6.2", clientSideOnly = true)
+@Mod(
+        modid = EntityCullingMod.MODID,
+        name = EntityCullingMod.NAME,
+        version = "1.6.2",
+        clientSideOnly = true,
+        acceptableRemoteVersions = "*"
+)
 public class EntityCullingMod {
     public static final String MODID = "entityculling";
     public static final String NAME = "EntityCulling";
