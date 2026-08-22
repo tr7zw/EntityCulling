@@ -91,8 +91,8 @@ public class WorldRendererMixin {
                 double nameTagDistance = 64.0D;
                 //? if >= 26.2 {
 
-                nameTagDistance = living.getAttributeValue(
-                        net.minecraft.world.entity.ai.attributes.Attributes.NAME_TAG_DISTANCE);
+                nameTagDistance = living
+                        .getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.NAME_TAG_DISTANCE);
                 //? }
 
                 if (renderer instanceof LivingEntityRendererAccessor accessor
@@ -128,9 +128,7 @@ public class WorldRendererMixin {
                     if (d < nameTagDistance * nameTagDistance) {
                         state.nameTag = entity.getDisplayName();
                         state.nameTagAttachment = entity.getAttachments().getNullable(
-                                net.minecraft.world.entity.EntityAttachment.NAME_TAG,
-                                0,
-                                entity.getYRot(partialTick));
+                                net.minecraft.world.entity.EntityAttachment.NAME_TAG, 0, entity.getYRot(partialTick));
                     }
                 }
             } else {
