@@ -132,7 +132,8 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
             if (tickCounter++ % config.captureRate == 0) {
                 if (!config.skipEntityCulling) {
                     List<Cullable> entities = StreamSupport
-                            .stream(client.level.entitiesForRendering().spliterator(), false).map(this::prefetchEntityData).filter(Objects::nonNull).toList();
+                            .stream(client.level.entitiesForRendering().spliterator(), false)
+                            .map(this::prefetchEntityData).filter(Objects::nonNull).toList();
                     cullTask.setEntitiesForRendering(entities);
                     debugCollector.getDataHolder().consideredEntities = entities.size();
                 }
@@ -180,7 +181,8 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
         for (Map.Entry<BlockPos, BlockEntity> entry : entities.entrySet()) {
             BlockEntity entity = entry.getValue();
             if (entity instanceof Cullable cullable) {
-                if (blockEntityWhitelist.contains(entity.getType()) || Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(entry.getValue()) == null) {
+                if (blockEntityWhitelist.contains(entity.getType()) || Minecraft.getInstance()
+                        .getBlockEntityRenderDispatcher().getRenderer(entry.getValue()) == null) {
                     // No renderer/whitelisted, so no culling
                     continue;
                 }

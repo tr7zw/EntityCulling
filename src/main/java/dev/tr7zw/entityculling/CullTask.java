@@ -99,7 +99,8 @@ public class CullTask implements Runnable {
                     cullable.setCulled(false);
                     continue;
                 }
-                if (!cullable.getEc$Position().closerThan(cameraMC, EntityCullingModBase.instance.config.tracingDistance)) {
+                if (!cullable.getEc$Position().closerThan(cameraMC,
+                        EntityCullingModBase.instance.config.tracingDistance)) {
                     cullable.setCulled(false); // If your entity view distance is larger than tracingDistance just
                                                // render it
                     continue;

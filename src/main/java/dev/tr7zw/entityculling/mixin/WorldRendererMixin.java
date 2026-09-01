@@ -10,16 +10,22 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.logisticscraft.occlusionculling.util.MathUtilities;
 //? if < 1.21.5 {
 /*
  import com.mojang.blaze3d.systems.RenderSystem;
 *///? }
 
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import dev.tr7zw.entityculling.EntityCullingModBase;
 import dev.tr7zw.entityculling.NMSCullingHelper;
 import dev.tr7zw.entityculling.access.Cullable;
 import dev.tr7zw.transition.mc.GeneralUtil;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.world.phys.AABB;
 
 //? if >= 26.2 {
 
