@@ -6,11 +6,21 @@ import lombok.experimental.*;
 import net.minecraft.client.*;
 
 public final class KeybindHolder {
+
+    //? if >= 26.3 {
+
+    private static final int UNBOUND_KEY = 0;
+    //? } else {
+    /*
+    private static final int UNBOUND_KEY = -1;
+     */
+    //? }
+
     public static final KeybindHolder INSTANCE = new KeybindHolder();
     private boolean initialized = false;
-    public final KeyMapping keybind = GeneralUtil.createKeyMapping("key.entityculling.toggle", -1,
+    public final KeyMapping keybind = GeneralUtil.createKeyMapping("key.entityculling.toggle", UNBOUND_KEY,
             "text.entityculling.title");
-    public final KeyMapping keybindBoxes = GeneralUtil.createKeyMapping("key.entityculling.toggleBoxes", -1,
+    public final KeyMapping keybindBoxes = GeneralUtil.createKeyMapping("key.entityculling.toggleBoxes", UNBOUND_KEY,
             "text.entityculling.title");
 
     private KeybindHolder() {
