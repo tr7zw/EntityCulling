@@ -53,3 +53,4 @@ src/main/neoforge-resources/META-INF/neoforge.mods.toml
 /src/main/java/dev/tr7zw/util
 pmd-rules.xml
 /buildSrc
+/versions

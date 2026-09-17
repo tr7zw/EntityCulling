@@ -86,22 +86,34 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
 
     @Override
     public AABB entityCullingGetCullingBox(T entity) {
-        //? if <= 1.21.1 {
-        /*
-         return entity.getBoundingBoxForCulling();
-        *///? } else {
+        //? if >= 26.3 {
 
-        return getBoundingBoxForCulling(entity);
+        return getBoundingBoxForCulling(entity, 0);
+        //? } else if > 1.21.1 {
+        /*
+         return getBoundingBoxForCulling(entity);
+        *///? } else {
+        /*
+        return entity.getBoundingBoxForCulling();
+        */
         //? }
     }
 
-    //? if >= 1.21.2 {
+    //? if >= 26.3 {
 
     @Shadow
     abstract boolean affectedByCulling(T entity);
 
     @Shadow
+    abstract AABB getBoundingBoxForCulling(T entity, float partialTicks);
+    //? } else if >= 1.21.2 {
+    /*
+    @Shadow
+    abstract boolean affectedByCulling(T entity);
+    
+    @Shadow
     abstract AABB getBoundingBoxForCulling(T entity);
+     */
     //? }
 
 }

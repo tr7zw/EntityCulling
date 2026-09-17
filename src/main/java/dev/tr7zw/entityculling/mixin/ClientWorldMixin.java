@@ -72,7 +72,14 @@ public class ClientWorldMixin {
     }
 
     private void processDisplay(net.minecraft.world.entity.Display display) {
-        if (display.getBoundingBoxForCulling().getSize() == 0 && display instanceof DisplayAccessor accessor) {
+        //? if >= 26.3 {
+
+        if (display.getBoundingBox().getSize() == 0 && display instanceof DisplayAccessor accessor) {
+            //? } else {
+            /*
+            if (display.getBoundingBoxForCulling().getSize() == 0 && display instanceof DisplayAccessor accessor) {
+             */
+            //? }
             accessor.invokeSetWidth(3);
             accessor.invokeSetHeight(3);
             // cause culling data update
