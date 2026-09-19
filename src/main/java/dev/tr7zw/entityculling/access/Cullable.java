@@ -1,5 +1,6 @@
 package dev.tr7zw.entityculling.access;
 
+import net.minecraft.core.*;
 import net.minecraft.world.phys.*;
 
 public interface Cullable {
@@ -27,5 +28,9 @@ public interface Cullable {
     Vec3 getEc$Position();
 
     void setEc$Position(Vec3 pos);
+
+    default BlockPos getBlockPos() {
+        return null;
+    }
 
 }

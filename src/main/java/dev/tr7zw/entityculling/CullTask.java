@@ -42,7 +42,7 @@ public class CullTask implements Runnable {
     @Setter
     private List<Cullable> entitiesForRendering = new ArrayList<>();
     @Setter
-    private Map<BlockPos, Cullable> blockEntities = new HashMap<>();
+    private List<Cullable> blockEntities = new ArrayList<>();
     @Setter
     private Vec3 cameraMC = new Vec3(0, 0, 0);
 
@@ -64,6 +64,9 @@ public class CullTask implements Runnable {
                         lastPos.set(cameraMC.x, cameraMC.y, cameraMC.z);
                         Vec3d camera = lastPos;
                         culling.resetCache();
+                        if (!EntityCullingModBase.instance.config.safeMode) {
+                            EntityCullingModBase.instance.extractEntityData(Minecraft.getInstance());
+                        }
                         cullBlockEntities(cameraMC, camera);
                         cullEntities(cameraMC, camera);
                         lastTime = (System.nanoTime() - start) / 1_000_000.0;
@@ -123,28 +126,27 @@ public class CullTask implements Runnable {
         if (disableBlockEntityCulling) {
             return;
         }
-        Iterator<Entry<BlockPos, Cullable>> iterator = blockEntities.entrySet().iterator();
-        Entry<BlockPos, Cullable> entry;
+        Iterator<Cullable> iterator = blockEntities.iterator();
+        Cullable cullable;
         while (iterator.hasNext()) {
             try {
-                entry = iterator.next();
+                cullable = iterator.next();
             } catch (NullPointerException | ConcurrentModificationException ex) {
                 break; // We are not synced to the main thread, so NPE's/CME are allowed here and way
                        // less
                        // overhead probably than trying to sync stuff up for no really good reason
             }
-            if (entry == null) {
+            if (cullable == null) {
                 // assume the iterator is broken, cancel the loop
                 // https://github.com/tr7zw/EntityCulling/issues/168
                 break;
             }
-            if (EntityCullingModBase.instance.isBlockEntityDynamicWhitelisted(entry.getValue())) {
+            if (EntityCullingModBase.instance.isBlockEntityDynamicWhitelisted(cullable)) {
                 continue;
             }
-            Cullable cullable = entry.getValue();
             if (!cullable.isForcedVisible()) {
-                BlockPos pos = entry.getKey();
-                if (closerThan(pos, cameraMC, 64)) { // 64 is the fixed max tile view distance
+                BlockPos pos = cullable.getBlockPos();
+                if (pos != null && closerThan(pos, cameraMC, 64)) { // 64 is the fixed max tile view distance
                     AABB boundingBox = cullable.getEc$BoundingBox();//EntityCullingModBase.instance.setupAABB(entry.getValue(), pos);
                     if (boundingBox.getXsize() > hitboxLimit || boundingBox.getYsize() > hitboxLimit
                             || boundingBox.getZsize() > hitboxLimit) {

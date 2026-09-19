@@ -50,6 +50,10 @@ public class ConfigUpgrader {
             config.tickCullingWhitelist.addAll(tmp.tickCullingWhitelist);
             config.blockEntityWhitelist.addAll(tmp.blockEntityWhitelist);
         }
+        if (config.configVersion < 9) {
+            config.configVersion = 9;
+            changed = true;
+        }
         // check for more changes here
 
         return changed;

@@ -6,7 +6,8 @@ import java.util.Set;
 
 public class Config {
 
-    public int configVersion = 8;
+    public int configVersion = 9;
+    public boolean safeMode = true;
     public boolean renderNametagsThroughWalls = true;
     // spotless:off
     public Set<String> blockEntityWhitelist = new HashSet<>(

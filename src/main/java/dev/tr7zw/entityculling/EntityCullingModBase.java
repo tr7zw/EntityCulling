@@ -130,30 +130,8 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
         if (ingame && enabled) {
             boolean changed = false;
             if (tickCounter++ % config.captureRate == 0) {
-                if (!config.skipEntityCulling) {
-                    List<Cullable> entities = StreamSupport
-                            .stream(client.level.entitiesForRendering().spliterator(), false)
-                            .map(this::prefetchEntityData).filter(Objects::nonNull).toList();
-                    cullTask.setEntitiesForRendering(entities);
-                    debugCollector.getDataHolder().consideredEntities = entities.size();
-                }
-                if (!config.skipBlockEntityCulling) {
-                    Map<BlockPos, Cullable> blockEntities = new HashMap<>();
-                    for (int x = -8; x <= 8; x++) {
-                        for (int z = -8; z <= 8; z++) {
-                            //? if >= 26.0 {
-                            LevelChunk chunk = client.level.getChunk(client.player.chunkPosition().x() + x,
-                                    client.player.chunkPosition().z() + z);
-                            //? } else {
-                            /*
-                            LevelChunk chunk = client.level.getChunk(client.player.chunkPosition().x + x,
-                                    client.player.chunkPosition().z + z);
-                            *///? }
-                            prefetchBlockEntityData(blockEntities, chunk.getBlockEntities());
-                        }
-                    }
-                    cullTask.setBlockEntities(blockEntities);
-                    debugCollector.getDataHolder().consideredBlockEntities = blockEntities.size();
+                if (config.safeMode) {
+                    extractEntityData(client);
                 }
                 changed = true;
             }
@@ -172,22 +150,48 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
         } else {
             cullTask.setIngame(false);
             cullTask.setEntitiesForRendering(Collections.emptyList());
-            cullTask.setBlockEntities(Collections.emptyMap());
+            cullTask.setBlockEntities(Collections.emptyList());
             lastTickTime = (System.nanoTime() - start) / 1_000_000.0;
         }
     }
 
-    private void prefetchBlockEntityData(Map<BlockPos, Cullable> blockEntities, Map<BlockPos, BlockEntity> entities) {
-        for (Map.Entry<BlockPos, BlockEntity> entry : entities.entrySet()) {
-            BlockEntity entity = entry.getValue();
+    void extractEntityData(Minecraft client) {
+        if (!config.skipEntityCulling) {
+            List<Cullable> entities = StreamSupport.stream(client.level.entitiesForRendering().spliterator(), false)
+                    .map(this::prefetchEntityData).filter(Objects::nonNull).toList();
+            cullTask.setEntitiesForRendering(entities);
+            debugCollector.getDataHolder().consideredEntities = entities.size();
+        }
+        if (!config.skipBlockEntityCulling) {
+            List<Cullable> blockEntities = new ArrayList<>();
+            for (int x = -8; x <= 8; x++) {
+                for (int z = -8; z <= 8; z++) {
+                    //? if >= 26.0 {
+                    LevelChunk chunk = client.level.getChunk(client.player.chunkPosition().x() + x,
+                            client.player.chunkPosition().z() + z);
+                    //? } else {
+                    /*
+                    LevelChunk chunk = client.level.getChunk(client.player.chunkPosition().x + x,
+                            client.player.chunkPosition().z + z);
+                    *///? }
+                    prefetchBlockEntityData(blockEntities, chunk.getBlockEntities());
+                }
+            }
+            cullTask.setBlockEntities(blockEntities);
+            debugCollector.getDataHolder().consideredBlockEntities = blockEntities.size();
+        }
+    }
+
+    private void prefetchBlockEntityData(List<Cullable> blockEntities, Map<BlockPos, BlockEntity> entities) {
+        for (BlockEntity entity : entities.values()) {
             if (entity instanceof Cullable cullable) {
-                if (blockEntityWhitelist.contains(entity.getType()) || Minecraft.getInstance()
-                        .getBlockEntityRenderDispatcher().getRenderer(entry.getValue()) == null) {
+                if (blockEntityWhitelist.contains(entity.getType())
+                        || Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(entity) == null) {
                     // No renderer/whitelisted, so no culling
                     continue;
                 }
-                cullable.setEc$BoundingBox(setupAABB(entity, entry.getKey()));
-                blockEntities.put(entry.getKey(), cullable);
+                cullable.setEc$BoundingBox(setupAABB(entity, entity.getBlockPos()));
+                blockEntities.add(cullable);
             }
         }
     }
