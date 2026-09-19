@@ -1,6 +1,7 @@
 package dev.tr7zw.entityculling;
 
 import dev.tr7zw.entityculling.access.EntityRendererInter;
+import dev.tr7zw.transition.mc.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.world.entity.*;
@@ -14,6 +15,9 @@ public class NMSCullingHelper {
 
     @SuppressWarnings("unchecked")
     public static boolean ignoresCulling(Entity entity) {
+        if (entity == GeneralUtil.getPlayer()) {
+            return true;
+        }
         //? if <= 1.21.1 {
         /*
          return entity.noCulling;
