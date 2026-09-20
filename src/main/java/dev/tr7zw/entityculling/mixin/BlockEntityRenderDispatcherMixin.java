@@ -31,7 +31,7 @@ public abstract class BlockEntityRenderDispatcherMixin {
             //? if >= 26.2 {
             boolean isGloballyRendered,
             //? }
-            //? if neoforge && >= 26.2 {
+            //? if neoforge && >= 1.21.9 {
             /*
             net.minecraft.client.renderer.culling.Frustum neoFrustum,
             *///? }
