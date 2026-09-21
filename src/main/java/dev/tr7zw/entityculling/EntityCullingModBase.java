@@ -191,6 +191,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
                     continue;
                 }
                 cullable.setEc$BoundingBox(setupAABB(entity, entity.getBlockPos()));
+                cullable.setEc$PBlockPos(entity.getBlockPos());
                 blockEntities.add(cullable);
             }
         }

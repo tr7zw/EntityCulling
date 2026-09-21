@@ -29,8 +29,8 @@ public interface Cullable {
 
     void setEc$Position(Vec3 pos);
 
-    default BlockPos getBlockPos() {
-        return null;
-    }
+    BlockPos getEc$PBlockPos();
+
+    void setEc$PBlockPos(BlockPos pos);
 
 }

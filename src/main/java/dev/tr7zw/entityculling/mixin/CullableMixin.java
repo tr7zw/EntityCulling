@@ -1,6 +1,7 @@
 package dev.tr7zw.entityculling.mixin;
 
 import lombok.*;
+import net.minecraft.core.*;
 import net.minecraft.world.phys.*;
 import org.spongepowered.asm.mixin.Mixin;
 
@@ -24,6 +25,9 @@ public class CullableMixin implements Cullable {
     @Getter
     @Setter
     private Vec3 ec$Position;
+    @Getter
+    @Setter
+    private BlockPos ec$PBlockPos;
 
     @Override
     public void setTimeout() {

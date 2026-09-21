@@ -145,7 +145,7 @@ public class CullTask implements Runnable {
                 continue;
             }
             if (!cullable.isForcedVisible()) {
-                BlockPos pos = cullable.getBlockPos();
+                BlockPos pos = cullable.getEc$PBlockPos();
                 if (pos != null && closerThan(pos, cameraMC, 64)) { // 64 is the fixed max tile view distance
                     AABB boundingBox = cullable.getEc$BoundingBox();//EntityCullingModBase.instance.setupAABB(entry.getValue(), pos);
                     if (boundingBox.getXsize() > hitboxLimit || boundingBox.getYsize() > hitboxLimit
