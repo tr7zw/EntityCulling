@@ -10,7 +10,7 @@ See https://github.com/tr7zw/EntityCulling/issues/313 / https://github.com/cc-tw
  */
 public interface BlockEntityRenderFabricExtension<T extends BlockEntity> {
 
-    default AABB getRenderBoundingBox(T blockEntity) {
+    default AABB ec$getRenderBoundingBox(T blockEntity) {
         return new AABB(blockEntity.getBlockPos());
     }
 }

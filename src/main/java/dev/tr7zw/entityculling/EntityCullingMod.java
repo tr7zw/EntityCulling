@@ -56,7 +56,7 @@ public class EntityCullingMod extends EntityCullingModBase
             return new AABB(pos).inflate(0, 1, 0);
         }
         return ((BlockEntityRenderFabricExtension) Minecraft.getInstance().getBlockEntityRenderDispatcher()
-                .getRenderer(entity)).getRenderBoundingBox(entity);
+                .getRenderer(entity)).ec$getRenderBoundingBox(entity);
         //? } else if neoforge {
         /*
                return ((net.neoforged.neoforge.client.extensions.IBlockEntityRendererExtension)Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(entity)).getRenderBoundingBox(entity);
