@@ -36,7 +36,8 @@ public abstract class BlockEntityRenderDispatcherMixin {
             net.minecraft.client.renderer.culling.Frustum neoFrustum,
             *///? }
             CallbackInfoReturnable<net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState> info) {
-        if (EntityCullingModBase.instance.config.skipBlockEntityCulling) {
+        if (blockEntity == null || EntityCullingModBase.instance.config.skipBlockEntityCulling
+                || EntityCullingModBase.instance.blockEntityWhitelist.contains(blockEntity.getType())) {
             EntityCullingModBase.instance.renderedBlockEntities++;
             return;
         }
@@ -61,8 +62,9 @@ public abstract class BlockEntityRenderDispatcherMixin {
         if (blockEntityRenderer.shouldRenderOffScreen()) {
             EntityCullingModBase.instance.renderedBlockEntities++;
             return;
-        } else if (EntityCullingModBase.instance.config.blockEntityFrustumCulling && frustum != null && !frustum
-                .isVisible(EntityCullingModBase.instance.setupAABB(blockEntity, blockEntity.getBlockPos()))) {
+        } else if (EntityCullingModBase.instance.config.blockEntityFrustumCulling && frustum != null
+                && !frustum.isVisible(
+                        EntityCullingModBase.instance.setupAABB(blockEntity, blockEntity.getBlockPos()).inflate(1))) {
             // Implement frustum culling like with entities
             EntityCullingModBase.instance.skippedBlockEntities++;
             info.setReturnValue(null);
