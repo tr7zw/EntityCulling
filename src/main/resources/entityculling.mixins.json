@@ -14,8 +14,7 @@
         "ClientWorldMixin",
         "DebugScreenEntriesAccessor",
         "LivingEntityRendererAccessor",
-        "DisplayAccessor",
-        "BlockEntityRendererMixin"
+        "DisplayAccessor"
     ],
     "injectors": {
         "defaultRequire": 1

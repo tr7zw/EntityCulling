@@ -1,5 +1,9 @@
 package dev.tr7zw.entityculling;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+
 import net.minecraft.client.renderer.blockentity.*;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.phys.*;
@@ -11,6 +15,45 @@ See https://github.com/tr7zw/EntityCulling/issues/313 / https://github.com/cc-tw
 public interface BlockEntityRenderFabricExtension<T extends BlockEntity> {
 
     default AABB getRenderBoundingBox(T blockEntity) {
+        return new AABB(blockEntity.getBlockPos());
+    }
+
+    // This only calculates this once per class, so we're not going to waste as much time with the lookup
+    // like we normally would with reflection.
+    ClassValue<Method> RENDER_BOUNDING_BOX_GETTER = new ClassValue<>() {
+        @Override
+        protected Method computeValue(Class<?> type) {
+            try {
+                Method method = type.getMethod("getRenderBoundingBox", BlockEntity.class);
+                int modifiers = method.getModifiers();
+
+                if (!Modifier.isStatic(modifiers) && method.getReturnType() == AABB.class) {
+                    return method;
+                }
+            } catch (NoSuchMethodException e) {
+                return null;
+            }
+
+            return null;
+        }
+    };
+
+    static AABB tryGetRenderBoundingBox(BlockEntityRenderer renderer, BlockEntity blockEntity) {
+        // There shouldn't be a performance impact for the value below, but just in case, let's bypass it.
+        if (renderer instanceof BlockEntityRenderFabricExtension extension) {
+            return extension.getRenderBoundingBox(blockEntity);
+        }
+
+        // Reflection time! Fortunately, this shouldn't be horrible on performance.
+        Method method = RENDER_BOUNDING_BOX_GETTER.get(renderer.getClass());
+        if (method != null) {
+            try {
+                return (AABB) method.invoke(renderer, blockEntity);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         return new AABB(blockEntity.getBlockPos());
     }
 }
