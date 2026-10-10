@@ -3,6 +3,7 @@ package dev.tr7zw.entityculling;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Optional;
 
 import net.minecraft.client.renderer.blockentity.*;
 import net.minecraft.world.level.block.entity.*;
@@ -20,21 +21,20 @@ public interface BlockEntityRenderFabricExtension<T extends BlockEntity> {
 
     // This only calculates this once per class, so we're not going to waste as much time with the lookup
     // like we normally would with reflection.
-    ClassValue<Method> RENDER_BOUNDING_BOX_GETTER = new ClassValue<>() {
+    ClassValue<Optional<Method>> RENDER_BOUNDING_BOX_GETTER = new ClassValue<>() {
         @Override
-        protected Method computeValue(Class<?> type) {
+        protected Optional<Method> computeValue(Class<?> type) {
             try {
                 Method method = type.getMethod("getRenderBoundingBox", BlockEntity.class);
                 int modifiers = method.getModifiers();
 
                 if (!Modifier.isStatic(modifiers) && method.getReturnType() == AABB.class) {
-                    return method;
+                    return Optional.of(method);
                 }
-            } catch (NoSuchMethodException e) {
-                return null;
+            } catch (NoSuchMethodException ignored) {
             }
 
-            return null;
+            return Optional.empty();
         }
     };
 
@@ -45,10 +45,10 @@ public interface BlockEntityRenderFabricExtension<T extends BlockEntity> {
         }
 
         // Reflection time! Fortunately, this shouldn't be horrible on performance.
-        Method method = RENDER_BOUNDING_BOX_GETTER.get(renderer.getClass());
-        if (method != null) {
+        Optional<Method> method = RENDER_BOUNDING_BOX_GETTER.get(renderer.getClass());
+        if (method.isPresent()) {
             try {
-                return (AABB) method.invoke(renderer, blockEntity);
+                return (AABB) method.orElseThrow().invoke(renderer, blockEntity);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
