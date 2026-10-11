@@ -57,7 +57,7 @@ public class CullTask implements Runnable {
         while (Minecraft.getInstance().isRunning()) { // client.isRunning() returns false at the start?!?
             try {
                 Thread.sleep(sleepDelay);
-                if (!requestCull) {
+                if (!requestCull || !(EntityCullingVersionlessBase.enabled && ingame)) {
                     LockSupport.parkNanos(this, PARK_TIMEOUT_NANOS);
                 }
                 if (EntityCullingVersionlessBase.enabled && ingame) {
@@ -78,7 +78,6 @@ public class CullTask implements Runnable {
                     }
                 } else {
                     lastTime = 0; // Reset last time if not enabled
-                    requestCull = false; // worldTick keeps requesting, clear it so the thread can park
                 }
             } catch (Exception e) {
                 e.printStackTrace();
