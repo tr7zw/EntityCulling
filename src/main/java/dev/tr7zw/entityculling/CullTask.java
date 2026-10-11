@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.locks.LockSupport;
 
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 import com.logisticscraft.occlusionculling.util.Vec3d;
@@ -22,7 +23,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class CullTask implements Runnable {
 
-    public boolean requestCull = false;
+    public volatile boolean requestCull = false;
     public boolean disableEntityCulling = false;
     public boolean disableBlockEntityCulling = false;
 
@@ -30,6 +31,7 @@ public class CullTask implements Runnable {
     private final int sleepDelay = EntityCullingModBase.instance.config.sleepDelay;
     private final int hitboxLimit = EntityCullingModBase.instance.config.hitboxLimit;
     public double lastTime = 0;
+    private static final long PARK_TIMEOUT_NANOS = 1_000_000_000L;
 
     // reused preallocated vars
     private Vec3d lastPos = new Vec3d(0, 0, 0);
@@ -55,6 +57,9 @@ public class CullTask implements Runnable {
         while (Minecraft.getInstance().isRunning()) { // client.isRunning() returns false at the start?!?
             try {
                 Thread.sleep(sleepDelay);
+                if (!requestCull || !(EntityCullingVersionlessBase.enabled && ingame)) {
+                    LockSupport.parkNanos(this, PARK_TIMEOUT_NANOS);
+                }
                 if (EntityCullingVersionlessBase.enabled && ingame) {
                     // getEyePosition can use a fixed delta as its debug only anyway;
                     if (requestCull
