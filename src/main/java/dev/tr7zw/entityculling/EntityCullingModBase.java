@@ -36,6 +36,10 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     private int tickCounter = 0;
     public double lastTickTime = 0;
     private boolean freezeCamera = false;
+    // preallocation sizes, adding a small buffer to hopefully avoid any resizing during runtime
+    private static final int PREALLOC_BUFFER = 10;
+    private int lastEntityCount = 0;
+    private int lastBlockEntityCount = 0;
     //? if >= 1.21.9 {
 
     public net.minecraft.client.renderer.culling.Frustum frustum = null;
@@ -163,18 +167,19 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
 
     void extractEntityData(Minecraft client) {
         if (!config.skipEntityCulling) {
-            List<Cullable> entities = new ArrayList<>();
+            List<Cullable> entities = new ArrayList<>(lastEntityCount + PREALLOC_BUFFER);
             for (Entity entity : client.level.entitiesForRendering()) {
                 Cullable cullable = prefetchEntityData(entity);
                 if (cullable != null) {
                     entities.add(cullable);
                 }
             }
+            lastEntityCount = entities.size();
             cullTask.setEntitiesForRendering(entities);
             debugCollector.getDataHolder().consideredEntities = entities.size();
         }
         if (!config.skipBlockEntityCulling) {
-            List<Cullable> blockEntities = new ArrayList<>();
+            List<Cullable> blockEntities = new ArrayList<>(lastBlockEntityCount + PREALLOC_BUFFER);
             for (int x = -8; x <= 8; x++) {
                 for (int z = -8; z <= 8; z++) {
                     //? if >= 26.0 {
@@ -188,6 +193,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
                     prefetchBlockEntityData(blockEntities, chunk.getBlockEntities());
                 }
             }
+            lastBlockEntityCount = blockEntities.size();
             cullTask.setBlockEntities(blockEntities);
             debugCollector.getDataHolder().consideredBlockEntities = blockEntities.size();
         }
