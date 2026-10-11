@@ -11,6 +11,7 @@ public class Provider implements DataProvider {
 
     private final Minecraft client = Minecraft.getInstance();
     private ClientLevel world = null;
+    private final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
     @Override
     public boolean prepareChunk(int chunkX, int chunkZ) {
@@ -20,8 +21,7 @@ public class Provider implements DataProvider {
 
     @Override
     public boolean isOpaqueFullCube(int x, int y, int z) {
-        BlockPos pos = new BlockPos(x, y, z);
-        var state = world.getBlockState(pos);
+        var state = world.getBlockState(pos.set(x, y, z));
         if (EntityCullingModBase.instance.config.solidLeaves && state.getBlock() instanceof LeavesBlock) {
             return true;
         }

@@ -53,7 +53,7 @@ public class EntityCullingMod extends EntityCullingModBase
         //? if fabric {
 
         if (entity instanceof BannerBlockEntity) {
-            return new AABB(pos).inflate(0, 1, 0);
+            return new AABB(pos.getX(), pos.getY() - 1, pos.getZ(), pos.getX() + 1, pos.getY() + 2, pos.getZ() + 1);
         }
         return ((BlockEntityRenderFabricExtension) Minecraft.getInstance().getBlockEntityRenderDispatcher()
                 .getRenderer(entity)).getRenderBoundingBox(entity);

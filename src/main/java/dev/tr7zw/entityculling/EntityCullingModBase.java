@@ -1,8 +1,8 @@
 package dev.tr7zw.entityculling;
 
 import java.util.*;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.Function;
-import java.util.stream.StreamSupport;
 
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 
@@ -48,6 +48,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
         cullTask = new CullTask(culling);
 
         cullThread = new Thread(cullTask, "CullThread");
+        cullThread.setDaemon(true); // may be parked for up to a second, don't hold up the shutdown
         cullThread.setUncaughtExceptionHandler((thread, ex) -> {
             LOGGER.error("The CullingThread has crashed! Please report the following stacktrace!", ex);
         });
@@ -63,7 +64,12 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     }
 
     public void worldTick() {
+        requestCull();
+    }
+
+    private void requestCull() {
         cullTask.requestCull = true;
+        LockSupport.unpark(cullThread);
     }
 
     public void clientTick() {
@@ -143,7 +149,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
                                 .mainCamera() /*?} else {*//* client.gameRenderer.getMainCamera() *//*?}*/
                                 /*? >= 1.21.11 {*/.position() /*?} else {*//* .getPosition() *//*?}*/);
             }
-            cullTask.requestCull = true;
+            requestCull();
             if (changed) {
                 lastTickTime = (System.nanoTime() - start) / 1_000_000.0;
             }
@@ -157,8 +163,13 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
 
     void extractEntityData(Minecraft client) {
         if (!config.skipEntityCulling) {
-            List<Cullable> entities = StreamSupport.stream(client.level.entitiesForRendering().spliterator(), false)
-                    .map(this::prefetchEntityData).filter(Objects::nonNull).toList();
+            List<Cullable> entities = new ArrayList<>();
+            for (Entity entity : client.level.entitiesForRendering()) {
+                Cullable cullable = prefetchEntityData(entity);
+                if (cullable != null) {
+                    entities.add(cullable);
+                }
+            }
             cullTask.setEntitiesForRendering(entities);
             debugCollector.getDataHolder().consideredEntities = entities.size();
         }
@@ -213,6 +224,9 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     public abstract AABB setupAABB(BlockEntity entity, BlockPos pos);
 
     public boolean isBlockEntityDynamicWhitelisted(Cullable entity) {
+        if (dynamicBlockEntityWhitelist.isEmpty()) {
+            return false; // skip the iterator allocation
+        }
         for (Function<BlockEntity, Boolean> fun : dynamicBlockEntityWhitelist) {
             if (entity instanceof BlockEntity be && fun.apply(be)) {
                 return true;
@@ -222,6 +236,9 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     }
 
     public boolean isEntityDynamicWhitelisted(Cullable entity) {
+        if (dynamicEntityWhitelist.isEmpty()) {
+            return false; // skip the iterator allocation
+        }
         for (Function<Entity, Boolean> fun : dynamicEntityWhitelist) {
             if (entity instanceof Entity ent && fun.apply(ent)) {
                 return true;
