@@ -15,7 +15,7 @@
     "text.entityculling.tickCulling": "Tik culling",
     "text.entityculling.tickCulling.tooltip": "Když zapnuto, entity které jsou culled nebudou tikované. Toto může zlepšit výkon ve specifických případech, ale může způsobit problémy se specifickými módy. Zvažujte o využití jemnějších možností ovládání v druhém tabu.",
     "text.entityculling.disableF3": "Vypnout F3 debug info",
-    "text.entityculling.disableF3.tooltip":     "Když zapnuto, F3 debug info nebude ukazovat informace of cullingu.",
+    "text.entityculling.disableF3.tooltip": "Když zapnuto, F3 debug info nebude ukazovat informace of cullingu.",
     "text.entityculling.skipEntityCulling": "Přeskočit culling entit",
     "text.entityculling.skipEntityCulling.tooltip": "Když zapnuto, culling entit bude uplně přeskočen. Toto může být užitečné pro debugging nebo když culling chcete vypnout dočasně.",
     "text.entityculling.skipBlockEntityCulling": "Přeskočit culling blok entit",

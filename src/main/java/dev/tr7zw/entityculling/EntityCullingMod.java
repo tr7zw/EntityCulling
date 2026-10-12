@@ -55,8 +55,8 @@ public class EntityCullingMod extends EntityCullingModBase
         if (entity instanceof BannerBlockEntity) {
             return new AABB(pos.getX(), pos.getY() - 1, pos.getZ(), pos.getX() + 1, pos.getY() + 2, pos.getZ() + 1);
         }
-        return BlockEntityRenderFabricExtension.tryGetRenderBoundingBox(Minecraft.getInstance().getBlockEntityRenderDispatcher()
-            .getRenderer(entity), entity);
+        return BlockEntityRenderFabricExtension.tryGetRenderBoundingBox(
+                Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(entity), entity);
         //? } else if neoforge {
         /*
                return ((net.neoforged.neoforge.client.extensions.IBlockEntityRendererExtension)Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(entity)).getRenderBoundingBox(entity);
