@@ -36,6 +36,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     private int tickCounter = 0;
     public double lastTickTime = 0;
     private boolean freezeCamera = false;
+    public static volatile long tickTimeMs = System.currentTimeMillis();
     // preallocation sizes, adding a small buffer to hopefully avoid any resizing during runtime
     private static final int PREALLOC_BUFFER = 10;
     private int lastEntityCount = 0;
@@ -77,6 +78,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     }
 
     public void clientTick() {
+        tickTimeMs = System.currentTimeMillis();
         // late init
         if (!lateInit) {
             lateInit = true;
