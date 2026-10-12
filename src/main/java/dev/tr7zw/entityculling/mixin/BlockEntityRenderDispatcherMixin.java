@@ -74,7 +74,7 @@ public abstract class BlockEntityRenderDispatcherMixin {
             return;
         }
         if (blockEntity instanceof Cullable cullable) {
-            if (!cullable.isForcedVisible() && cullable.isCulled()) {
+            if (cullable.isCulled() && !cullable.isForcedVisible()) {
                 EntityCullingModBase.instance.skippedBlockEntities++;
                 info.setReturnValue(null);
                 if (EntityCullingModBase.instance.debugCollector.isRunning()) {
@@ -113,7 +113,7 @@ public abstract class BlockEntityRenderDispatcherMixin {
            return;
        }
     
-       if (!((Cullable) blockEntity).isForcedVisible() && ((Cullable) blockEntity).isCulled()) {
+       if (((Cullable) blockEntity).isCulled() && !((Cullable) blockEntity).isForcedVisible()) {
            EntityCullingModBase.instance.skippedBlockEntities++;
            info.cancel();
            return;

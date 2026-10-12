@@ -36,6 +36,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     private int tickCounter = 0;
     public double lastTickTime = 0;
     private boolean freezeCamera = false;
+    public static volatile long tickTimeMs = System.currentTimeMillis();
     //? if >= 1.21.9 {
 
     public net.minecraft.client.renderer.culling.Frustum frustum = null;
@@ -73,6 +74,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     }
 
     public void clientTick() {
+        tickTimeMs = System.currentTimeMillis();
         // late init
         if (!lateInit) {
             lateInit = true;

@@ -51,7 +51,7 @@ public class WorldRendererMixin {
             return;
         }
         Cullable cullable = (Cullable) entity;
-        if (!cullable.isForcedVisible() && cullable.isCulled() && !NMSCullingHelper.ignoresCulling(entity)) {
+        if (cullable.isCulled() && !cullable.isForcedVisible() && !NMSCullingHelper.ignoresCulling(entity)) {
             EntityCullingModBase.instance.skippedEntities++;
             var state = new net.minecraft.client.renderer.entity.state.EntityRenderState();
 
@@ -158,7 +158,7 @@ public class WorldRendererMixin {
           return;
       }
      Cullable cullable = (Cullable) entity;
-     if (!cullable.isForcedVisible() && cullable.isCulled() && !NMSCullingHelper.ignoresCulling(entity)) {
+     if (cullable.isCulled() && !cullable.isForcedVisible() && !NMSCullingHelper.ignoresCulling(entity)) {
         if (this.entityCulling$entityRenderDispatcher.getRenderer(entity) instanceof net.minecraft.client.renderer.entity.EntityRenderer entityRenderer
                 && entityRenderer instanceof dev.tr7zw.entityculling.access.EntityRendererInter entityRendererInter) {
             if (EntityCullingModBase.instance.config.renderNametagsThroughWalls && matrices != null

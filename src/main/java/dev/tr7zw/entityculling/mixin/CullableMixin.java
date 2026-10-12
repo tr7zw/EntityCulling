@@ -5,6 +5,7 @@ import net.minecraft.core.*;
 import net.minecraft.world.phys.*;
 import org.spongepowered.asm.mixin.Mixin;
 
+import dev.tr7zw.entityculling.EntityCullingModBase;
 import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
 import dev.tr7zw.entityculling.access.Cullable;
 import net.minecraft.world.entity.Entity;
@@ -31,12 +32,12 @@ public class CullableMixin implements Cullable {
 
     @Override
     public void setTimeout() {
-        lasttime = System.currentTimeMillis() + 1000;
+        lasttime = EntityCullingModBase.tickTimeMs + 1000;
     }
 
     @Override
     public boolean isForcedVisible() {
-        return lasttime > System.currentTimeMillis();
+        return lasttime > EntityCullingModBase.tickTimeMs;
     }
 
     @Override
