@@ -1,6 +1,6 @@
 package dev.tr7zw.entityculling;
 
-import com.logisticscraft.occlusionculling.DataProvider;
+import dev.tr7zw.entityculling.versionless.occlusionculling.DataProvider;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;

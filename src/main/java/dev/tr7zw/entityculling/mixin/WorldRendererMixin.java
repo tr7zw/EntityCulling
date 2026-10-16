@@ -10,7 +10,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.logisticscraft.occlusionculling.util.MathUtilities;
+//? if >= 1.21.4 && < 1.21.11 {
+/*
+import dev.tr7zw.entityculling.versionless.occlusionculling.util.MathUtilities;
+ */
+//? }
+
 //? if < 1.21.5 {
 /*
  import com.mojang.blaze3d.systems.RenderSystem;

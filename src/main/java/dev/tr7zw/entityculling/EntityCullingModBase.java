@@ -4,10 +4,11 @@ import java.util.*;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Function;
 
-import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
+import dev.tr7zw.entityculling.versionless.occlusionculling.OcclusionCullingInstance;
 
 import dev.tr7zw.entityculling.access.*;
 import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
+import dev.tr7zw.entityculling.versionless.occlusionculling.cache.*;
 import dev.tr7zw.transition.manager.*;
 import dev.tr7zw.transition.mc.ClientUtil;
 import dev.tr7zw.transition.mc.ComponentProvider;
@@ -49,8 +50,9 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     public void onInitialize() {
         instance = this;
         super.onInitialize();
-        culling = new OcclusionCullingInstance(config.tracingDistance, new Provider());
-        cullTask = new CullTask(culling);
+        cache = new OptimisticArrayCache(config.tracingDistance);
+        culling = new OcclusionCullingInstance(config.tracingDistance, new Provider(), cache);
+        cullTask = new CullTask(culling, cache);
 
         cullThread = new Thread(cullTask, "CullThread");
         cullThread.setDaemon(true); // may be parked for up to a second, don't hold up the shutdown
