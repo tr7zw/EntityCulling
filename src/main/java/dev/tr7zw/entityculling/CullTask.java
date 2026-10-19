@@ -8,6 +8,7 @@ import java.util.concurrent.locks.LockSupport;
 
 import dev.tr7zw.entityculling.versionless.occlusionculling.*;
 import dev.tr7zw.entityculling.versionless.occlusionculling.cache.*;
+import dev.tr7zw.entityculling.versionless.occlusionculling.provider.*;
 import dev.tr7zw.entityculling.versionless.occlusionculling.util.Vec3d;
 
 import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
@@ -46,10 +47,12 @@ public class CullTask implements Runnable {
     private List<Cullable> blockEntities = new ArrayList<>();
     @Setter
     private Vec3 cameraMC = new Vec3(0, 0, 0);
+    private DataProvider dataProvider;
 
-    public CullTask(OcclusionCulling culling, OcclusionCache cache) {
+    public CullTask(OcclusionCulling culling, OcclusionCache cache, DataProvider dataProvider) {
         this.culling = culling;
         this.cache = cache;
+        this.dataProvider = dataProvider;
     }
 
     @Override
@@ -74,6 +77,7 @@ public class CullTask implements Runnable {
                         }
                         cullBlockEntities(cameraMC, camera);
                         cullEntities(cameraMC, camera);
+                        dataProvider.postRun();
                         lastTime = (System.nanoTime() - start) / 1_000_000.0;
                     }
                 } else {

@@ -3,8 +3,8 @@ package dev.tr7zw.entityculling.versionless.occlusionculling;
 import java.util.Arrays;
 import java.util.BitSet;
 
-import dev.tr7zw.entityculling.versionless.occlusionculling.cache.ArrayOcclusionCache;
 import dev.tr7zw.entityculling.versionless.occlusionculling.cache.OcclusionCache;
+import dev.tr7zw.entityculling.versionless.occlusionculling.provider.*;
 import dev.tr7zw.entityculling.versionless.occlusionculling.util.MathUtilities;
 import dev.tr7zw.entityculling.versionless.occlusionculling.util.Vec3d;
 
@@ -126,6 +126,7 @@ public class OcclusionCullingInstance implements OcclusionCulling {
                         if (visibleOnFace != 0) {
                             targetPos.set(x, y, z);
                             if (isVoxelVisible(viewerPosition, targetPos, faceEdgeData, visibleOnFace)) {
+                                provider.postAABB();
                                 return true;
                             }
                         }
@@ -134,11 +135,13 @@ public class OcclusionCullingInstance implements OcclusionCulling {
                 }
             }
 
+            provider.postAABB();
             return false;
         } catch (Throwable t) {
             // Failsafe
             t.printStackTrace();
         }
+        provider.postAABB();
         return true;
     }
 
@@ -382,7 +385,7 @@ public class OcclusionCullingInstance implements OcclusionCulling {
 
             boolean finished = stepRay(start, x, y, z, dimFracX, dimFracY, dimFracZ, intersectCount, x_inc, y_inc,
                     z_inc, t_next_y, t_next_x, t_next_z);
-            provider.cleanup();
+            provider.postRay();
             if (finished) {
                 cache.cacheResult(cameraPos, targets[0], true);
                 return true;
@@ -415,9 +418,10 @@ public class OcclusionCullingInstance implements OcclusionCulling {
             if (cVal == 0) {
                 // save current cell
                 int chunkX = currentX >> 4;
+                int chunkY = currentY >> 4;
                 int chunkZ = currentZ >> 4;
-                if (!provider.prepareChunk(chunkX, chunkZ)) { // Chunk not ready
-                    return false;
+                if (!provider.prepareChunk(chunkX, chunkY, chunkZ)) { // Chunk not ready
+                    return true;
                 }
 
                 if (provider.isOpaqueFullCube(currentX, currentY, currentZ)) {

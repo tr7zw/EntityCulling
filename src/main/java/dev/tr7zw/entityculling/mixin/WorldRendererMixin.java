@@ -24,7 +24,7 @@ import dev.tr7zw.entityculling.versionless.occlusionculling.util.MathUtilities;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import dev.tr7zw.entityculling.EntityCullingModBase;
-import dev.tr7zw.entityculling.NMSCullingHelper;
+import dev.tr7zw.entityculling.util.NMSCullingHelper;
 import dev.tr7zw.entityculling.access.Cullable;
 import dev.tr7zw.transition.mc.GeneralUtil;
 import net.minecraft.client.renderer.*;

@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Function;
 
+import dev.tr7zw.entityculling.provider.*;
+import dev.tr7zw.entityculling.util.*;
 import dev.tr7zw.entityculling.versionless.occlusionculling.OcclusionCullingInstance;
 
 import dev.tr7zw.entityculling.access.*;
@@ -51,8 +53,9 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
         instance = this;
         super.onInitialize();
         cache = new OptimisticArrayCache(config.tracingDistance);
-        culling = new OcclusionCullingInstance(config.tracingDistance, new Provider(), cache);
-        cullTask = new CullTask(culling, cache);
+        dataProvider = new DirectProvider();
+        culling = new OcclusionCullingInstance(config.tracingDistance, dataProvider, cache);
+        cullTask = new CullTask(culling, cache, dataProvider);
 
         cullThread = new Thread(cullTask, "CullThread");
         cullThread.setDaemon(true); // may be parked for up to a second, don't hold up the shutdown
