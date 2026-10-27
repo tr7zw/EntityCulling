@@ -15,6 +15,7 @@ import dev.tr7zw.transition.manager.*;
 import dev.tr7zw.transition.mc.ClientUtil;
 import dev.tr7zw.transition.mc.ComponentProvider;
 import dev.tr7zw.transition.mc.GeneralUtil;
+import lombok.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -39,6 +40,8 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     private int tickCounter = 0;
     public double lastTickTime = 0;
     private boolean freezeCamera = false;
+    @Getter
+    private AABB disableTickCullingBox = new AABB(0, 0, 0, 1, 1, 1);
     public static volatile long tickTimeMs = System.currentTimeMillis();
     // preallocation sizes, adding a small buffer to hopefully avoid any resizing during runtime
     private static final int PREALLOC_BUFFER = 10;
@@ -154,6 +157,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
             }
 
             cullTask.setIngame(true);
+            disableTickCullingBox = client.player.getBoundingBox().inflate(1.5);
             if (!freezeCamera) {
                 cullTask.setCameraMC(EntityCullingModBase.instance.config.debugMode ? client.player.getEyePosition(0)
                         : /*? >= 26.2 {*/client.gameRenderer

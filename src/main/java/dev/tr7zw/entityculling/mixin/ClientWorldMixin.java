@@ -55,6 +55,10 @@ public class ClientWorldMixin {
             EntityCullingModBase.instance.tickedEntities++;
             return; // whitelisted, don't skip that tick
         }
+        if (entity.getBoundingBox().intersects(EntityCullingModBase.instance.getDisableTickCullingBox())) {
+            // Close to the player, force full tick for the entity to avoid the player interacting with a tick culled entity
+            return;
+        }
         if (entity instanceof Cullable) {
             Cullable cull = (Cullable) entity;
             if (cull.isCulled() || cull.isOutOfCamera()) {
