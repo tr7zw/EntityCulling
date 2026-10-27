@@ -89,15 +89,15 @@ public class ClientWorldMixin {
 
     private void basicTick(Entity entity) {
         entity.setOldPosAndRot();
+        //? if >= 26.3 {
+        entity.getInterpolation().interpolate();
+        //? }
         ++entity.tickCount;
         if (entity instanceof LivingEntity living) {
             living.aiStep();
             if (living.hurtTime > 0)
                 living.hurtTime--;
         }
-        //? if >= 26.3 {
-        entity.getInterpolation().interpolate();
-        //? }
         // the warden sounds are generated clientside instead of serverside, so simulate
         // that part of the code here.
         if (entity instanceof Warden warden) {
