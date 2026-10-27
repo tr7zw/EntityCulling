@@ -98,6 +98,11 @@ public class ClientWorldMixin {
             if (living.hurtTime > 0)
                 living.hurtTime--;
         }
+        //? if > 1.20.1 {
+        if (entity instanceof LivingEntityAccessor living) {
+            living.callRefreshDirtyAttributes();
+        }
+        //? }
         // the warden sounds are generated clientside instead of serverside, so simulate
         // that part of the code here.
         if (entity instanceof Warden warden) {

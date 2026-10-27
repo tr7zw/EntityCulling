@@ -15,7 +15,8 @@
         "DebugScreenEntriesAccessor",
         "LivingEntityRendererAccessor",
         "DisplayAccessor",
-        "LevelChunkSectionMixin"
+        "LevelChunkSectionMixin",
+        "LivingEntityAccessor"
     ],
     "injectors": {
         "defaultRequire": 1
