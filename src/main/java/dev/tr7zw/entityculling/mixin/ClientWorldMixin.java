@@ -107,6 +107,13 @@ public class ClientWorldMixin {
             living.callRefreshDirtyAttributes();
         }
         //? }
+        // the shulker hitbox follows its peek amount, which only advances in tick().
+        // Keep advancing it so the collision box stays in sync with the server.
+        //? if >= 1.17 {
+        if (entity instanceof ShulkerAccessor shulker && shulker.callUpdatePeekAmount()) {
+            shulker.callOnPeekAmountChange();
+        }
+        //? }
         // the warden sounds are generated clientside instead of serverside, so simulate
         // that part of the code here.
         if (entity instanceof Warden warden) {

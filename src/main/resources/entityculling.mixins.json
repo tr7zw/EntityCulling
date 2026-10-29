@@ -16,7 +16,8 @@
         "LivingEntityRendererAccessor",
         "DisplayAccessor",
         "LevelChunkSectionMixin",
-        "LivingEntityAccessor"
+        "LivingEntityAccessor",
+        "ShulkerAccessor"
     ],
     "injectors": {
         "defaultRequire": 1
