@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 import dev.tr7zw.entityculling.provider.*;
 import dev.tr7zw.entityculling.util.*;
+import dev.tr7zw.entityculling.util.debug.*;
 import dev.tr7zw.entityculling.versionless.occlusionculling.CubemapOcclusionInstance;
 import dev.tr7zw.entityculling.versionless.occlusionculling.OcclusionCullingInstance;
 
@@ -56,15 +57,20 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     public void onInitialize() {
         instance = this;
         super.onInitialize();
-        dataProvider = new SimpleCacheProvider();
+        dataProvider = new DirectProvider();
         CubemapOcclusionInstance cb = new CubemapOcclusionInstance(config.tracingDistance, dataProvider, null);
-        culling = cb;
-        cache = new NoCache() {
+        OcclusionCache cubeCache = new NoCache() {
             @Override
             public void resetCache() {
                 cb.resetCache();
             }
         };
+
+        OcclusionCache normalCache = new OptimisticArrayCache(config.tracingDistance);
+        OcclusionCullingInstance normalCulling = new OcclusionCullingInstance(config.tracingDistance, dataProvider, normalCache);
+        cache = new JoinedCache(normalCache, cubeCache);
+        culling = new ComparingOcclusionCullingInstance(normalCulling, cb);
+
         cullTask = new CullTask(culling, cache, dataProvider);
 
         cullThread = new Thread(cullTask, "CullThread");
