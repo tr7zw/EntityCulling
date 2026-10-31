@@ -56,9 +56,15 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     public void onInitialize() {
         instance = this;
         super.onInitialize();
-        cache = new NoCache();
         dataProvider = new SimpleCacheProvider();
-        culling = new CubemapOcclusionInstance(config.tracingDistance, dataProvider, null);
+        CubemapOcclusionInstance cb = new CubemapOcclusionInstance(config.tracingDistance, dataProvider, null);
+        culling = cb;
+        cache = new NoCache() {
+            @Override
+            public void resetCache() {
+                cb.resetCache();
+            }
+        };
         cullTask = new CullTask(culling, cache, dataProvider);
 
         cullThread = new Thread(cullTask, "CullThread");

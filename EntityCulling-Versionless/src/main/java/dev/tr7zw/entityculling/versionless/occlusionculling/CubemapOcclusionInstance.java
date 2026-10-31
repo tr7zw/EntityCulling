@@ -19,10 +19,6 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
     private final int[] preIncY = new int[TOTAL_PIXELS];
     private final int[] preIncZ = new int[TOTAL_PIXELS];
 
-    private final double[] preInvX = new double[TOTAL_PIXELS];
-    private final double[] preInvY = new double[TOTAL_PIXELS];
-    private final double[] preInvZ = new double[TOTAL_PIXELS];
-
     private final int reach;
     private final double aabbExpansion;
     private final DataProvider provider;
@@ -94,10 +90,6 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
                     preIncY[idx] = dy > 0 ? 1 : (dy < 0 ? -1 : 0);
                     preIncZ[idx] = dz > 0 ? 1 : (dz < 0 ? -1 : 0);
 
-                    preInvX[idx] = dx == 0.0 ? 1e9 : 1.0 / dx;
-                    preInvY[idx] = dy == 0.0 ? 1e9 : 1.0 / dy;
-                    preInvZ[idx] = dz == 0.0 ? 1e9 : 1.0 / dz;
-
                     idx++;
                 }
             }
@@ -143,7 +135,6 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
         double t_next_y = y_inc > 0 ? (y + 1 - start.y) * dimFracY : (start.y - y) * dimFracY;
         double t_next_z = z_inc > 0 ? (z + 1 - start.z) * dimFracZ : (start.z - z) * dimFracZ;
 
-        // Current chunk tracking - only prepareChunk when crossing a 16-block border!
         int curChunkX = x >> 4;
         int curChunkY = y >> 4;
         int curChunkZ = z >> 4;
@@ -151,7 +142,6 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
 
         double t = 0.0;
         for (int step = 0; step < reach; step++) {
-            // Did we cross into a new chunk section?
             int chX = x >> 4;
             int chY = y >> 4;
             int chZ = z >> 4;
@@ -163,22 +153,22 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
             }
 
             if (!chunkReady) {
-                return reach; // Unloaded chunk: stop ray
+                return reach;
             }
 
-            // Pure bitwise operation in SimpleCache!
             if (provider.isOpaqueFullCube(x, y, z)) {
                 return t;
             }
 
-            if (t_next_y < t_next_x && t_next_y < t_next_z) {
-                y += y_inc;
-                t = t_next_y;
-                t_next_y += dimFracY;
-            } else if (t_next_x < t_next_y && t_next_x < t_next_z) {
+            // Fixed tie-aware DDA stepping: selects the axis with the minimum next-boundary time
+            if (t_next_x <= t_next_y && t_next_x <= t_next_z) {
                 x += x_inc;
                 t = t_next_x;
                 t_next_x += dimFracX;
+            } else if (t_next_y <= t_next_z) {
+                y += y_inc;
+                t = t_next_y;
+                t_next_y += dimFracY;
             } else {
                 z += z_inc;
                 t = t_next_z;
@@ -220,7 +210,6 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
         int midY = (bMinY + bMaxY) / 2;
         int midZ = (bMinZ + bMaxZ) / 2;
 
-        // Check external cache if active
         if (externalCache != null) {
             boolean allBlocksHidden = true;
             for (int bx = bMinX; bx <= bMaxX; bx++) {
@@ -234,7 +223,6 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
             }
             if (allBlocksHidden) return false;
         } else {
-            // Check standalone local cache
             long key = (((long) midX & 0x3FFFFFF) << 38) | (((long) midZ & 0x3FFFFFF) << 12) | ((long) midY & 0xFFF);
             int idx = (int) (key & LOCAL_CACHE_MASK);
             if (localCacheKeys[idx] == key) {
@@ -242,6 +230,12 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
                 if (localCacheValues[idx] == 2) return false;
             }
         }
+
+        // Camera-to-nearest-point distance computed once for conservative depth testing
+        double nearX = Math.max(minX, Math.min(viewerPosition.x, maxX)) - viewerPosition.x;
+        double nearY = Math.max(minY, Math.min(viewerPosition.y, maxY)) - viewerPosition.y;
+        double nearZ = Math.max(minZ, Math.min(viewerPosition.z, maxZ)) - viewerPosition.z;
+        double minDist = Math.sqrt(nearX * nearX + nearY * nearY + nearZ * nearZ);
 
         double x1 = minX - viewerPosition.x, x2 = maxX - viewerPosition.x;
         double y1 = minY - viewerPosition.y, y2 = maxY - viewerPosition.y;
@@ -301,7 +295,8 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
                 }
             }
 
-            if (maxU < -1.0 || minU > 1.0 || minV < -1.0 || maxV > 1.0) {
+            // Fixed V-range rejection: only skip when the V range is completely outside [-1, 1]
+            if (maxU < -1.0 || minU > 1.0 || maxV < -1.0 || minV > 1.0) {
                 continue;
             }
 
@@ -322,30 +317,10 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
                 for (int px = minPx; px <= maxPx; px++) {
                     int rayIdx = rowOffset + px;
 
-                    double tx1 = x1 * preInvX[rayIdx];
-                    double tx2 = x2 * preInvX[rayIdx];
-                    double tminX = Math.min(tx1, tx2);
-                    double tmaxX = Math.max(tx1, tx2);
-
-                    double ty1 = y1 * preInvY[rayIdx];
-                    double ty2 = y2 * preInvY[rayIdx];
-                    double tminY = Math.min(ty1, ty2);
-                    double tmaxY = Math.max(ty1, ty2);
-
-                    double tz1 = z1 * preInvZ[rayIdx];
-                    double tz2 = z2 * preInvZ[rayIdx];
-                    double tminZ = Math.min(tz1, tz2);
-                    double tmaxZ = Math.max(tz1, tz2);
-
-                    double tEnter = Math.max(Math.max(tminX, tminY), tminZ);
-                    double tExit  = Math.min(Math.min(tmaxX, tmaxY), tmaxZ);
-
-                    if (tEnter <= tExit && tExit > 0) {
-                        double distToBox = tEnter > 0 ? tEnter : 0;
-                        if (distToBox < depthBuffer[rayIdx] + 0.1) {
-                            cacheVisible(midX, midY, midZ);
-                            return true;
-                        }
+                    // Conservative depth test against covered pixels without ray-center slab requirement
+                    if (minDist < depthBuffer[rayIdx] + 0.1) {
+                        cacheVisible(midX, midY, midZ);
+                        return true;
                     }
                 }
             }
