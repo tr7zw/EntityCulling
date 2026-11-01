@@ -54,6 +54,9 @@ public class RasterOcclusionInstance implements OcclusionCulling {
 
     public void resetCache() {
         this.needsRebake = true;
+        this.lastCamX = Double.NaN; // Force coordinate mismatch
+        this.lastCamY = Double.NaN;
+        this.lastCamZ = Double.NaN;
         Arrays.fill(localCacheKeys, Long.MIN_VALUE);
     }
 

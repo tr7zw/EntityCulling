@@ -11,152 +11,153 @@ import java.util.Arrays;
 
 public class BrickCacheProvider implements BrickProvider {
 
-    private static final int GRID_SIZE = 16;
-    private static final int GRID_MASK = GRID_SIZE - 1; // 15
-    private static final int TOTAL_SECTIONS = GRID_SIZE * GRID_SIZE * GRID_SIZE; // 4096
-
     private final Minecraft client = Minecraft.getInstance();
     private ClientLevel world = null;
 
-    private final long[][] sectionBitmasks = new long[TOTAL_SECTIONS][];
-    private final long[] sectionBrickMasks = new long[TOTAL_SECTIONS];
-    private final long[] sectionTags = new long[TOTAL_SECTIONS];
-
-    // Reusable scratchpad array to prevent heap churn during chunk bakes
-    private final long[] scratchMask = new long[64];
-
-    private volatile int modificationCount = 0;
-
-    public long[] activeBitmask = null;
-    public long activeBrickMask = 0L;
-    public int activeChunkX = Integer.MIN_VALUE;
-    public int activeChunkY = Integer.MIN_VALUE;
-    public int activeChunkZ = Integer.MIN_VALUE;
-
-    public BrickCacheProvider() {
-        Arrays.fill(sectionTags, Long.MIN_VALUE);
-    }
-
-    public int getModificationCount() {
-        return modificationCount;
-    }
-
-    private static int getSlot(int cx, int cy, int cz) {
-        return (cx & GRID_MASK) | ((cy & GRID_MASK) << 4) | ((cz & GRID_MASK) << 8);
-    }
-
-    private static long packTag(int cx, int cy, int cz) {
-        return (((long) cx & 0x3FFFFFF) << 38) | (((long) cz & 0x3FFFFFF) << 12) | ((long) cy & 0xFFF);
-    }
+    private BrickCache cache = null;
+    private int curX = Integer.MIN_VALUE;
+    private int curY = Integer.MIN_VALUE;
+    private int curZ = Integer.MIN_VALUE;
 
     @Override
     public long[] getVoxelBitmask() {
-        return activeBitmask;
+        return (cache != null && cache.brickMask != 0L) ? cache.bitmask : null;
     }
 
     @Override
     public boolean prepareChunk(int chunkX, int chunkY, int chunkZ) {
-        if (chunkX == activeChunkX && chunkY == activeChunkY && chunkZ == activeChunkZ) {
-            return true;
+        if (curX == chunkX && curY == chunkY && curZ == chunkZ) {
+            return cache != null;
         }
 
-        activeChunkX = chunkX;
-        activeChunkY = chunkY;
-        activeChunkZ = chunkZ;
-
-        int slot = getSlot(chunkX, chunkY, chunkZ);
-        long tag = packTag(chunkX, chunkY, chunkZ);
-
-        if (sectionTags[slot] == tag) {
-            activeBitmask = sectionBitmasks[slot];
-            activeBrickMask = sectionBrickMasks[slot];
-            return true;
-        }
+        curX = chunkX;
+        curY = chunkY;
+        curZ = chunkZ;
 
         world = client.level;
-        if (world == null) {
-            activeBitmask = null;
-            activeBrickMask = 0L;
-            return false;
-        }
-
-        ChunkSectionAccess access = ECUtil.resolveSection(world, chunkX, chunkY, chunkZ);
-        if (access == null) {
-            // Pure air chunk
-            sectionTags[slot] = tag;
-            sectionBitmasks[slot] = null;
-            sectionBrickMasks[slot] = 0L;
-            activeBitmask = null;
-            activeBrickMask = 0L;
-            return true;
-        }
-
-        // Bake chunk bitmasks
-        Arrays.fill(scratchMask, 0L);
-        long brickMask = 0L;
-        var states = access.entityCulling$getStates();
-
-        for (int x = 0; x < 16; x++) {
-            int bx = x >> 2;
-            for (int y = 0; y < 16; y++) {
-                int by = y >> 2;
-                int brickYShift = bx | (by << 2);
-                for (int z = 0; z < 16; z++) {
-                    if (ECUtil.isOpaqueFullCube(states.get(x, y, z))) {
-                        int idx = x | (y << 4) | (z << 8);
-                        scratchMask[idx >>> 6] |= (1L << (idx & 63));
-
-                        int bz = z >> 2;
-                        brickMask |= (1L << (brickYShift | (bz << 4)));
-                    }
+        if (world != null) {
+            ChunkSectionAccess access = ECUtil.resolveSection(world, chunkX, chunkY, chunkZ);
+            if (access != null) {
+                cache = access.ec$getProviderData(BrickCache.class);
+                if (cache == null) {
+                    rebuild(access);
+                    cache = access.ec$getProviderData(BrickCache.class);
                 }
+                return cache != null;
             }
         }
 
-        sectionTags[slot] = tag;
-        sectionBitmasks[slot] = brickMask == 0L ? null : scratchMask.clone();
-        sectionBrickMasks[slot] = brickMask;
-        activeBitmask = sectionBitmasks[slot];
-        activeBrickMask = brickMask;
-
-        return true;
+        cache = null;
+        return false;
     }
 
     @Override
     public boolean isOpaqueFullCube(int x, int y, int z) {
-        if (activeBitmask == null) {
+        if (cache == null || cache.brickMask == 0L) {
             return false;
         }
-        int blockIdx = (x & 15) | ((y & 15) << 4) | ((z & 15) << 8);
-        return (activeBitmask[blockIdx >>> 6] & (1L << (blockIdx & 63))) != 0;
+        return cache.isOpaque(x & 0xF, y & 0xF, z & 0xF);
     }
 
     @Override
     public boolean isBrickEmpty(int lx, int ly, int lz) {
-        int brickIdx = ((lx & 15) >> 2) | (((ly & 15) >> 2) << 2) | (((lz & 15) >> 2) << 4);
-        return (activeBrickMask & (1L << brickIdx)) == 0;
+        if (cache == null) {
+            return true;
+        }
+        return cache.isBrickEmpty(lx & 0xF, ly & 0xF, lz & 0xF);
     }
 
     @Override
     public void onChange(ChunkSectionProvider chunk, int x, int y, int z, boolean isOpaque) {
-        int cx = x >> 4, cy = y >> 4, cz = z >> 4;
-        int slot = getSlot(cx, cy, cz);
-        if (sectionTags[slot] == packTag(cx, cy, cz)) {
-            sectionTags[slot] = Long.MIN_VALUE;
+        if (chunk instanceof ChunkSectionAccess access) {
+            BrickCache localCache = access.ec$getProviderData(BrickCache.class);
+            if (localCache != null) {
+                localCache.setOpaque(x & 0xF, y & 0xF, z & 0xF, isOpaque);
+            } else {
+                rebuild(access);
+            }
         }
-        modificationCount++;
     }
 
     @Override
     public void postRun() {
         world = null;
-        activeBitmask = null;
-        activeBrickMask = 0L;
-        activeChunkX = Integer.MIN_VALUE;
-        activeChunkY = Integer.MIN_VALUE;
-        activeChunkZ = Integer.MIN_VALUE;
+        cache = null;
+        curX = Integer.MIN_VALUE;
+        curY = Integer.MIN_VALUE;
+        curZ = Integer.MIN_VALUE;
     }
 
     @Override
-    public void recalcBlockCounts(ChunkSectionProvider chunk) {}
+    public void recalcBlockCounts(ChunkSectionProvider chunk) {
+    }
+
+    private void rebuild(ChunkSectionAccess access) {
+        BrickCache localCache = access.ec$getProviderData(BrickCache.class);
+        if (localCache == null) {
+            localCache = new BrickCache();
+            access.ec$setProviderData(localCache);
+        } else {
+            localCache.reset();
+        }
+
+        var states = access.entityCulling$getStates();
+        for (int x = 0; x < 16; x++) {
+            for (int y = 0; y < 16; y++) {
+                for (int z = 0; z < 16; z++) {
+                    if (ECUtil.isOpaqueFullCube(states.get(x, y, z))) {
+                        localCache.setOpaque(x, y, z, true);
+                    }
+                }
+            }
+        }
+        access.ec$setDirty(false);
+    }
+
+    public static class BrickCache {
+        public final long[] bitmask = new long[64];
+        public final byte[] brickCounts = new byte[64];
+        public long brickMask = 0L;
+
+        public void reset() {
+            Arrays.fill(bitmask, 0L);
+            Arrays.fill(brickCounts, (byte) 0);
+            brickMask = 0L;
+        }
+
+        public void setOpaque(int x, int y, int z, boolean opaque) {
+            int blockIdx = x | (y << 4) | (z << 8);
+            int arrayIdx = blockIdx >>> 6;
+            long bit = 1L << (blockIdx & 63);
+            boolean wasOpaque = (bitmask[arrayIdx] & bit) != 0;
+
+            if (wasOpaque == opaque) {
+                return;
+            }
+
+            int brickIdx = (x >> 2) | ((y >> 2) << 2) | ((z >> 2) << 4);
+
+            if (opaque) {
+                bitmask[arrayIdx] |= bit;
+                if (brickCounts[brickIdx]++ == 0) {
+                    brickMask |= (1L << brickIdx);
+                }
+            } else {
+                bitmask[arrayIdx] &= ~bit;
+                if (--brickCounts[brickIdx] == 0) {
+                    brickMask &= ~(1L << brickIdx);
+                }
+            }
+        }
+
+        public boolean isOpaque(int x, int y, int z) {
+            int blockIdx = x | (y << 4) | (z << 8);
+            return (bitmask[blockIdx >>> 6] & (1L << (blockIdx & 63))) != 0;
+        }
+
+        public boolean isBrickEmpty(int lx, int ly, int lz) {
+            int brickIdx = (lx >> 2) | ((ly >> 2) << 2) | ((lz >> 2) << 4);
+            return (brickMask & (1L << brickIdx)) == 0;
+        }
+    }
 }
