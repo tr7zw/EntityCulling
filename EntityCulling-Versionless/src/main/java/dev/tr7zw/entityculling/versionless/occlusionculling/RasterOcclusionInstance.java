@@ -9,7 +9,6 @@ import java.util.Arrays;
 
 public class RasterOcclusionInstance implements OcclusionCulling {
 
-    // 64x64 resolution: each row is exactly one 64-bit long (single CPU cycle mask ops)
     private static final int RES = 64;
     private static final int TOTAL_PIXELS = 6 * RES * RES;
 
@@ -17,13 +16,9 @@ public class RasterOcclusionInstance implements OcclusionCulling {
     private final double aabbExpansion;
     private final BrickProvider provider;
 
-    // Depth buffer storing max occluder distance per pixel
     private final float[] depthBuffer = new float[TOTAL_PIXELS];
-
-    // 6 faces x 64 rows of 64-bit coverage masks
     private final long[] coverageMask = new long[6 * RES];
 
-    // Local result cache
     private static final int LOCAL_CACHE_MASK = 1023;
     private final long[] localCacheKeys = new long[LOCAL_CACHE_MASK + 1];
     private final byte[] localCacheValues = new byte[LOCAL_CACHE_MASK + 1];
@@ -34,11 +29,11 @@ public class RasterOcclusionInstance implements OcclusionCulling {
     private boolean needsRebake = true;
 
     public RasterOcclusionInstance(int maxDistance, BrickProvider provider) {
-        this(maxDistance, provider, 0.5);
+        this(maxDistance, provider, 0.15); // Tighter expansion to avoid over-rendering
     }
 
     public RasterOcclusionInstance(int maxDistance, BrickProvider provider, OcclusionCache cache) {
-        this(maxDistance, provider, 0.5);
+        this(maxDistance, provider, 0.15);
     }
 
     public RasterOcclusionInstance(int maxDistance, BrickProvider provider, OcclusionCache cache, double aabbExpansion) {
@@ -54,7 +49,7 @@ public class RasterOcclusionInstance implements OcclusionCulling {
 
     public void resetCache() {
         this.needsRebake = true;
-        this.lastCamX = Double.NaN; // Force coordinate mismatch
+        this.lastCamX = Double.NaN;
         this.lastCamY = Double.NaN;
         this.lastCamZ = Double.NaN;
         Arrays.fill(localCacheKeys, Long.MIN_VALUE);
@@ -70,15 +65,11 @@ public class RasterOcclusionInstance implements OcclusionCulling {
         Arrays.fill(coverageMask, 0L);
         Arrays.fill(localCacheKeys, Long.MIN_VALUE);
 
-        // Rasterize occluders front-to-back for all 6 cubemap faces
         for (int face = 0; face < 6; face++) {
             rasterizeFace(cameraPos, face);
         }
     }
 
-    /**
-     * Traverses the voxel grid strictly front-to-back from the camera within the face pyramid.
-     */
     private void rasterizeFace(Vec3d cam, int face) {
         int camX = MathUtilities.floor(cam.x);
         int camY = MathUtilities.floor(cam.y);
@@ -86,59 +77,58 @@ public class RasterOcclusionInstance implements OcclusionCulling {
 
         int faceOffset = face * RES;
         int fullRows = 0;
+        int maxDist = Math.min(reach, 48);
 
-        int maxDist = Math.min(reach, 48); // 48 blocks covers almost all direct occluders
-
-        // Step front-to-back in depth layers
         for (int d = 1; d <= maxDist; d++) {
-            // Early out: if all 64 rows of this face are 100% full, the whole pyramid is occluded!
             if (fullRows == RES) {
                 break;
             }
 
             switch (face) {
-                case 0 -> fullRows += scanLayer(cam, face, camX + d, camY - d, camY + d, camZ - d, camZ + d, 0, faceOffset); // +X
-                case 1 -> fullRows += scanLayer(cam, face, camX - d, camY - d, camY + d, camZ - d, camZ + d, 1, faceOffset); // -X
-                case 2 -> fullRows += scanLayer(cam, face, camY + d, camX - d, camX + d, camZ - d, camZ + d, 2, faceOffset); // +Y
-                case 3 -> fullRows += scanLayer(cam, face, camY - d, camX - d, camX + d, camZ - d, camZ + d, 3, faceOffset); // -Y
-                case 4 -> fullRows += scanLayer(cam, face, camZ + d, camX - d, camX + d, camY - d, camY + d, 4, faceOffset); // +Z
-                case 5 -> fullRows += scanLayer(cam, face, camZ - d, camX - d, camX + d, camY - d, camY + d, 5, faceOffset); // -Z
+                case 0 -> fullRows += scanLayer(cam, 0, camX + d, camY - d, camY + d, camZ - d, camZ + d, faceOffset);
+                case 1 -> fullRows += scanLayer(cam, 1, camX - d, camY - d, camY + d, camZ - d, camZ + d, faceOffset);
+                case 2 -> fullRows += scanLayer(cam, 2, camY + d, camX - d, camX + d, camZ - d, camZ + d, faceOffset);
+                case 3 -> fullRows += scanLayer(cam, 3, camY - d, camX - d, camX + d, camZ - d, camZ + d, faceOffset);
+                case 4 -> fullRows += scanLayer(cam, 4, camZ + d, camX - d, camX + d, camY - d, camY + d, faceOffset);
+                case 5 -> fullRows += scanLayer(cam, 5, camZ - d, camX - d, camX + d, camY - d, camY + d, faceOffset);
             }
         }
     }
 
-    private int scanLayer(Vec3d cam, int face, int normalCoord, int minT1, int maxT1, int minT2, int maxT2, int axis, int faceOffset) {
+    private int scanLayer(Vec3d cam, int face, int normalCoord, int minT1, int maxT1, int minT2, int maxT2, int faceOffset) {
         int newlyFullRows = 0;
 
-        // Traverse tangent 1 in steps of 4 (bricks)
-        for (int t1 = minT1; t1 <= maxT1; t1 += 4) {
-            for (int t2 = minT2; t2 <= maxT2; t2 += 4) {
-                int bx = (axis == 0 || axis == 1) ? normalCoord : ((axis == 2 || axis == 3) ? t1 : t1);
-                int by = (axis == 2 || axis == 3) ? normalCoord : ((axis == 0 || axis == 1) ? t1 : t2);
-                int bz = (axis == 4 || axis == 5) ? normalCoord : ((axis == 0 || axis == 1) ? t2 : t2);
+        // Align coordinates to 4-block brick boundaries
+        int startT1 = (minT1 >> 2) << 2;
+        int endT1 = (maxT1 >> 2) << 2;
+        int startT2 = (minT2 >> 2) << 2;
+        int endT2 = (maxT2 >> 2) << 2;
 
-                int cx = bx >> 4, cy = by >> 4, cz = bz >> 4;
-                provider.prepareChunk(cx, cy, cz);
+        for (int b1 = startT1; b1 <= endT1; b1 += 4) {
+            for (int b2 = startT2; b2 <= endT2; b2 += 4) {
+                int bx = (face <= 1) ? normalCoord : ((face <= 3) ? b1 : b1);
+                int by = (face == 2 || face == 3) ? normalCoord : ((face <= 1) ? b1 : b2);
+                int bz = (face >= 4) ? normalCoord : b2;
 
-                if (provider.getVoxelBitmask() == null) {
-                    continue; // Pure air chunk
+                provider.prepareChunk(bx >> 4, by >> 4, bz >> 4);
+                long[] bitmask = provider.getVoxelBitmask();
+                if (bitmask == null || provider.isBrickEmpty(bx, by, bz)) {
+                    continue;
                 }
 
-                if (provider.isBrickEmpty(bx, by, bz)) {
-                    continue; // 4x4x4 brick is pure air
-                }
+                int lim1 = Math.min(b1 + 3, maxT1);
+                int lim2 = Math.min(b2 + 3, maxT2);
+                int init1 = Math.max(b1, minT1);
+                int init2 = Math.max(b2, minT2);
 
-                // Rasterize solid blocks in this 4x4 brick
-                int limT1 = Math.min(t1 + 3, maxT1);
-                int limT2 = Math.min(t2 + 3, maxT2);
+                for (int sub1 = init1; sub1 <= lim1; sub1++) {
+                    for (int sub2 = init2; sub2 <= lim2; sub2++) {
+                        int vx = (face <= 1) ? normalCoord : ((face <= 3) ? sub1 : sub1);
+                        int vy = (face == 2 || face == 3) ? normalCoord : ((face <= 1) ? sub1 : sub2);
+                        int vz = (face >= 4) ? normalCoord : sub2;
 
-                for (int sub1 = t1; sub1 <= limT1; sub1++) {
-                    for (int sub2 = t2; sub2 <= limT2; sub2++) {
-                        int vx = (axis <= 1) ? normalCoord : ((axis <= 3) ? sub1 : sub1);
-                        int vy = (axis == 2 || axis == 3) ? normalCoord : ((axis <= 1) ? sub1 : sub2);
-                        int vz = (axis >= 4) ? normalCoord : ((axis <= 1) ? sub2 : sub2);
-
-                        if (provider.isOpaqueFullCube(vx, vy, vz)) {
+                        int blockIdx = (vx & 15) | ((vy & 15) << 4) | ((vz & 15) << 8);
+                        if ((bitmask[blockIdx >>> 6] & (1L << (blockIdx & 63))) != 0) {
                             newlyFullRows += rasterizeBlock(cam, face, vx, vy, vz, faceOffset);
                         }
                     }
@@ -148,85 +138,93 @@ public class RasterOcclusionInstance implements OcclusionCulling {
         return newlyFullRows;
     }
 
-    /**
-     * Inner-conservative projection: fills ONLY pixels that are 100% inside the block projection.
-     */
     private int rasterizeBlock(Vec3d cam, int face, int bx, int by, int bz, int faceOffset) {
-        double x1 = bx - cam.x, x2 = bx + 1.0 - cam.x;
-        double y1 = by - cam.y, y2 = by + 1.0 - cam.y;
-        double z1 = bz - cam.z, z2 = bz + 1.0 - cam.z;
+        double x1 = bx - cam.x, x2 = x1 + 1.0;
+        double y1 = by - cam.y, y2 = y1 + 1.0;
+        double z1 = bz - cam.z, z2 = z1 + 1.0;
 
         double minU, maxU, minV, maxV;
-        double nearDist;
+        double depth;
 
         switch (face) {
             case 0 -> { // +X
                 if (x1 <= 0.05) return 0;
-                minU = -z2 / x1; maxU = -z1 / x2;
-                minV =  y1 / x2; maxV =  y2 / x1;
-                nearDist = x1;
+                depth = x1;
+                double inv = 1.0 / depth;
+                minU = -z2 * inv; maxU = -z1 * inv;
+                minV =  y1 * inv; maxV =  y2 * inv;
             }
             case 1 -> { // -X
                 if (x2 >= -0.05) return 0;
-                double nx = -x2, fx = -x1;
-                minU =  z1 / fx; maxU =  z2 / nx;
-                minV =  y1 / fx; maxV =  y2 / nx;
-                nearDist = nx;
+                depth = -x2;
+                double inv = 1.0 / depth;
+                minU =  z1 * inv; maxU =  z2 * inv;
+                minV =  y1 * inv; maxV =  y2 * inv;
             }
             case 2 -> { // +Y
                 if (y1 <= 0.05) return 0;
-                minU =  x1 / y2; maxU =  x2 / y1;
-                minV =  z1 / y2; maxV =  z2 / y1;
-                nearDist = y1;
+                depth = y1;
+                double inv = 1.0 / depth;
+                minU =  x1 * inv; maxU =  x2 * inv;
+                minV =  z1 * inv; maxV =  z2 * inv;
             }
             case 3 -> { // -Y
                 if (y2 >= -0.05) return 0;
-                double ny = -y2, fy = -y1;
-                minU =  x1 / fy; maxU =  x2 / ny;
-                minV = -z2 / ny; maxV = -z1 / fy;
-                nearDist = ny;
+                depth = -y2;
+                double inv = 1.0 / depth;
+                minU =  x1 * inv; maxU =  x2 * inv;
+                minV = -z2 * inv; maxV = -z1 * inv;
             }
             case 4 -> { // +Z
                 if (z1 <= 0.05) return 0;
-                minU =  x1 / z2; maxU =  x2 / z1;
-                minV =  y1 / z2; maxV =  y2 / z1;
-                nearDist = z1;
+                depth = z1;
+                double inv = 1.0 / depth;
+                minU =  x1 * inv; maxU =  x2 * inv;
+                minV =  y1 * inv; maxV =  y2 * inv;
             }
             default -> { // -Z
                 if (z2 >= -0.05) return 0;
-                double nz = -z2, fz = -z1;
-                minU = -x2 / nz; maxU = -x1 / fz;
-                minV =  y1 / fz; maxV =  y2 / nz;
-                nearDist = nz;
+                depth = -z2;
+                double inv = 1.0 / depth;
+                minU = -x2 * inv; maxU = -x1 * inv;
+                minV =  y1 * inv; maxV =  y2 * inv;
             }
         }
 
-        // Clamp to face bounds
         if (maxU <= -1.0 || minU >= 1.0 || maxV <= -1.0 || minV >= 1.0) {
             return 0;
         }
 
-        // STRICT INNER-CONSERVATIVE RASTERIZATION:
-        // A pixel is filled IF AND ONLY IF it is 100% inside [minU, maxU] x [minV, maxV]
-        int minPx = (int) Math.ceil(32.0 * (minU + 1.0));
-        int maxPx = (int) Math.floor(32.0 * (maxU + 1.0) - 1.0);
-        int minPy = (int) Math.ceil(32.0 * (1.0 - maxV));
-        int maxPy = (int) Math.floor(32.0 * (1.0 - minV) - 1.0);
+        // Convert normalized [-1, 1] to [0, 64] pixel space
+        double sMinX = 32.0 * (minU + 1.0);
+        double sMaxX = 32.0 * (maxU + 1.0);
+        double sMinY = 32.0 * (1.0 - maxV);
+        double sMaxY = 32.0 * (1.0 - minV);
 
-        // Clamping to screen bounds
+        // Continuous pixel rounding: eliminates 1-pixel seams between adjacent blocks
+        int minPx = (int) Math.round(sMinX);
+        int maxPx = (int) Math.round(sMaxX) - 1;
+        int minPy = (int) Math.round(sMinY);
+        int maxPy = (int) Math.round(sMaxY) - 1;
+
+        if (minPx > maxPx || minPy > maxPy) {
+            return 0;
+        }
+
         minPx = Math.max(0, minPx);
         maxPx = Math.min(RES - 1, maxPx);
         minPy = Math.max(0, minPy);
         maxPy = Math.min(RES - 1, maxPy);
 
-        // If the block does not 100% cover any pixel, abort! The gap/slit is preserved!
         if (minPx > maxPx || minPy > maxPy) {
             return 0;
         }
 
         int width = maxPx - minPx + 1;
         long rowMask = (width == 64) ? -1L : (((1L << width) - 1L) << minPx);
-        float conservativeDepth = (float) (nearDist + 1.732); // Max block diagonal
+        
+        // Use true front-face depth with a small epsilon for precision
+        float conservativeDepth = (float) (depth + 0.05);
 
         int newlyFull = 0;
         int depthFaceOffset = face * RES * RES;
@@ -235,8 +233,8 @@ public class RasterOcclusionInstance implements OcclusionCulling {
             int maskIdx = faceOffset + py;
             long current = coverageMask[maskIdx];
 
-            // Fast skip if all pixels in this row are already covered by closer occluders
-            if ((current & rowMask) == rowMask) {
+            long newlyCovered = rowMask & ~current;
+            if (newlyCovered == 0L) {
                 continue;
             }
 
@@ -247,9 +245,8 @@ public class RasterOcclusionInstance implements OcclusionCulling {
 
             int depthRowOffset = depthFaceOffset + py * RES;
             for (int px = minPx; px <= maxPx; px++) {
-                int pIdx = depthRowOffset + px;
-                if (conservativeDepth < depthBuffer[pIdx]) {
-                    depthBuffer[pIdx] = conservativeDepth;
+                if ((newlyCovered & (1L << px)) != 0) {
+                    depthBuffer[depthRowOffset + px] = conservativeDepth;
                 }
             }
         }
@@ -283,25 +280,13 @@ public class RasterOcclusionInstance implements OcclusionCulling {
         int bMaxY = MathUtilities.floor(maxY);
         int bMaxZ = MathUtilities.floor(maxZ);
 
-        int midX = (bMinX + bMaxX) >> 1;
-        int midY = (bMinY + bMaxY) >> 1;
-        int midZ = (bMinZ + bMaxZ) >> 1;
-        int dimX = bMaxX - bMinX;
-        int dimY = bMaxY - bMinY;
-        int dimZ = bMaxZ - bMinZ;
-
-        long key = computeLocalKey(midX, midY, midZ, dimX, dimY, dimZ);
+        long key = computeLocalKey(bMinX, bMinY, bMinZ, bMaxX - bMinX, bMaxY - bMinY, bMaxZ - bMinZ);
         int idx = (int) (key & LOCAL_CACHE_MASK);
         if (localCacheKeys[idx] == key) {
             byte val = localCacheValues[idx];
             if (val == 1) return true;
             if (val == 2) return false;
         }
-
-        double nearX = Math.max(minX, Math.min(viewerPosition.x, maxX)) - viewerPosition.x;
-        double nearY = Math.max(minY, Math.min(viewerPosition.y, maxY)) - viewerPosition.y;
-        double nearZ = Math.max(minZ, Math.min(viewerPosition.z, maxZ)) - viewerPosition.z;
-        double minDist = Math.sqrt(nearX * nearX + nearY * nearY + nearZ * nearZ);
 
         double x1 = minX - viewerPosition.x, x2 = maxX - viewerPosition.x;
         double y1 = minY - viewerPosition.y, y2 = maxY - viewerPosition.y;
@@ -311,55 +296,50 @@ public class RasterOcclusionInstance implements OcclusionCulling {
 
         for (int face = 0; face < 6; face++) {
             double minU, maxU, minV, maxV;
+            double faceDist;
 
             switch (face) {
                 case 0 -> { // +X
                     if (x2 <= 0.05) continue;
-                    double nx = Math.max(0.05, x1), fx = Math.max(0.05, x2);
-                    minU = Math.min(Math.min(-z1 / nx, -z1 / fx), Math.min(-z2 / nx, -z2 / fx));
-                    maxU = Math.max(Math.max(-z1 / nx, -z1 / fx), Math.max(-z2 / nx, -z2 / fx));
-                    minV = Math.min(Math.min( y1 / nx,  y1 / fx), Math.min( y2 / nx,  y2 / fx));
-                    maxV = Math.max(Math.max( y1 / nx,  y1 / fx), Math.max( y2 / nx,  y2 / fx));
+                    faceDist = Math.max(0.05, x1);
+                    double nx = faceDist, fx = Math.max(0.05, x2);
+                    minU = Math.min(-z2 / nx, -z2 / fx); maxU = Math.max(-z1 / nx, -z1 / fx);
+                    minV = Math.min( y1 / fx,  y1 / nx); maxV = Math.max( y2 / fx,  y2 / nx);
                 }
                 case 1 -> { // -X
                     if (x1 >= -0.05) continue;
-                    double nx = Math.max(0.05, -x2), fx = Math.max(0.05, -x1);
-                    minU = Math.min(Math.min( z1 / nx,  z1 / fx), Math.min( z2 / nx,  z2 / fx));
-                    maxU = Math.max(Math.max( z1 / nx,  z1 / fx), Math.max( z2 / nx,  z2 / fx));
-                    minV = Math.min(Math.min( y1 / nx,  y1 / fx), Math.min( y2 / nx,  y2 / fx));
-                    maxV = Math.max(Math.max( y1 / nx,  y1 / fx), Math.max( y2 / nx,  y2 / fx));
+                    faceDist = Math.max(0.05, -x2);
+                    double nx = faceDist, fx = Math.max(0.05, -x1);
+                    minU = Math.min( z1 / fx,  z1 / nx); maxU = Math.max( z2 / fx,  z2 / nx);
+                    minV = Math.min( y1 / fx,  y1 / nx); maxV = Math.max( y2 / fx,  y2 / nx);
                 }
                 case 2 -> { // +Y
                     if (y2 <= 0.05) continue;
-                    double ny = Math.max(0.05, y1), fy = Math.max(0.05, y2);
-                    minU = Math.min(Math.min( x1 / ny,  x1 / fy), Math.min( x2 / ny,  x2 / fy));
-                    maxU = Math.max(Math.max( x1 / ny,  x1 / fy), Math.max( x2 / ny,  x2 / fy));
-                    minV = Math.min(Math.min( z1 / ny,  z1 / fy), Math.min( z2 / ny,  z2 / fy));
-                    maxV = Math.max(Math.max( z1 / ny,  z1 / fy), Math.max( z2 / ny,  z2 / fy));
+                    faceDist = Math.max(0.05, y1);
+                    double ny = faceDist, fy = Math.max(0.05, y2);
+                    minU = Math.min( x1 / fy,  x1 / ny); maxU = Math.max( x2 / fy,  x2 / ny);
+                    minV = Math.min( z1 / fy,  z1 / ny); maxV = Math.max( z2 / fy,  z2 / ny);
                 }
                 case 3 -> { // -Y
                     if (y1 >= -0.05) continue;
-                    double ny = Math.max(0.05, -y2), fy = Math.max(0.05, -y1);
-                    minU = Math.min(Math.min( x1 / ny,  x1 / fy), Math.min( x2 / ny,  x2 / fy));
-                    maxU = Math.max(Math.max( x1 / ny,  x1 / fy), Math.max( x2 / ny,  x2 / fy));
-                    minV = Math.min(Math.min(-z1 / ny, -z1 / fy), Math.min(-z2 / ny, -z2 / fy));
-                    maxV = Math.max(Math.max(-z1 / ny, -z1 / fy), Math.max(-z2 / ny, -z2 / fy));
+                    faceDist = Math.max(0.05, -y2);
+                    double ny = faceDist, fy = Math.max(0.05, -y1);
+                    minU = Math.min( x1 / fy,  x1 / ny); maxU = Math.max( x2 / fy,  x2 / ny);
+                    minV = Math.min(-z2 / ny, -z2 / fy); maxV = Math.max(-z1 / ny, -z1 / fy);
                 }
                 case 4 -> { // +Z
                     if (z2 <= 0.05) continue;
-                    double nz = Math.max(0.05, z1), fz = Math.max(0.05, z2);
-                    minU = Math.min(Math.min( x1 / nz,  x1 / fz), Math.min( x2 / nz,  x2 / fz));
-                    maxU = Math.max(Math.max( x1 / nz,  x1 / fz), Math.max( x2 / nz,  x2 / fz));
-                    minV = Math.min(Math.min( y1 / nz,  y1 / fz), Math.min( y2 / nz,  y2 / fz));
-                    maxV = Math.max(Math.max( y1 / nz,  y1 / fz), Math.max( y2 / nz,  y2 / fz));
+                    faceDist = Math.max(0.05, z1);
+                    double nz = faceDist, fz = Math.max(0.05, z2);
+                    minU = Math.min( x1 / fz,  x1 / nz); maxU = Math.max( x2 / fz,  x2 / nz);
+                    minV = Math.min( y1 / fz,  y1 / nz); maxV = Math.max( y2 / fz,  y2 / nz);
                 }
                 default -> { // -Z
                     if (z1 >= -0.05) continue;
-                    double nz = Math.max(0.05, -z2), fz = Math.max(0.05, -z1);
-                    minU = Math.min(Math.min(-x1 / nz, -x1 / fz), Math.min(-x2 / nz, -x2 / fz));
-                    maxU = Math.max(Math.max(-x1 / nz, -x1 / fz), Math.max(-x2 / nz, -x2 / fz));
-                    minV = Math.min(Math.min( y1 / nz,  y1 / fz), Math.min( y2 / nz,  y2 / fz));
-                    maxV = Math.max(Math.max( y1 / nz,  y1 / fz), Math.max( y2 / nz,  y2 / fz));
+                    faceDist = Math.max(0.05, -z2);
+                    double nz = faceDist, fz = Math.max(0.05, -z1);
+                    minU = Math.min(-x2 / nz, -x2 / fz); maxU = Math.max(-x1 / nz, -x1 / fz);
+                    minV = Math.min( y1 / fz,  y1 / nz); maxV = Math.max( y2 / fz,  y2 / nz);
                 }
             }
 
@@ -372,20 +352,31 @@ public class RasterOcclusionInstance implements OcclusionCulling {
             double cMinV = Math.max(-1.0, minV);
             double cMaxV = Math.min(1.0, maxV);
 
-            // OUTER-CONSERVATIVE TEST: Every pixel touched by the entity is queried
             int minPx = Math.max(0, (int) Math.floor((cMinU + 1.0) * 32.0));
             int maxPx = Math.min(RES - 1, (int) Math.ceil((cMaxU + 1.0) * 32.0 - 1.0));
             int minPy = Math.max(0, (int) Math.floor((1.0 - cMaxV) * 32.0));
             int maxPy = Math.min(RES - 1, (int) Math.ceil((1.0 - cMinV) * 32.0 - 1.0));
 
+            int width = maxPx - minPx + 1;
+            long queryMask = (width == 64) ? -1L : (((1L << width) - 1L) << minPx);
+
+            int faceOffset = face * RES;
             int depthFaceOffset = face * RES * RES;
 
             for (int py = minPy; py <= maxPy; py++) {
+                sampledAny = true;
+                long rowCoverage = coverageMask[faceOffset + py];
+
+                // Fast-path: if any pixel in the row is unoccluded air, it's visible immediately
+                if ((rowCoverage & queryMask) != queryMask) {
+                    cacheResult(idx, key, (byte) 1);
+                    return true;
+                }
+
+                // Otherwise, compare depth
                 int depthRowOffset = depthFaceOffset + py * RES;
                 for (int px = minPx; px <= maxPx; px++) {
-                    sampledAny = true;
-                    // If any pixel peeks through an unoccluded space or closer than occluder, it's visible!
-                    if (minDist < depthBuffer[depthRowOffset + px]) {
+                    if (faceDist < depthBuffer[depthRowOffset + px]) {
                         cacheResult(idx, key, (byte) 1);
                         return true;
                     }
@@ -398,13 +389,12 @@ public class RasterOcclusionInstance implements OcclusionCulling {
             return true;
         }
 
-        // All sampled pixels are 100% occluded by closer blocks
         cacheResult(idx, key, (byte) 2);
         return false;
     }
 
-    private static long computeLocalKey(int midX, int midY, int midZ, int dimX, int dimY, int dimZ) {
-        return ((long) midX * 73856093L) ^ ((long) midY * 19349663L) ^ ((long) midZ * 83492791L)
+    private static long computeLocalKey(int minX, int minY, int minZ, int dimX, int dimY, int dimZ) {
+        return ((long) minX * 73856093L) ^ ((long) minY * 19349663L) ^ ((long) minZ * 83492791L)
              ^ ((long) dimX * 39916801L) ^ ((long) dimY * 479001599L) ^ ((long) dimZ * 2147483647L);
     }
 
