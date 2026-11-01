@@ -1,7 +1,7 @@
 package dev.tr7zw.entityculling.versionless.occlusionculling;
 
 import dev.tr7zw.entityculling.versionless.occlusionculling.cache.OcclusionCache;
-import dev.tr7zw.entityculling.versionless.occlusionculling.provider.DataProvider;
+import dev.tr7zw.entityculling.versionless.occlusionculling.provider.BrickProvider;
 import dev.tr7zw.entityculling.versionless.occlusionculling.util.MathUtilities;
 import dev.tr7zw.entityculling.versionless.occlusionculling.util.Vec3d;
 
@@ -12,6 +12,10 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
     private static final int RES = 32;
     private static final int TOTAL_PIXELS = 6 * RES * RES;
 
+    private final double[] preDirX = new double[TOTAL_PIXELS];
+    private final double[] preDirY = new double[TOTAL_PIXELS];
+    private final double[] preDirZ = new double[TOTAL_PIXELS];
+
     private final double[] preDimFracX = new double[TOTAL_PIXELS];
     private final double[] preDimFracY = new double[TOTAL_PIXELS];
     private final double[] preDimFracZ = new double[TOTAL_PIXELS];
@@ -21,14 +25,12 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
 
     private final int reach;
     private final double aabbExpansion;
-    private final DataProvider provider;
-    private final OcclusionCache externalCache;
+    private final BrickProvider provider;
 
     private final float[] depthBuffer = new float[TOTAL_PIXELS];
-    private final Vec3d[] rayDirs = new Vec3d[TOTAL_PIXELS];
     private final int[] camBlockPos = new int[3];
 
-    // --- Internal zero-allocation entity result cache (used when externalCache is null) ---
+    // Zero-allocation entity result cache
     private static final int LOCAL_CACHE_MASK = 1023; // 1,024 slots (~10 KB)
     private final long[] localCacheKeys = new long[LOCAL_CACHE_MASK + 1];
     private final byte[] localCacheValues = new byte[LOCAL_CACHE_MASK + 1]; // 0=empty, 1=visible, 2=hidden
@@ -38,18 +40,21 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
     private double lastCamZ = Double.NaN;
     private boolean needsRebake = true;
 
-    public CubemapOcclusionInstance(int maxDistance, DataProvider provider) {
-        this(maxDistance, provider, null, 0.5);
+    public CubemapOcclusionInstance(int maxDistance, BrickProvider provider) {
+        this(maxDistance, provider, 0.5);
     }
 
-    public CubemapOcclusionInstance(int maxDistance, DataProvider provider, OcclusionCache cache) {
-        this(maxDistance, provider, cache, 0.5);
+    public CubemapOcclusionInstance(int maxDistance, BrickProvider provider, OcclusionCache cache) {
+        this(maxDistance, provider, 0.5);
     }
 
-    public CubemapOcclusionInstance(int maxDistance, DataProvider provider, OcclusionCache cache, double aabbExpansion) {
+    public CubemapOcclusionInstance(int maxDistance, BrickProvider provider, OcclusionCache cache, double aabbExpansion) {
+        this(maxDistance, provider, aabbExpansion);
+    }
+
+    public CubemapOcclusionInstance(int maxDistance, BrickProvider provider, double aabbExpansion) {
         this.reach = maxDistance;
         this.provider = provider;
-        this.externalCache = cache;
         this.aabbExpansion = aabbExpansion;
         Arrays.fill(localCacheKeys, Long.MIN_VALUE);
         initRayDirections();
@@ -80,7 +85,9 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
                     double dy = y / len;
                     double dz = z / len;
 
-                    rayDirs[idx] = new Vec3d(dx, dy, dz);
+                    preDirX[idx] = dx;
+                    preDirY[idx] = dy;
+                    preDirZ[idx] = dz;
 
                     preDimFracX[idx] = dx == 0.0 ? Double.MAX_VALUE : Math.abs(1.0 / dx);
                     preDimFracY[idx] = dy == 0.0 ? Double.MAX_VALUE : Math.abs(1.0 / dy);
@@ -98,9 +105,6 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
 
     public void resetCache() {
         this.needsRebake = true;
-        if (this.externalCache != null) {
-            this.externalCache.resetCache();
-        }
         Arrays.fill(localCacheKeys, Long.MIN_VALUE);
     }
 
@@ -123,6 +127,10 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
     }
 
     private double traceSingleRay(int rayIdx, Vec3d start, int x, int y, int z) {
+        double dirX = preDirX[rayIdx];
+        double dirY = preDirY[rayIdx];
+        double dirZ = preDirZ[rayIdx];
+
         double dimFracX = preDimFracX[rayIdx];
         double dimFracY = preDimFracY[rayIdx];
         double dimFracZ = preDimFracZ[rayIdx];
@@ -131,9 +139,9 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
         int y_inc = preIncY[rayIdx];
         int z_inc = preIncZ[rayIdx];
 
-        double t_next_x = x_inc > 0 ? (x + 1 - start.x) * dimFracX : (start.x - x) * dimFracX;
-        double t_next_y = y_inc > 0 ? (y + 1 - start.y) * dimFracY : (start.y - y) * dimFracY;
-        double t_next_z = z_inc > 0 ? (z + 1 - start.z) * dimFracZ : (start.z - z) * dimFracZ;
+        double t_next_x = x_inc > 0 ? (x + 1 - start.x) * dimFracX : (x_inc < 0 ? (start.x - x) * dimFracX : Double.MAX_VALUE);
+        double t_next_y = y_inc > 0 ? (y + 1 - start.y) * dimFracY : (y_inc < 0 ? (start.y - y) * dimFracY : Double.MAX_VALUE);
+        double t_next_z = z_inc > 0 ? (z + 1 - start.z) * dimFracZ : (z_inc < 0 ? (start.z - z) * dimFracZ : Double.MAX_VALUE);
 
         int curChunkX = x >> 4;
         int curChunkY = y >> 4;
@@ -141,7 +149,7 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
         boolean chunkReady = provider.prepareChunk(curChunkX, curChunkY, curChunkZ);
 
         double t = 0.0;
-        for (int step = 0; step < reach; step++) {
+        while (t < reach) {
             int chX = x >> 4;
             int chY = y >> 4;
             int chZ = z >> 4;
@@ -156,11 +164,70 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
                 return reach;
             }
 
+            // --- LEVEL 2: 16x16x16 Chunk Skip ---
+            if (provider.getVoxelBitmask() == null) {
+                int remX = x_inc > 0 ? (16 - (x & 15)) : ((x & 15) + 1);
+                int remY = y_inc > 0 ? (16 - (y & 15)) : ((y & 15) + 1);
+                int remZ = z_inc > 0 ? (16 - (z & 15)) : ((z & 15) + 1);
+
+                double tExitX = x_inc != 0 ? t_next_x + (remX - 1) * dimFracX : Double.MAX_VALUE;
+                double tExitY = y_inc != 0 ? t_next_y + (remY - 1) * dimFracY : Double.MAX_VALUE;
+                double tExitZ = z_inc != 0 ? t_next_z + (remZ - 1) * dimFracZ : Double.MAX_VALUE;
+
+                double tExit = Math.min(tExitX, Math.min(tExitY, tExitZ));
+                if (tExit >= reach) {
+                    return reach;
+                }
+
+                // Synchronize all dimensions across the boundary face
+                double tAdv = tExit + 1e-6;
+                x = MathUtilities.floor(start.x + dirX * tAdv);
+                y = MathUtilities.floor(start.y + dirY * tAdv);
+                z = MathUtilities.floor(start.z + dirZ * tAdv);
+
+                t_next_x = x_inc > 0 ? (x + 1 - start.x) * dimFracX : (x_inc < 0 ? (start.x - x) * dimFracX : Double.MAX_VALUE);
+                t_next_y = y_inc > 0 ? (y + 1 - start.y) * dimFracY : (y_inc < 0 ? (start.y - y) * dimFracY : Double.MAX_VALUE);
+                t_next_z = z_inc > 0 ? (z + 1 - start.z) * dimFracZ : (z_inc < 0 ? (start.z - z) * dimFracZ : Double.MAX_VALUE);
+
+                t = tExit;
+                continue;
+            }
+
+            // --- LEVEL 1: 4x4x4 Brick Skip ---
+            if (provider.isBrickEmpty(x, y, z)) {
+                int remX = x_inc > 0 ? (4 - (x & 3)) : ((x & 3) + 1);
+                int remY = y_inc > 0 ? (4 - (y & 3)) : ((y & 3) + 1);
+                int remZ = z_inc > 0 ? (4 - (z & 3)) : ((z & 3) + 1);
+
+                double tExitX = x_inc != 0 ? t_next_x + (remX - 1) * dimFracX : Double.MAX_VALUE;
+                double tExitY = y_inc != 0 ? t_next_y + (remY - 1) * dimFracY : Double.MAX_VALUE;
+                double tExitZ = z_inc != 0 ? t_next_z + (remZ - 1) * dimFracZ : Double.MAX_VALUE;
+
+                double tExit = Math.min(tExitX, Math.min(tExitY, tExitZ));
+                if (tExit >= reach) {
+                    return reach;
+                }
+
+                // Synchronize all dimensions across the brick boundary
+                double tAdv = tExit + 1e-6;
+                x = MathUtilities.floor(start.x + dirX * tAdv);
+                y = MathUtilities.floor(start.y + dirY * tAdv);
+                z = MathUtilities.floor(start.z + dirZ * tAdv);
+
+                t_next_x = x_inc > 0 ? (x + 1 - start.x) * dimFracX : (x_inc < 0 ? (start.x - x) * dimFracX : Double.MAX_VALUE);
+                t_next_y = y_inc > 0 ? (y + 1 - start.y) * dimFracY : (y_inc < 0 ? (start.y - y) * dimFracY : Double.MAX_VALUE);
+                t_next_z = z_inc > 0 ? (z + 1 - start.z) * dimFracZ : (z_inc < 0 ? (start.z - z) * dimFracZ : Double.MAX_VALUE);
+
+                t = tExit;
+                continue;
+            }
+
+            // --- LEVEL 0: 1x1x1 Exact Voxel Test ---
             if (provider.isOpaqueFullCube(x, y, z)) {
                 return t;
             }
 
-            // Fixed tie-aware DDA stepping: selects the axis with the minimum next-boundary time
+            // Standard 1-block DDA step
             if (t_next_x <= t_next_y && t_next_x <= t_next_z) {
                 x += x_inc;
                 t = t_next_x;
@@ -174,8 +241,6 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
                 t = t_next_z;
                 t_next_z += dimFracZ;
             }
-
-            if (t > reach) break;
         }
         return reach;
     }
@@ -206,32 +271,21 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
         int bMaxY = MathUtilities.floor(maxY);
         int bMaxZ = MathUtilities.floor(maxZ);
 
-        int midX = (bMinX + bMaxX) / 2;
-        int midY = (bMinY + bMaxY) / 2;
-        int midZ = (bMinZ + bMaxZ) / 2;
+        int midX = (bMinX + bMaxX) >> 1;
+        int midY = (bMinY + bMaxY) >> 1;
+        int midZ = (bMinZ + bMaxZ) >> 1;
+        int dimX = bMaxX - bMinX;
+        int dimY = bMaxY - bMinY;
+        int dimZ = bMaxZ - bMinZ;
 
-        if (externalCache != null) {
-            boolean allBlocksHidden = true;
-            for (int bx = bMinX; bx <= bMaxX; bx++) {
-                for (int by = bMinY; by <= bMaxY; by++) {
-                    for (int bz = bMinZ; bz <= bMaxZ; bz++) {
-                        int cv = externalCache.getCacheValue(camBlockPos, bx, by, bz);
-                        if (cv == 1) return true;
-                        if (cv != 2) allBlocksHidden = false;
-                    }
-                }
-            }
-            if (allBlocksHidden) return false;
-        } else {
-            long key = (((long) midX & 0x3FFFFFF) << 38) | (((long) midZ & 0x3FFFFFF) << 12) | ((long) midY & 0xFFF);
-            int idx = (int) (key & LOCAL_CACHE_MASK);
-            if (localCacheKeys[idx] == key) {
-                if (localCacheValues[idx] == 1) return true;
-                if (localCacheValues[idx] == 2) return false;
-            }
+        long key = computeLocalKey(midX, midY, midZ, dimX, dimY, dimZ);
+        int idx = (int) (key & LOCAL_CACHE_MASK);
+        if (localCacheKeys[idx] == key) {
+            byte val = localCacheValues[idx];
+            if (val == 1) return true;
+            if (val == 2) return false;
         }
 
-        // Camera-to-nearest-point distance computed once for conservative depth testing
         double nearX = Math.max(minX, Math.min(viewerPosition.x, maxX)) - viewerPosition.x;
         double nearY = Math.max(minY, Math.min(viewerPosition.y, maxY)) - viewerPosition.y;
         double nearZ = Math.max(minZ, Math.min(viewerPosition.z, maxZ)) - viewerPosition.z;
@@ -240,6 +294,9 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
         double x1 = minX - viewerPosition.x, x2 = maxX - viewerPosition.x;
         double y1 = minY - viewerPosition.y, y2 = maxY - viewerPosition.y;
         double z1 = minZ - viewerPosition.z, z2 = maxZ - viewerPosition.z;
+
+        boolean sampledAnyRay = false;
+        double invRes = 2.0 / RES;
 
         for (int face = 0; face < 6; face++) {
             double minU, maxU, minV, maxV;
@@ -295,7 +352,6 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
                 }
             }
 
-            // Fixed V-range rejection: only skip when the V range is completely outside [-1, 1]
             if (maxU < -1.0 || minU > 1.0 || maxV < -1.0 || minV > 1.0) {
                 continue;
             }
@@ -305,50 +361,50 @@ public class CubemapOcclusionInstance implements OcclusionCulling {
             double cMinV = Math.max(-1.0, minV);
             double cMaxV = Math.min(1.0, maxV);
 
-            int minPx = Math.max(0, (int) ((cMinU + 1.0) * 0.5 * RES));
-            int maxPx = Math.min(RES - 1, (int) ((cMaxU + 1.0) * 0.5 * RES));
-            int minPy = Math.max(0, (int) ((1.0 - cMaxV) * 0.5 * RES));
-            int maxPy = Math.min(RES - 1, (int) ((1.0 - cMinV) * 0.5 * RES));
+            int minPx = Math.max(0, (int) Math.floor((cMinU + 1.0) * 0.5 * RES));
+            int maxPx = Math.min(RES - 1, (int) Math.floor((cMaxU + 1.0) * 0.5 * RES));
+            int minPy = Math.max(0, (int) Math.floor((1.0 - cMaxV) * 0.5 * RES));
+            int maxPy = Math.min(RES - 1, (int) Math.floor((1.0 - cMinV) * 0.5 * RES));
 
             int faceOffset = face * RES * RES;
 
             for (int py = minPy; py <= maxPy; py++) {
+                double rayV = 1.0 - (py + 0.5) * invRes;
+                if (rayV < cMinV || rayV > cMaxV) continue;
+
                 int rowOffset = faceOffset + py * RES;
                 for (int px = minPx; px <= maxPx; px++) {
+                    double rayU = (px + 0.5) * invRes - 1.0;
+                    if (rayU < cMinU || rayU > cMaxU) continue;
+
+                    sampledAnyRay = true;
                     int rayIdx = rowOffset + px;
 
-                    // Conservative depth test against covered pixels without ray-center slab requirement
                     if (minDist < depthBuffer[rayIdx] + 0.1) {
-                        cacheVisible(midX, midY, midZ);
+                        cacheResult(idx, key, (byte) 1);
                         return true;
                     }
                 }
             }
         }
 
-        cacheHidden(midX, midY, midZ);
+        // Sub-pixel conservative guarantee: if no ray centers fell inside the projection, don't cull
+        if (!sampledAnyRay) {
+            cacheResult(idx, key, (byte) 1);
+            return true;
+        }
+
+        cacheResult(idx, key, (byte) 2);
         return false;
     }
 
-    private void cacheVisible(int x, int y, int z) {
-        if (externalCache != null) {
-            externalCache.cacheResult(camBlockPos, x, y, z, true);
-        } else {
-            long key = (((long) x & 0x3FFFFFF) << 38) | (((long) z & 0x3FFFFFF) << 12) | ((long) y & 0xFFF);
-            int idx = (int) (key & LOCAL_CACHE_MASK);
-            localCacheKeys[idx] = key;
-            localCacheValues[idx] = 1;
-        }
+    private static long computeLocalKey(int midX, int midY, int midZ, int dimX, int dimY, int dimZ) {
+        return ((long) midX * 73856093L) ^ ((long) midY * 19349663L) ^ ((long) midZ * 83492791L)
+             ^ ((long) dimX * 39916801L) ^ ((long) dimY * 479001599L) ^ ((long) dimZ * 2147483647L);
     }
 
-    private void cacheHidden(int x, int y, int z) {
-        if (externalCache != null) {
-            externalCache.cacheResult(camBlockPos, x, y, z, false);
-        } else {
-            long key = (((long) x & 0x3FFFFFF) << 38) | (((long) z & 0x3FFFFFF) << 12) | ((long) y & 0xFFF);
-            int idx = (int) (key & LOCAL_CACHE_MASK);
-            localCacheKeys[idx] = key;
-            localCacheValues[idx] = 2;
-        }
+    private void cacheResult(int idx, long key, byte value) {
+        localCacheKeys[idx] = key;
+        localCacheValues[idx] = value;
     }
 }
