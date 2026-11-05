@@ -1,7 +1,7 @@
 {
     "text.entityculling.title": "EntityCulling",
     "key.category.minecraft.text.entityculling.title": "EntityCulling",
-    "key.entityculling.toggle": "Alternar depuración del culling",
+    "key.entityculling.toggle": "Alternar culling (depuración)",
     "key.entityculling.toggleBoxes": "Mostrar cajas de culling",
     "text.entityculling.tab.general_options": "General",
     "text.entityculling.tab.tick_culling": "Excluir del culling de ticks",
