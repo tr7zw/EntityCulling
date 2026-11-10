@@ -1,17 +1,17 @@
 package dev.tr7zw.entityculling.provider;
 
-import com.ibm.icu.impl.*;
-import dev.tr7zw.entityculling.*;
 import dev.tr7zw.entityculling.access.*;
 import dev.tr7zw.entityculling.util.*;
 import dev.tr7zw.entityculling.versionless.occlusionculling.provider.*;
 import net.minecraft.client.*;
 import net.minecraft.client.multiplayer.*;
-import net.minecraft.core.*;
-import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.state.*;
-import net.minecraft.world.level.chunk.*;
 
+/*
+This is a proof of concept/test implementation for how a cache could be implemented.
+It is not well tested and doesn't yet correctly move the processing into the main thread to remove all async access.
+But early tests did show that its faster than the current DirectAccess version, so something like this should replace it in the future.
+ */
+@Deprecated
 public class SimpleCacheProvider implements DataProvider {
     private final Minecraft client = Minecraft.getInstance();
     private ClientLevel world = null;
