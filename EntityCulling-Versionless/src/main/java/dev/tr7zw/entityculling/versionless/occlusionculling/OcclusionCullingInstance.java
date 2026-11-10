@@ -126,7 +126,6 @@ public class OcclusionCullingInstance implements OcclusionCulling {
                         if (visibleOnFace != 0) {
                             targetPos.set(x, y, z);
                             if (isVoxelVisible(viewerPosition, targetPos, faceEdgeData, visibleOnFace)) {
-                                provider.postAABB();
                                 return true;
                             }
                         }
@@ -135,13 +134,13 @@ public class OcclusionCullingInstance implements OcclusionCulling {
                 }
             }
 
-            provider.postAABB();
             return false;
         } catch (Throwable t) {
             // Failsafe
             t.printStackTrace();
+        } finally {
+            provider.postAABB();
         }
-        provider.postAABB();
         return true;
     }
 
