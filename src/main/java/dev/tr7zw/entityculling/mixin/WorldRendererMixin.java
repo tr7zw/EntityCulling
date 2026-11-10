@@ -83,7 +83,8 @@ public class WorldRendererMixin {
 
     private static net.minecraft.client.renderer.entity.state.EntityRenderState processNametag(Entity entity,
             float partialTick, net.minecraft.client.renderer.entity.state.EntityRenderState state) {
-        if (EntityCullingModBase.instance.config.renderNametagsThroughWalls && entity.shouldShowName()) {
+        if (EntityCullingModBase.instance.config.renderNametagsThroughWalls && entity.shouldShowName()
+                && !entity.isDiscrete()) { // INFO: The discrete check happens in the rendering itself, so it needs to be checked here as well
             if (entity instanceof LivingEntity living) {
                 var renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
                 double d = GeneralUtil.getCameraEntity().distanceToSqr(entity);
@@ -96,7 +97,7 @@ public class WorldRendererMixin {
                 //? }
 
                 if (renderer instanceof LivingEntityRendererAccessor accessor
-                        && accessor.invokeShouldShowName(living, d) && !entity.isDiscrete()) { // INFO: The discrete check happens in the rendering itself, so it needs to be checked here as well
+                        && accessor.invokeShouldShowName(living, d)) {
                     net.minecraft.network.chat.Component display;
                     //? if >= 26.0 {
 
