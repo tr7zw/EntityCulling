@@ -1,4 +1,4 @@
-package dev.tr7zw.entityculling;
+package dev.tr7zw.entityculling.util;
 
 import dev.tr7zw.entityculling.access.EntityRendererInter;
 import dev.tr7zw.transition.mc.*;

@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import dev.tr7zw.entityculling.EntityCullingModBase;
-import dev.tr7zw.entityculling.NMSCullingHelper;
+import dev.tr7zw.entityculling.util.NMSCullingHelper;
 import dev.tr7zw.entityculling.access.Cullable;
 import dev.tr7zw.transition.mc.GeneralUtil;
 import net.minecraft.client.Minecraft;
@@ -55,6 +55,11 @@ public class ClientWorldMixin {
             EntityCullingModBase.instance.tickedEntities++;
             return; // whitelisted, don't skip that tick
         }
+        if (entity.getBoundingBox().intersects(EntityCullingModBase.instance.getDisableTickCullingBox())) {
+            // Close to the player, force full tick for the entity to avoid the player interacting with a tick culled entity
+            EntityCullingModBase.instance.tickedEntities++;
+            return;
+        }
         if (entity instanceof Cullable) {
             Cullable cull = (Cullable) entity;
             if (cull.isCulled() || cull.isOutOfCamera()) {
@@ -98,6 +103,18 @@ public class ClientWorldMixin {
             if (living.hurtTime > 0)
                 living.hurtTime--;
         }
+        //? if > 1.20.1 {
+        if (entity instanceof LivingEntityAccessor living) {
+            living.callRefreshDirtyAttributes();
+        }
+        //? }
+        // the shulker hitbox follows its peek amount, which only advances in tick().
+        // Keep advancing it so the collision box stays in sync with the server.
+        //? if >= 1.17 {
+        if (entity instanceof ShulkerAccessor shulker && shulker.callUpdatePeekAmount()) {
+            shulker.callOnPeekAmountChange();
+        }
+        //? }
         // the warden sounds are generated clientside instead of serverside, so simulate
         // that part of the code here.
         if (entity instanceof Warden warden) {

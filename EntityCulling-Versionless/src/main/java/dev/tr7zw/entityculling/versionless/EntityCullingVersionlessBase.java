@@ -5,17 +5,23 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
+import dev.tr7zw.entityculling.versionless.occlusionculling.cache.*;
+import dev.tr7zw.entityculling.versionless.occlusionculling.provider.*;
+import lombok.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
+import dev.tr7zw.entityculling.versionless.occlusionculling.OcclusionCullingInstance;
 
 public abstract class EntityCullingVersionlessBase {
 
     public static final Logger LOGGER = LogManager.getLogger("EntityCulling");
-    public OcclusionCullingInstance culling;
+    protected OcclusionCullingInstance culling;
+    protected OcclusionCache cache;
+    @Getter
+    protected DataProvider dataProvider;
     public boolean debugHitboxes = false;
     public static boolean enabled = true;
     protected Thread cullThread;

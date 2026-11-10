@@ -2,15 +2,14 @@ package dev.tr7zw.entityculling;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.locks.LockSupport;
 
-import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
-import com.logisticscraft.occlusionculling.util.Vec3d;
+import dev.tr7zw.entityculling.versionless.occlusionculling.*;
+import dev.tr7zw.entityculling.versionless.occlusionculling.cache.*;
+import dev.tr7zw.entityculling.versionless.occlusionculling.provider.*;
+import dev.tr7zw.entityculling.versionless.occlusionculling.util.Vec3d;
 
 import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
 import dev.tr7zw.entityculling.access.Cullable;
@@ -27,7 +26,8 @@ public class CullTask implements Runnable {
     public boolean disableEntityCulling = false;
     public boolean disableBlockEntityCulling = false;
 
-    private final OcclusionCullingInstance culling;
+    private OcclusionCulling culling;
+    private OcclusionCache cache;
     private final int sleepDelay = EntityCullingModBase.instance.config.sleepDelay;
     private final int hitboxLimit = EntityCullingModBase.instance.config.hitboxLimit;
     public double lastTime = 0;
@@ -47,9 +47,12 @@ public class CullTask implements Runnable {
     private List<Cullable> blockEntities = new ArrayList<>();
     @Setter
     private Vec3 cameraMC = new Vec3(0, 0, 0);
+    private DataProvider dataProvider;
 
-    public CullTask(OcclusionCullingInstance culling) {
+    public CullTask(OcclusionCulling culling, OcclusionCache cache, DataProvider dataProvider) {
         this.culling = culling;
+        this.cache = cache;
+        this.dataProvider = dataProvider;
     }
 
     @Override
@@ -68,12 +71,13 @@ public class CullTask implements Runnable {
                         requestCull = false;
                         lastPos.set(cameraMC.x, cameraMC.y, cameraMC.z);
                         Vec3d camera = lastPos;
-                        culling.resetCache();
+                        cache.resetCache();
                         if (!EntityCullingModBase.instance.config.safeMode) {
                             EntityCullingModBase.instance.extractEntityData(Minecraft.getInstance());
                         }
                         cullBlockEntities(cameraMC, camera);
                         cullEntities(cameraMC, camera);
+                        dataProvider.postRun();
                         lastTime = (System.nanoTime() - start) / 1_000_000.0;
                     }
                 } else {
