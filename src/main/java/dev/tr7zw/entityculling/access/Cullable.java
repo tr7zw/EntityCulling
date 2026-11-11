@@ -33,4 +33,8 @@ public interface Cullable {
 
     void setEc$PBlockPos(BlockPos pos);
 
+    Vec3 getEc$Velocity();
+
+    void setEc$Velocity(Vec3 velocity);
+
 }

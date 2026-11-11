@@ -29,6 +29,9 @@ public class CullableMixin implements Cullable {
     @Getter
     @Setter
     private BlockPos ec$PBlockPos;
+    @Getter
+    @Setter
+    private Vec3 ec$Velocity;
 
     @Override
     public void setTimeout() {

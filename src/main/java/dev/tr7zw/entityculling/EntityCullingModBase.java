@@ -233,6 +233,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
             cullable.setShouldEntityAppearGlowing(Minecraft.getInstance().shouldEntityAppearGlowing(entity));
             cullable.setEc$BoundingBox(NMSCullingHelper.getCullingBox(entity));
             cullable.setEc$Position(entity.position());
+            cullable.setEc$Velocity(entity.getDeltaMovement());
             return cullable;
         }
         return null;

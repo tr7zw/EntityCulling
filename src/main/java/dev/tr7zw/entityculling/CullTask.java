@@ -120,11 +120,12 @@ public class CullTask implements Runnable {
                 AABB boundingBox = cullable.getEc$BoundingBox();
                 if (boundingBox == null || boundingBox.getXsize() > hitboxLimit || boundingBox.getYsize() > hitboxLimit
                         || boundingBox.getZsize() > hitboxLimit) {
-                    cullable.setCulled(false); // To big to bother to cull
+                    cullable.setCulled(false); // Too big to bother to cull
                     continue;
                 }
-                aabbMin.set(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
-                aabbMax.set(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ);
+                Vec3 velocity = cullable.getEc$Velocity();
+                aabbMin.set(boundingBox.minX + Math.min(0, velocity.x * 5), boundingBox.minY + Math.min(0, velocity.y * 5), boundingBox.minZ + Math.min(0, velocity.z * 5));
+                aabbMax.set(boundingBox.maxX + Math.max(0, velocity.x * 5), boundingBox.maxY + Math.max(0, velocity.y * 5), boundingBox.maxZ + Math.max(0, velocity.z * 5));
                 boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
                 cullable.setCulled(!visible);
             }
