@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.LockSupport;
 
+import dev.tr7zw.entityculling.versionless.api.*;
 import dev.tr7zw.entityculling.versionless.occlusionculling.*;
 import dev.tr7zw.entityculling.versionless.occlusionculling.cache.*;
 import dev.tr7zw.entityculling.versionless.occlusionculling.provider.*;
@@ -77,6 +78,7 @@ public class CullTask implements Runnable {
                         }
                         cullBlockEntities(cameraMC, camera);
                         cullEntities(cameraMC, camera);
+                        EntityCullingAPIVersionless.getCULLING_EVENT().callEvent((min, max) -> this.culling.isAABBVisible(min, max, camera));
                         dataProvider.postRun();
                         lastTime = (System.nanoTime() - start) / 1_000_000.0;
                     }
