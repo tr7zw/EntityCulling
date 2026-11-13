@@ -106,6 +106,7 @@ public class CullTask implements Runnable {
                 break;
             }
             if (EntityCullingModBase.instance.isEntityDynamicWhitelisted(cullable)) {
+                cullable.setCulled(false);
                 continue;
             }
             if (!cullable.isForcedVisible()) {
@@ -156,6 +157,7 @@ public class CullTask implements Runnable {
                 break;
             }
             if (EntityCullingModBase.instance.isBlockEntityDynamicWhitelisted(cullable)) {
+                cullable.setCulled(false);
                 continue;
             }
             if (!cullable.isForcedVisible()) {
