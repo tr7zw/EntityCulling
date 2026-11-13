@@ -106,6 +106,7 @@ public class CullTask implements Runnable {
                 break;
             }
             if (EntityCullingModBase.instance.isEntityDynamicWhitelisted(cullable)) {
+                cullable.setCulled(false);
                 continue;
             }
             if (!cullable.isForcedVisible()) {
@@ -133,6 +134,9 @@ public class CullTask implements Runnable {
                 boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
                 cullable.setCulled(!visible);
             }
+            else{
+                cullable.setCulled(false);
+            }
         }
     }
 
@@ -156,6 +160,7 @@ public class CullTask implements Runnable {
                 break;
             }
             if (EntityCullingModBase.instance.isBlockEntityDynamicWhitelisted(cullable)) {
+                cullable.setCulled(false);
                 continue;
             }
             if (!cullable.isForcedVisible()) {
@@ -173,6 +178,9 @@ public class CullTask implements Runnable {
                     cullable.setCulled(!visible);
                 }
 
+            }
+            else{
+                cullable.setCulled(false);
             }
         }
     }
