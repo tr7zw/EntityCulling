@@ -3,6 +3,7 @@ package dev.tr7zw.entityculling.versionless.occlusionculling;
 import java.util.Arrays;
 import java.util.BitSet;
 
+import dev.tr7zw.entityculling.versionless.*;
 import dev.tr7zw.entityculling.versionless.occlusionculling.cache.OcclusionCache;
 import dev.tr7zw.entityculling.versionless.occlusionculling.provider.*;
 import dev.tr7zw.entityculling.versionless.occlusionculling.util.MathUtilities;
@@ -137,7 +138,13 @@ public class OcclusionCullingInstance implements OcclusionCulling {
             return false;
         } catch (Throwable t) {
             // Failsafe
-            t.printStackTrace();
+            StringBuilder sb = new StringBuilder();
+            sb.append("aabbMin: ").append(aabbMin).append(", aabbMax: ").append(aabbMax).append(", viewerPosition: ")
+                    .append(viewerPosition).append(", skipList size: ").append(skipList.size())
+                    .append(", skipList length: ").append(skipList.length()).append(", reach: ").append(reach)
+                    .append(", aabbExpansion: ").append(aabbExpansion);
+            EntityCullingVersionlessBase.LOGGER.error("Error during occlusion culling. Info: " + sb, t);
+
         } finally {
             provider.postAABB();
         }
