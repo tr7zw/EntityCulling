@@ -68,6 +68,13 @@ public class Vec3d {
         return Double.compare(vec3d.z, z) == 0;
     }
 
+    public double squaredDistanceTo(Vec3d other) {
+        double dx = this.x - other.x;
+        double dy = this.y - other.y;
+        double dz = this.z - other.z;
+        return dx * dx + dy * dy + dz * dz;
+    }
+
     @Override
     public int hashCode() {
         long l = Double.doubleToLongBits(x);

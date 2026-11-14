@@ -13,12 +13,12 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dev.tr7zw.entityculling.versionless.occlusionculling.OcclusionCullingInstance;
+import dev.tr7zw.entityculling.versionless.occlusionculling.OcclusionCulling;
 
 public abstract class EntityCullingVersionlessBase {
 
     public static final Logger LOGGER = LogManager.getLogger("EntityCulling");
-    protected OcclusionCullingInstance culling;
+    protected OcclusionCulling culling;
     protected OcclusionCache cache;
     @Getter
     protected DataProvider dataProvider;
