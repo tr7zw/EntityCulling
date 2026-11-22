@@ -31,6 +31,7 @@ public class CullTask implements Runnable {
     private OcclusionCache cache;
     private final int sleepDelay = EntityCullingModBase.instance.config.sleepDelay;
     private final int hitboxLimit = EntityCullingModBase.instance.config.hitboxLimit;
+    private final int maxVelocitySize = 10;
     public double lastTime = 0;
     private static final long PARK_TIMEOUT_NANOS = 1_000_000_000L;
 
@@ -78,7 +79,8 @@ public class CullTask implements Runnable {
                         }
                         cullBlockEntities(cameraMC, camera);
                         cullEntities(cameraMC, camera);
-                        EntityCullingAPIVersionless.getCULLING_EVENT().callEvent((min, max) -> this.culling.isAABBVisible(min, max, camera));
+                        EntityCullingAPIVersionless.getCULLING_EVENT()
+                                .callEvent((min, max) -> this.culling.isAABBVisible(min, max, camera));
                         dataProvider.postRun();
                         lastTime = (System.nanoTime() - start) / 1_000_000.0;
                     }
@@ -127,10 +129,12 @@ public class CullTask implements Runnable {
                     continue;
                 }
                 Vec3 velocity = cullable.getEc$Velocity();
-                aabbMin.set(boundingBox.minX + Math.min(0, velocity.x * 5),
-                        boundingBox.minY + Math.min(0, velocity.y * 5), boundingBox.minZ + Math.min(0, velocity.z * 5));
-                aabbMax.set(boundingBox.maxX + Math.max(0, velocity.x * 5),
-                        boundingBox.maxY + Math.max(0, velocity.y * 5), boundingBox.maxZ + Math.max(0, velocity.z * 5));
+                aabbMin.set(boundingBox.minX + Math.clamp(velocity.x * 5, -maxVelocitySize, 0),
+                        boundingBox.minY + Math.clamp(velocity.y * 5, -maxVelocitySize, 0),
+                        boundingBox.minZ + Math.clamp(velocity.z * 5, -maxVelocitySize, 0));
+                aabbMax.set(boundingBox.maxX + Math.clamp(velocity.x * 5, 0, maxVelocitySize),
+                        boundingBox.maxY + Math.clamp(velocity.y * 5, 0, maxVelocitySize),
+                        boundingBox.maxZ + Math.clamp(velocity.z * 5, 0, maxVelocitySize));
                 boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
                 cullable.setCulled(!visible);
             }
