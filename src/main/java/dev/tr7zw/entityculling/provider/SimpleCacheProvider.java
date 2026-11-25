@@ -33,13 +33,14 @@ public class SimpleCacheProvider implements DataProvider {
             ChunkSectionAccess access = ECUtil.resolveSection(world, chunkX, chunkY, chunkZ);
             if (access != null) {
                 cache = access.ec$getProviderData(SimpleCache.class);
-                /*    if (cache == null) {
+                if (cache == null) {
                     rebuild(access);
                     cache = access.ec$getProviderData(SimpleCache.class);
-                }*/
+                }
                 return cache != null;
             }
         }
+        cache = null;
         return false;
     }
 

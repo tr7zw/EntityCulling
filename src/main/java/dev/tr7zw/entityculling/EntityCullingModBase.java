@@ -6,7 +6,8 @@ import java.util.function.Function;
 
 import dev.tr7zw.entityculling.provider.*;
 import dev.tr7zw.entityculling.util.*;
-import dev.tr7zw.entityculling.versionless.occlusionculling.OcclusionCullingInstance;
+import dev.tr7zw.entityculling.util.debug.*;
+import dev.tr7zw.entityculling.versionless.occlusionculling.*;
 
 import dev.tr7zw.entityculling.access.*;
 import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
@@ -55,10 +56,22 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
     public void onInitialize() {
         instance = this;
         super.onInitialize();
-        cache = new OptimisticArrayCache(config.tracingDistance);
-        dataProvider = new DirectProvider();
-        culling = new OcclusionCullingInstance(config.tracingDistance, dataProvider, cache);
-        cullTask = new CullTask(culling, cache, dataProvider);
+        BrickCacheProvider bProvider = new BrickCacheProvider();
+        dataProvider = bProvider;
+        RasterOcclusionInstance cb = new RasterOcclusionInstance(config.tracingDistance, bProvider, null);
+        OcclusionCache cubeCache = new NoCache() {
+            @Override
+            public void resetCache() {
+                cb.resetCache();
+            }
+        };
+
+        OcclusionCache normalCache = new OptimisticArrayCache(config.tracingDistance);
+        OcclusionCullingInstance normalCulling = new OcclusionCullingInstance(config.tracingDistance, dataProvider, normalCache);
+        cache = new JoinedCache(normalCache, cubeCache);
+        culling = new ComparingOcclusionCullingInstance(normalCulling, cb);
+
+        cullTask = new CullTask(cb, cubeCache, dataProvider);
 
         cullThread = new Thread(cullTask, "CullThread");
         cullThread.setDaemon(true); // may be parked for up to a second, don't hold up the shutdown
