@@ -114,7 +114,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
             }
         }
         // Handle keybinds
-        if (KeybindHolder.INSTANCE.keybind.isDown()) {
+        if (!KeybindHolder.INSTANCE.keybind.isUnbound() && KeybindHolder.INSTANCE.keybind.isDown()) {
             if (pressed)
                 return;
             pressed = true;
@@ -127,7 +127,7 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
         } else {
             pressed = false;
         }
-        if (KeybindHolder.INSTANCE.keybindBoxes.isDown()) {
+        if (!KeybindHolder.INSTANCE.keybindBoxes.isUnbound() && KeybindHolder.INSTANCE.keybindBoxes.isDown()) {
             if (pressedBox)
                 return;
             pressedBox = true;
