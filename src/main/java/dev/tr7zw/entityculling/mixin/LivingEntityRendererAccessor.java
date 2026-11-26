@@ -16,7 +16,7 @@ public interface LivingEntityRendererAccessor {
 
 }
 //? } else {
-/*
- @Mixin(targets = "net.minecraft.client.Minecraft") // dummy for older versions
- public class LivingEntityRendererAccessor {}
+
+/*@Mixin(targets = "net.minecraft.client.Minecraft") // dummy for older versions
+public class LivingEntityRendererAccessor {}
 *///? }

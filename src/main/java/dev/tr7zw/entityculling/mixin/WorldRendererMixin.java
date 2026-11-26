@@ -11,14 +11,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 //? if >= 1.21.4 && < 1.21.11 {
-/*
-import dev.tr7zw.entityculling.versionless.occlusionculling.util.MathUtilities;
- */
-//? }
+
+/*import dev.tr7zw.entityculling.versionless.occlusionculling.util.MathUtilities;
+ 
+*///? }
 
 //? if < 1.21.5 {
-/*
- import com.mojang.blaze3d.systems.RenderSystem;
+
+/*import com.mojang.blaze3d.systems.RenderSystem;
 *///? }
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -36,8 +36,8 @@ import net.minecraft.world.phys.AABB;
 
 @Mixin(net.minecraft.client.renderer.extract.LevelExtractor.class)
 //? } else {
-/*
-@Mixin(LevelRenderer.class)
+
+/*@Mixin(LevelRenderer.class)
 *///? }
 public class WorldRendererMixin {
 
@@ -64,8 +64,8 @@ public class WorldRendererMixin {
 
             state.entityType = EntityTypes.INTERACTION;
             //? } else {
-            /*
-            state.entityType = EntityType.INTERACTION;
+
+            /*state.entityType = EntityType.INTERACTION;
             *///? }
             state = processNametag(entity, partialTick, state);
             state.x = net.minecraft.util.Mth.lerp(partialTick, entity.xOld, entity.getX());
@@ -108,8 +108,8 @@ public class WorldRendererMixin {
 
                     Entity checkEntity = entity;
                     //? } else {
-                    /*
-                    if (entity instanceof net.minecraft.client.entity.ClientAvatarEntity checkEntity) {
+
+                    /*if (entity instanceof net.minecraft.client.entity.ClientAvatarEntity checkEntity) {
                     *///? }
 
                     if (d < 100 && (display = checkEntity.belowNameDisplay()) != null) {
@@ -118,8 +118,8 @@ public class WorldRendererMixin {
 
                         avatarState.entityType = EntityTypes.PLAYER;
                         //? } else {
-                        /*
-                        avatarState.entityType = EntityType.PLAYER;
+
+                        /*avatarState.entityType = EntityType.PLAYER;
                         *///? }
                         avatarState.scoreText = display;
                         avatarState.isInvisibleToPlayer = true;
@@ -127,8 +127,8 @@ public class WorldRendererMixin {
                     }
 
                     //? if < 26.0 {
-                    /*
-                    }
+
+                    /*}
                     *///? }
 
                     if (d < nameTagDistance * nameTagDistance) {
@@ -156,62 +156,62 @@ public class WorldRendererMixin {
     //? }
 
     //? if < 1.21.9 {
-    /*
-     @Inject(at = @At("HEAD"), method = "renderEntity", cancellable = true)
-     private void renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta,
-          PoseStack matrices, MultiBufferSource vertexConsumers, org.spongepowered.asm.mixin.injection.callback.CallbackInfo info) {
-      if (EntityCullingModBase.instance.config.skipEntityCulling) {
-          return;
-      }
-     Cullable cullable = (Cullable) entity;
-     if (cullable.isCulled() && !cullable.isForcedVisible() && !NMSCullingHelper.ignoresCulling(entity)) {
-        if (this.entityCulling$entityRenderDispatcher.getRenderer(entity) instanceof net.minecraft.client.renderer.entity.EntityRenderer entityRenderer
-                && entityRenderer instanceof dev.tr7zw.entityculling.access.EntityRendererInter entityRendererInter) {
-            if (EntityCullingModBase.instance.config.renderNametagsThroughWalls && matrices != null
-                    && vertexConsumers != null && entityRendererInter.shadowShouldShowName(entity)) {
-               double x = net.minecraft.util.Mth.lerp((double) tickDelta, (double) entity.xOld, (double) entity.getX()) - cameraX;
-                double y = net.minecraft.util.Mth.lerp((double) tickDelta, (double) entity.yOld, (double) entity.getY()) - cameraY;
-                double z = net.minecraft.util.Mth.lerp((double) tickDelta, (double) entity.zOld, (double) entity.getZ()) - cameraZ;
-                var vec3d = NMSCullingHelper.getRenderOffset(entityRenderer, entity, tickDelta);
-                double d = x + vec3d.x;
-                double e = y + vec3d.y;
-                double f = z + vec3d.z;
-                matrices.pushPose();
-                matrices.translate(d, e, f);
-                entityRendererInter.shadowRenderNameTag(entity, entity.getDisplayName(), matrices, vertexConsumers,
-                        this.entityCulling$entityRenderDispatcher.getPackedLightCoords(entity, tickDelta),
-                         tickDelta);
-                  matrices.popPose();
-             }
-     //? if >= 1.21.4 {
-    
-                if (EntityCullingModBase.instance.debugHitboxes) {
-                    lateRenders.add(() -> {
-                        renderDebugBox(entity, cameraX, cameraY, cameraZ, tickDelta, matrices, vertexConsumers, false);
-                     });
-                 }
-     //? }
-                EntityCullingModBase.instance.skippedEntities++;
-                info.cancel();
-               return;
-           }
-        }
-         EntityCullingModBase.instance.renderedEntities++;
-        cullable.setOutOfCamera(false);
-     //? if >= 1.21.4 {
-    
-        if (EntityCullingModBase.instance.debugHitboxes) {
-             lateRenders.add(() -> {
-                 renderDebugBox(entity, cameraX, cameraY, cameraZ, tickDelta, matrices, vertexConsumers, true);
-             });
-         }
-     //? }
+
+    /*@Inject(at = @At("HEAD"), method = "renderEntity", cancellable = true)
+    private void renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta,
+         PoseStack matrices, MultiBufferSource vertexConsumers, org.spongepowered.asm.mixin.injection.callback.CallbackInfo info) {
+     if (EntityCullingModBase.instance.config.skipEntityCulling) {
+         return;
      }
+    Cullable cullable = (Cullable) entity;
+    if (cullable.isCulled() && !cullable.isForcedVisible() && !NMSCullingHelper.ignoresCulling(entity)) {
+       if (this.entityCulling$entityRenderDispatcher.getRenderer(entity) instanceof net.minecraft.client.renderer.entity.EntityRenderer entityRenderer
+               && entityRenderer instanceof dev.tr7zw.entityculling.access.EntityRendererInter entityRendererInter) {
+           if (EntityCullingModBase.instance.config.renderNametagsThroughWalls && matrices != null
+                   && vertexConsumers != null && entityRendererInter.shadowShouldShowName(entity)) {
+              double x = net.minecraft.util.Mth.lerp((double) tickDelta, (double) entity.xOld, (double) entity.getX()) - cameraX;
+               double y = net.minecraft.util.Mth.lerp((double) tickDelta, (double) entity.yOld, (double) entity.getY()) - cameraY;
+               double z = net.minecraft.util.Mth.lerp((double) tickDelta, (double) entity.zOld, (double) entity.getZ()) - cameraZ;
+               var vec3d = NMSCullingHelper.getRenderOffset(entityRenderer, entity, tickDelta);
+               double d = x + vec3d.x;
+               double e = y + vec3d.y;
+               double f = z + vec3d.z;
+               matrices.pushPose();
+               matrices.translate(d, e, f);
+               entityRendererInter.shadowRenderNameTag(entity, entity.getDisplayName(), matrices, vertexConsumers,
+                       this.entityCulling$entityRenderDispatcher.getPackedLightCoords(entity, tickDelta),
+                        tickDelta);
+                 matrices.popPose();
+            }
+    //? if >= 1.21.4 {
+    
+               if (EntityCullingModBase.instance.debugHitboxes) {
+                   lateRenders.add(() -> {
+                       renderDebugBox(entity, cameraX, cameraY, cameraZ, tickDelta, matrices, vertexConsumers, false);
+                    });
+                }
+    //? }
+               EntityCullingModBase.instance.skippedEntities++;
+               info.cancel();
+              return;
+          }
+       }
+        EntityCullingModBase.instance.renderedEntities++;
+       cullable.setOutOfCamera(false);
+    //? if >= 1.21.4 {
+    
+       if (EntityCullingModBase.instance.debugHitboxes) {
+            lateRenders.add(() -> {
+                renderDebugBox(entity, cameraX, cameraY, cameraZ, tickDelta, matrices, vertexConsumers, true);
+            });
+        }
+    //? }
+    }
     *///? }
 
     //? if >= 1.21.4 && < 1.21.11 {
-    /*
-    //    @Inject(at = @At("RETURN"), method = "renderEntities")
+
+    /*//    @Inject(at = @At("RETURN"), method = "renderEntities")
     //    private void renderEntities(PoseStack poseStack, net.minecraft.client.renderer.MultiBufferSource.BufferSource bufferSource, net.minecraft.client.Camera camera,
     //            net.minecraft.client.DeltaTracker deltaTracker, List<Entity> list, CallbackInfo info) {
     //        if (!lateRenders.isEmpty()) {

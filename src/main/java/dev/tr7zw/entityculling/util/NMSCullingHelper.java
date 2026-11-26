@@ -19,8 +19,8 @@ public class NMSCullingHelper {
             return true;
         }
         //? if <= 1.21.1 {
-        /*
-         return entity.noCulling;
+
+        /*return entity.noCulling;
         *///? } else {
         var renderer = MC.getEntityRenderDispatcher().getRenderer(entity);
         if (renderer == null) {
@@ -38,13 +38,13 @@ public class NMSCullingHelper {
 
             return EntityTypes.ARMOR_STAND.getDimensions().makeBoundingBox(entity.position());
             //? } else {
-            /*
-            return EntityType.ARMOR_STAND.getDimensions().makeBoundingBox(entity.position());
+
+            /*return EntityType.ARMOR_STAND.getDimensions().makeBoundingBox(entity.position());
             *///? }
         }
         //? if <= 1.21.1 {
-        /*
-         return entity.getBoundingBoxForCulling();
+
+        /*return entity.getBoundingBoxForCulling();
         *///? } else {
         var renderer = MC.getEntityRenderDispatcher().getRenderer(entity);
         if (renderer == null) {
@@ -56,8 +56,8 @@ public class NMSCullingHelper {
 
     public static Vec3 getRenderOffset(EntityRenderer entityRenderer, Entity entity, float tickDelta) {
         //? if <= 1.21.1 {
-        /*
-         return entityRenderer.getRenderOffset(entity, tickDelta);
+
+        /*return entityRenderer.getRenderOffset(entity, tickDelta);
         *///? } else {
 
         return entityRenderer.getRenderOffset(entityRenderer.createRenderState(entity, tickDelta));

@@ -2,6 +2,7 @@ package dev.tr7zw.entityculling;
 
 import net.minecraft.client.*;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.*;
 import net.minecraft.resources.*;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -10,7 +11,6 @@ import dev.tr7zw.entityculling.config.ConfigScreenProvider;
 import dev.tr7zw.transition.loader.ModLoaderEventUtil;
 import dev.tr7zw.transition.loader.ModLoaderUtil;
 import dev.tr7zw.transition.mc.ComponentProvider;
-import dev.tr7zw.transition.mc.GeneralUtil;
 //? if >= 1.21.9 {
 
 import dev.tr7zw.entityculling.debugEntries.*;
@@ -58,11 +58,11 @@ public class EntityCullingMod extends EntityCullingModBase
         return BlockEntityRenderFabricExtension.tryGetRenderBoundingBox(
                 Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(entity), entity);
         //? } else if neoforge {
-        /*
-               return ((net.neoforged.neoforge.client.extensions.IBlockEntityRendererExtension)Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(entity)).getRenderBoundingBox(entity);
+
+        /*return ((net.neoforged.neoforge.client.extensions.IBlockEntityRendererExtension)Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(entity)).getRenderBoundingBox(entity);
         *///? } else if forge {
-        /*
-               return entity.getRenderBoundingBox();
+
+        /*return entity.getRenderBoundingBox();
         *///? }
     }
 
@@ -70,12 +70,26 @@ public class EntityCullingMod extends EntityCullingModBase
 
     public static final net.minecraft.client.gui.components.debug.DebugEntryCategory DEBUG_CATEGORY = new net.minecraft.client.gui.components.debug.DebugEntryCategory(
             ComponentProvider.translatable("text.entityculling.title"), 10F);
-    public static final /*? >= 1.21.11 {*/ Identifier /*?} else {*//* Identifier *//*?}*/ DEBUG_CATEGORY_ID = GeneralUtil
+    //? if >= 26.4 {
+    public static final net.minecraft.client.gui.components.debug.DebugGroup DEBUG_CATEGORY_ID = net.minecraft.client.gui.components.debug.DebugGroup.Builder
+            .titled("EntityCulling").withAccentColor(0x0d6836)
+            .withPreferredColumn(net.minecraft.client.gui.components.debug.DebugColumn.Side.LEFT).build();
+    //? } else {
+    /*
+    public static final Identifier DEBUG_CATEGORY_ID = dev.tr7zw.transition.mc.GeneralUtil
             .getResourceLocation("entityculling", "debug");
+     */
+    //? }
 
     private static void registerDebugLine(String id, net.minecraft.client.gui.components.debug.DebugScreenEntry entry) {
+        //? if >= 26.4 {
+
+        //? } else {
+        /*
         dev.tr7zw.entityculling.mixin.DebugScreenEntriesAccessor
-                .invokeRegister(GeneralUtil.getResourceLocation("entityculling", id), entry);
+                .invokeRegister(dev.tr7zw.transition.mc.GeneralUtil.getResourceLocation("entityculling", id), entry);
+         */
+        //? }
     }
     //? }
 }

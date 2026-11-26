@@ -1,53 +1,53 @@
 //? if forge {
-/*
- package dev.tr7zw.entityculling;
 
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.fml.DistExecutor;
- import net.minecraftforge.fml.common.Mod;
- import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
- import dev.tr7zw.transition.loader.ModLoaderUtil;
+/*package dev.tr7zw.entityculling;
 
- @Mod("entityculling")
- public class EntityCullingBootstrap {
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import dev.tr7zw.transition.loader.ModLoaderUtil;
 
- public EntityCullingBootstrap(FMLJavaModLoadingContext context) {
-        ModLoaderUtil.setModLoadingContext(context);
- 	DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> { 
-         new EntityCullingMod().onInitialize();
-        });
- }
-    public EntityCullingBootstrap() {
-        this(FMLJavaModLoadingContext.get());
-    }
+@Mod("entityculling")
+public class EntityCullingBootstrap {
 
- }
+public EntityCullingBootstrap(FMLJavaModLoadingContext context) {
+       ModLoaderUtil.setModLoadingContext(context);
+	DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> { 
+        new EntityCullingMod().onInitialize();
+       });
+}
+   public EntityCullingBootstrap() {
+       this(FMLJavaModLoadingContext.get());
+   }
+
+}
 *///? } else if neoforge {
-/*
- package dev.tr7zw.entityculling;
 
- import net.neoforged.api.distmarker.Dist;
- import net.neoforged.fml.common.Mod;
- import net.neoforged.fml.loading.FMLEnvironment;
- import dev.tr7zw.transition.loader.ModLoaderEventUtil;
+/*package dev.tr7zw.entityculling;
 
- @Mod("entityculling")
- public class EntityCullingBootstrap {
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLEnvironment;
+import dev.tr7zw.transition.loader.ModLoaderEventUtil;
 
-    public EntityCullingBootstrap() {
- //? if < 1.21.9 {
-/^
-         if(FMLEnvironment.dist == Dist.CLIENT) {
- ^///? } else {
+@Mod("entityculling")
+public class EntityCullingBootstrap {
 
-         if(FMLEnvironment.getDist() == Dist.CLIENT) {
- //? }
-                    ModLoaderEventUtil.registerClientSetupListener(() -> new EntityCullingMod().onInitialize());
-                    //? if >= 26.1 {
-                    KeybindHolder.INSTANCE.registerKeybinds();
-                    //? }
-            }
-    }
+   public EntityCullingBootstrap() {
+//? if < 1.21.9 {
 
- }
+        /^if(FMLEnvironment.dist == Dist.CLIENT) {
+^///? } else {
+
+        if(FMLEnvironment.getDist() == Dist.CLIENT) {
+//? }
+                   ModLoaderEventUtil.registerClientSetupListener(() -> new EntityCullingMod().onInitialize());
+                   //? if >= 26.1 {
+                   KeybindHolder.INSTANCE.registerKeybinds();
+                   //? }
+           }
+   }
+
+}
 *///? }

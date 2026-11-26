@@ -161,8 +161,8 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
             if (!freezeCamera) {
                 cullTask.setCameraMC(EntityCullingModBase.instance.config.debugMode ? client.player.getEyePosition(0)
                         : /*? >= 26.2 {*/client.gameRenderer
-                                .mainCamera() /*?} else {*//* client.gameRenderer.getMainCamera() *//*?}*/
-                                /*? >= 1.21.11 {*/.position() /*?} else {*//* .getPosition() *//*?}*/);
+                                .mainCamera() /*?} else {*/ /*client.gameRenderer.getMainCamera() *//*?}*/
+                                /*? >= 1.21.11 {*/.position() /*?} else {*/ /*.getPosition() *//*?}*/);
             }
             requestCull();
             if (changed) {
@@ -197,8 +197,8 @@ public abstract class EntityCullingModBase extends EntityCullingVersionlessBase 
                     LevelChunk chunk = client.level.getChunk(client.player.chunkPosition().x() + x,
                             client.player.chunkPosition().z() + z);
                     //? } else {
-                    /*
-                    LevelChunk chunk = client.level.getChunk(client.player.chunkPosition().x + x,
+
+                    /*LevelChunk chunk = client.level.getChunk(client.player.chunkPosition().x + x,
                             client.player.chunkPosition().z + z);
                     *///? }
                     prefetchBlockEntityData(blockEntities, chunk.getBlockEntities());

@@ -18,12 +18,12 @@ public abstract class BlockEntityRenderDispatcherMixin {
     //? if >= 1.21.9 {
 
     //? if neoforge && >= 26.2 {
-    /*
-    @Inject(method = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher;tryExtractRenderState(Lnet/minecraft/world/level/block/entity/BlockEntity;FLnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;ZLnet/minecraft/client/renderer/culling/Frustum;)Lnet/minecraft/client/renderer/blockentity/state/BlockEntityRenderState;", at = @At("HEAD"), cancellable = true)
+
+    /*@Inject(method = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher;tryExtractRenderState(Lnet/minecraft/world/level/block/entity/BlockEntity;FLnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;ZLnet/minecraft/client/renderer/culling/Frustum;)Lnet/minecraft/client/renderer/blockentity/state/BlockEntityRenderState;", at = @At("HEAD"), cancellable = true)
      *///? } else if neoforge {
-    /*
-        @Inject(method = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher;tryExtractRenderState(Lnet/minecraft/world/level/block/entity/BlockEntity;FLnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;Lnet/minecraft/client/renderer/culling/Frustum;)Lnet/minecraft/client/renderer/blockentity/state/BlockEntityRenderState;", at = @At("HEAD"), cancellable = true)
-     *///? } else {
+
+    /*@Inject(method = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher;tryExtractRenderState(Lnet/minecraft/world/level/block/entity/BlockEntity;FLnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;Lnet/minecraft/client/renderer/culling/Frustum;)Lnet/minecraft/client/renderer/blockentity/state/BlockEntityRenderState;", at = @At("HEAD"), cancellable = true)
+    *///? } else {
     @Inject(method = "tryExtractRenderState", at = @At("HEAD"), cancellable = true)
     //? }
     public void tryExtractRenderState(BlockEntity blockEntity, float partialTicks,
@@ -32,8 +32,8 @@ public abstract class BlockEntityRenderDispatcherMixin {
             boolean isGloballyRendered,
             //? }
             //? if neoforge && >= 1.21.9 {
-            /*
-            net.minecraft.client.renderer.culling.Frustum neoFrustum,
+
+            /*net.minecraft.client.renderer.culling.Frustum neoFrustum,
             *///? }
             CallbackInfoReturnable<net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState> info) {
         if (blockEntity == null || EntityCullingModBase.instance.config.skipBlockEntityCulling
@@ -54,8 +54,8 @@ public abstract class BlockEntityRenderDispatcherMixin {
         }
         var frustum = EntityCullingModBase.instance.frustum;
         //? if neoforge && >= 26.2 {
-        /*
-        if (neoFrustum != null) {
+
+        /*if (neoFrustum != null) {
             frustum = neoFrustum;
         }
         *///? }
@@ -91,35 +91,35 @@ public abstract class BlockEntityRenderDispatcherMixin {
     }
 
     //? } else {
-    /*
-     @Inject(method = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher;render(Lnet/minecraft/world/level/block/entity/BlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;)V", at = @At("HEAD"), cancellable = true)
-     public <E extends BlockEntity> void render(E blockEntity, float f, com.mojang.blaze3d.vertex.PoseStack poseStack,
-            net.minecraft.client.renderer.MultiBufferSource multiBufferSource, org.spongepowered.asm.mixin.injection.callback.CallbackInfo info) {
-      if (EntityCullingModBase.instance.config.skipBlockEntityCulling) {
+
+    /*@Inject(method = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher;render(Lnet/minecraft/world/level/block/entity/BlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;)V", at = @At("HEAD"), cancellable = true)
+    public <E extends BlockEntity> void render(E blockEntity, float f, com.mojang.blaze3d.vertex.PoseStack poseStack,
+           net.minecraft.client.renderer.MultiBufferSource multiBufferSource, org.spongepowered.asm.mixin.injection.callback.CallbackInfo info) {
+     if (EntityCullingModBase.instance.config.skipBlockEntityCulling) {
+         return;
+     }
+     BlockEntityRenderer blockEntityRenderer = getRenderer(blockEntity);
+     if (blockEntityRenderer == null) {
+        return; // Not a block entity that has a renderer, skip all logic
+    }
+    //? if >= 1.21.6 {
+    
+        if (blockEntityRenderer.shouldRenderOffScreen()) {
+    //? } else {
+    
+     /^if(blockEntityRenderer.shouldRenderOffScreen(blockEntity)) {
+    ^///? }
+         EntityCullingModBase.instance.renderedBlockEntities++;
           return;
       }
-      BlockEntityRenderer blockEntityRenderer = getRenderer(blockEntity);
-      if (blockEntityRenderer == null) {
-         return; // Not a block entity that has a renderer, skip all logic
-     }
-     //? if >= 1.21.6 {
     
-         if (blockEntityRenderer.shouldRenderOffScreen()) {
-     //? } else {
-    /^
-      if(blockEntityRenderer.shouldRenderOffScreen(blockEntity)) {
-     ^///? }
-          EntityCullingModBase.instance.renderedBlockEntities++;
-           return;
-       }
-    
-       if (((Cullable) blockEntity).isCulled() && !((Cullable) blockEntity).isForcedVisible()) {
-           EntityCullingModBase.instance.skippedBlockEntities++;
-           info.cancel();
-           return;
-       }
-        EntityCullingModBase.instance.renderedBlockEntities++;
-     }
+      if (((Cullable) blockEntity).isCulled() && !((Cullable) blockEntity).isForcedVisible()) {
+          EntityCullingModBase.instance.skippedBlockEntities++;
+          info.cancel();
+          return;
+      }
+       EntityCullingModBase.instance.renderedBlockEntities++;
+    }
     *///? }
 
     @Shadow

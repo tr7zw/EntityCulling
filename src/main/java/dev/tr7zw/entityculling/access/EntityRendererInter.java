@@ -12,8 +12,8 @@ public interface EntityRendererInter<T extends Entity> {
     boolean shadowShouldShowName(T entity);
 
     //? if < 26.1 {
-    /*
-    void shadowRenderNameTag(T entity, Component component, PoseStack poseStack, MultiBufferSource multiBufferSource,
+
+    /*void shadowRenderNameTag(T entity, Component component, PoseStack poseStack, MultiBufferSource multiBufferSource,
             int light, float f);
     
      *///? }

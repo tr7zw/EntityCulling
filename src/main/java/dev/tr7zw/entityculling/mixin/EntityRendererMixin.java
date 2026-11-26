@@ -18,8 +18,8 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
     @Override
     public boolean shadowShouldShowName(T entity) {
         //? if <= 1.21.1 {
-        /*
-         return shouldShowName(entity);
+
+        /*return shouldShowName(entity);
         *///? } else {
 
         return ((EntityRenderer) (Object) this).createRenderState(entity, 0).nameTag != null;
@@ -27,57 +27,57 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
     }
 
     //? if < 26.1 {
-    /*
-    @Override
+
+    /*@Override
     public void shadowRenderNameTag(T entity, Component component, PoseStack poseStack,
             MultiBufferSource multiBufferSource, int light, float delta) {
         //? if >= 1.21.9 {
     
         //? } else if >= 1.21.2 {
-        /^
-         renderNameTag(((EntityRenderer) (Object) this).createRenderState(entity, delta), component, poseStack,
+        
+         /^renderNameTag(((EntityRenderer) (Object) this).createRenderState(entity, delta), component, poseStack,
                 multiBufferSource, light);
         ^///? } else if >= 1.20.5 {
-        /^
-         renderNameTag(entity, component, poseStack, multiBufferSource, light, delta);
+        
+         /^renderNameTag(entity, component, poseStack, multiBufferSource, light, delta);
         ^///? } else {
-        /^
-         renderNameTag(entity, component, poseStack, multiBufferSource, light);
+        
+         /^renderNameTag(entity, component, poseStack, multiBufferSource, light);
         ^///? }
     }
     *///? }
 
     //? if <= 1.21.1 {
-    /*
-     @Shadow
-     public abstract boolean shouldShowName(T entity);
+
+    /*@Shadow
+    public abstract boolean shouldShowName(T entity);
     *///? }
 
     //? if < 1.21.9 {
-    /*
-     //? if >= 1.21.2 {
+
+    /*//? if >= 1.21.2 {
     
-         @Shadow
-         public abstract void renderNameTag(net.minecraft.client.renderer.entity.state.EntityRenderState entityRenderState,
-                 Component component, PoseStack poseStack, MultiBufferSource multiBufferSource, int i);
-     //? } else if >= 1.20.5 {
-    /^
-         @Shadow
-      public abstract void renderNameTag(T entity, Component component, PoseStack poseStack,
-      MultiBufferSource multiBufferSource, int i, float f);
-     ^///? } else {
-    /^
-         @Shadow
-         public abstract void renderNameTag(T entity, Component component, PoseStack poseStack,
-      MultiBufferSource multiBufferSource, int i);
-     ^///? }
+        @Shadow
+        public abstract void renderNameTag(net.minecraft.client.renderer.entity.state.EntityRenderState entityRenderState,
+                Component component, PoseStack poseStack, MultiBufferSource multiBufferSource, int i);
+    //? } else if >= 1.20.5 {
+    
+        /^@Shadow
+     public abstract void renderNameTag(T entity, Component component, PoseStack poseStack,
+     MultiBufferSource multiBufferSource, int i, float f);
+    ^///? } else {
+    
+        /^@Shadow
+        public abstract void renderNameTag(T entity, Component component, PoseStack poseStack,
+     MultiBufferSource multiBufferSource, int i);
+    ^///? }
     *///? }
 
     @Override
     public boolean entityCullingIgnoresCulling(T entity) {
         //? if <= 1.21.1 {
-        /*
-         return entity.noCulling;
+
+        /*return entity.noCulling;
         *///? } else {
 
         return !affectedByCulling(entity);
@@ -90,13 +90,13 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
 
         return getBoundingBoxForCulling(entity, 0);
         //? } else if > 1.21.1 {
-        /*
-         return getBoundingBoxForCulling(entity);
+
+        /*return getBoundingBoxForCulling(entity);
         *///? } else {
-        /*
-        return entity.getBoundingBoxForCulling();
-        */
-        //? }
+
+        /*return entity.getBoundingBoxForCulling();
+        
+        *///? }
     }
 
     //? if >= 26.3 {
@@ -107,13 +107,13 @@ public abstract class EntityRendererMixin<T extends Entity> implements EntityRen
     @Shadow
     abstract AABB getBoundingBoxForCulling(T entity, float partialTicks);
     //? } else if >= 1.21.2 {
-    /*
-    @Shadow
+
+    /*@Shadow
     abstract boolean affectedByCulling(T entity);
     
     @Shadow
     abstract AABB getBoundingBoxForCulling(T entity);
-     */
-    //? }
+     
+    *///? }
 
 }

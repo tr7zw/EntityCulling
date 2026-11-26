@@ -34,8 +34,8 @@ public class ECUtil {
             return true;
         }
         //? if <= 1.21.1 {
-        /*
-         return state.isSolidRender(net.minecraft.world.level.EmptyBlockGetter.INSTANCE, net.minecraft.core.BlockPos.ZERO);
+
+        /*return state.isSolidRender(net.minecraft.world.level.EmptyBlockGetter.INSTANCE, net.minecraft.core.BlockPos.ZERO);
         *///? } else {
 
         return state.isSolidRender();

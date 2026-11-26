@@ -11,10 +11,10 @@ public final class KeybindHolder {
 
     private static final int UNBOUND_KEY = 0;
     //? } else {
-    /*
-    private static final int UNBOUND_KEY = -1;
-     */
-    //? }
+
+    /*private static final int UNBOUND_KEY = -1;
+     
+    *///? }
 
     public static final KeybindHolder INSTANCE = new KeybindHolder();
     private boolean initialized = false;

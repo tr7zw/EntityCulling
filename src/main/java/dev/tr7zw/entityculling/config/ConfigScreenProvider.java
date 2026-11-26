@@ -196,12 +196,12 @@ public class ConfigScreenProvider {
         }
 
         private static @NotNull String getStringEntity(Entry<ResourceKey<EntityType<?>>, EntityType<?>> a) {
-            return a.getKey()/*? >= 1.21.11 {*/.identifier() /*?} else {*//* .location() *//*?}*/.toString();
+            return a.getKey()/*? >= 1.21.11 {*/.identifier() /*?} else {*/ /*.location() *//*?}*/.toString();
         }
 
         private static @NotNull String getStringBlockEntity(
                 Entry<ResourceKey<BlockEntityType<?>>, BlockEntityType<?>> a) {
-            return a.getKey()/*? >= 1.21.11 {*/.identifier() /*?} else {*//* .location() *//*?}*/.toString();
+            return a.getKey()/*? >= 1.21.11 {*/.identifier() /*?} else {*/ /*.location() *//*?}*/.toString();
         }
 
         @Override

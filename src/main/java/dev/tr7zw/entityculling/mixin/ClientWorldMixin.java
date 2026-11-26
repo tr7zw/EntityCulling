@@ -21,8 +21,8 @@ import net.minecraft.world.entity.monster.warden.Warden;
 
 import net.minecraft.world.entity.vehicle.minecart.*;
 //? } else {
-/*
-        import net.minecraft.world.entity.vehicle.*;
+
+/*import net.minecraft.world.entity.vehicle.*;
 
 *///? }
 
@@ -81,10 +81,10 @@ public class ClientWorldMixin {
 
         if (display.getBoundingBox().getSize() == 0 && display instanceof DisplayAccessor accessor) {
             //? } else {
-            /*
-            if (display.getBoundingBoxForCulling().getSize() == 0 && display instanceof DisplayAccessor accessor) {
-             */
-            //? }
+
+            /*if (display.getBoundingBoxForCulling().getSize() == 0 && display instanceof DisplayAccessor accessor) {
+             
+            *///? }
             accessor.invokeSetWidth(3);
             accessor.invokeSetHeight(3);
             // cause culling data update
@@ -135,7 +135,7 @@ public class ClientWorldMixin {
      */
     private int getWardenHeartBeatDelay(Warden warden) {
         float f = warden.getClientAngerLevel() / AngerLevel.ANGRY.getMinimumAnger();
-        return 40 - Mth.floor(Mth.clamp(f, 0.0F, 1.0F) * 30.0F);
+        return 40 - Mth.floor(Math.clamp(f, 0.0F, 1.0F) * 30.0F);
     }
 
 }
